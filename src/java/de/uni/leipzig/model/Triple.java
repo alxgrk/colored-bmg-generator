@@ -1,4 +1,4 @@
-package de.alxgrk.model;
+package de.uni.leipzig.model;
 
 import lombok.Value;
 
