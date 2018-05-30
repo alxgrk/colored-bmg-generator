@@ -10,7 +10,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-    	RandomTree randomTree = new RandomTree(4, 10, 2);
+    	RandomTree randomTree = new RandomTree(2, 5, 2);
     	randomTree.create();
     	
     	List<List<Node>> adjList = randomTree.getAdjList();

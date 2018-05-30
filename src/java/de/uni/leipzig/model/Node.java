@@ -32,7 +32,7 @@ public class Node {
 
     @Override
     public String toString() {
-        return label + "|" + path;
+        return "(" + label + ")" + path;
     }
 
 }

@@ -24,11 +24,11 @@ public class RandomTree {
 	public void create() {
 		ArrayList<Integer> arrayList = new ArrayList<>();
 		arrayList.add(0);
-		create(arrayList);
+		create(arrayList, true);
 		link();
 	}
 
-	private void create(List<Integer> ids) {
+	private void create(List<Integer> ids, Boolean shouldHaveChildren) {
 
 		// erzeuge neue linkedList in Arraylist und neuen Node
 		List<Node> childList = new LinkedList<Node>();
@@ -37,7 +37,7 @@ public class RandomTree {
 		Node node = Node.of(randomLabel(), ids);
 		childList.add(node);
 
-		if (randomBoolean() == true && ids.size() < maxTiefe) {
+		if (shouldHaveChildren == true && ids.size() < maxTiefe) {
 
 			// bestimme wie viele Abzweige
 			int zahl = randomInt(maxKinder);
@@ -46,10 +46,11 @@ public class RandomTree {
 
 			for (int i = 1; i <= zahl; i++) {
 				// erzeugung des neuen Namen-Arrays
-				ids.add(i);
-
+				List<Integer> copy = new ArrayList<>(ids);
+				copy.add(i);
+				
 				// rekursive Funktion
-				create(ids);
+				create(copy, randomBoolean());
 			}
 		} else {
 			return;
@@ -61,14 +62,17 @@ public class RandomTree {
 		for (int i = 0; i < adjList.size() - 1; i++) { // Eintrag
 			for (int j = 0; j < adjList.size(); j++) { // Vergleichseintrag
 				
+				Node first = adjList.get(i).get(0);
+				Node second = adjList.get(j).get(0);
+				
 				//Vergleich der Baumtiefe über die Länge des ID-Arrays. Bei Abstand von 1 wäre eine Kind-beziehung möglich
-				if (adjList.get(i).get(0).getIds().size() == adjList.get(j).get(0).getIds().size() - 1) {
+				if (first.getIds().size() == second.getIds().size() - 1) {
 					// vergleicht die ID-Arrays miteinander bis entweder eine ungleichheit auftritt, oder das kürzere Array vollständig durchlaufen wurde 
 					int v = 0; 
-					while (adjList.get(i).get(0).getIds().get(v) == adjList.get(j).get(0).getIds().get(v)) {
-						if (v == adjList.get(i).get(0).getIds().size() - 1) {
+					while (first.getIds().get(v) == second.getIds().get(v)) {
+						if (v == first.getIds().size() - 1) {
 							// hängt den vergleichseintrag an den Eintrag, sofern das kürzere ID-Array vollständig übereingestimmt hat
-							adjList.get(i).add(adjList.get(j).get(0));
+							adjList.get(i).add(second);
 							break;
 						}
 						v++;
