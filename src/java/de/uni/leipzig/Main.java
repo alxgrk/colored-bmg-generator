@@ -1,9 +1,12 @@
 package de.uni.leipzig;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import de.uni.leipzig.model.Node;
+import de.uni.leipzig.model.Tree;
 import de.uni.leipzig.model.Triple;
 
 public class Main {
@@ -15,9 +18,14 @@ public class Main {
     	
     	List<List<Node>> adjList = randomTree.getAdjList();
     	
-    	List<Triple> tripel = new TripleFinder().findTripel(adjList);
+    	TripleFinder tripleFinder = new TripleFinder();
+		List<Triple> triple = tripleFinder.findTriple(adjList);
     	
-        System.out.println(tripel.toString());
+        System.out.println(triple.toString());
+        
+        Tree result = AhoBuild.build(new HashSet<>(triple), new ArrayList<>(tripleFinder.getLeaves()));
+        
+        System.out.println(result.toNewickNotation());
     }
 
 }

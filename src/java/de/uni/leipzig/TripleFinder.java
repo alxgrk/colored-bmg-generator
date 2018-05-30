@@ -1,15 +1,21 @@
 package de.uni.leipzig;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import de.uni.leipzig.model.Edge;
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Triple;
+import lombok.Getter;
 
+@Getter
 public class TripleFinder {
 
-	public List<Triple> findTripel(List<List<Node>> liste) {
+	private Set<Node> leaves = new HashSet<>();
+	
+	public List<Triple> findTriple(List<List<Node>> liste) {
 
 		List<Triple> tripleList = new ArrayList<>();
 		
@@ -26,17 +32,23 @@ public class TripleFinder {
 				for (int k = 0; k < liste.size(); k++) {
 					if (liste.get(k).size() == 1 && k != j && k != i) {
 
-						List<Integer> x = liste.get(i).get(0).getIds();
-						List<Integer> y = liste.get(j).get(0).getIds();
-						List<Integer> z = liste.get(k).get(0).getIds();
+						Node firstNode = liste.get(i).get(0);
+						Node secondNode = liste.get(j).get(0);
+						Node thirdNode = liste.get(k).get(0);
+						
+						List<Integer> x = firstNode.getIds();
+						List<Integer> y = secondNode.getIds();
+						List<Integer> z = thirdNode.getIds();
 
 						List<Integer> lcaXY = findLCA(x, y);
 						List<Integer> lcaXYZ = findLCA(z, lcaXY);
 
 						if (lcaXY.size() > lcaXYZ.size()) {
-							Edge edge = new Edge(liste.get(i).get(0), liste.get(j).get(0));
-							Triple tripel = new Triple(edge, liste.get(k).get(0));
+							Edge edge = new Edge(firstNode, secondNode);
+							Triple tripel = new Triple(edge, thirdNode);
 							tripleList.add(tripel);
+							
+							leaves.add(firstNode);
 						}
 					}
 				}

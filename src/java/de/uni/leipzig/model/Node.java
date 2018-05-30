@@ -1,5 +1,6 @@
 package de.uni.leipzig.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Value;
@@ -15,10 +16,11 @@ public class Node {
     
     String path = "";
 
+    public static Node helpNode() {
+        return new Node(-1, new ArrayList<>());
+    }
+    
     public static Node of(Integer label, List<Integer> id) {
-        if (id.isEmpty())
-            throw new IllegalArgumentException("Node value length must be >= 0");
-
         return new Node(label, id);
     }
 
@@ -30,8 +32,15 @@ public class Node {
 		}
     }
 
+    public boolean isHelpNode() {
+		return label == -1;
+	}
+    
     @Override
     public String toString() {
+    	if (isHelpNode())
+    		return "*";
+    	
         return "(" + label + ")" + path;
     }
 
