@@ -14,48 +14,64 @@ import lombok.Getter;
 public class TripleFinder {
 
 	private Set<Node> leaves = new HashSet<>();
-	
+
 	public List<Triple> findTriple(List<List<Node>> liste) {
 
 		List<Triple> tripleList = new ArrayList<>();
-		
+
 		for (int i = 0; i < liste.size(); i++) {
-			if (liste.get(i).size() != 1) {
+
+			List<Node> firstList = liste.get(i);
+
+			if (!isLeave(firstList)) {
 				continue;
 			}
 
+			Node firstNode = firstList.get(0);
+			// add every leave
+			leaves.add(firstNode);
+			
 			for (int j = 0; j < liste.size(); j++) {
-				if (liste.get(j).size() != 1 || j == i) {
+
+				List<Node> secondList = liste.get(j);
+
+				if (!isLeave(secondList) || j == i) {
 					continue;
 				}
+				
+				Node secondNode = secondList.get(0);
 
 				for (int k = 0; k < liste.size(); k++) {
-					if (liste.get(k).size() == 1 && k != j && k != i) {
 
-						Node firstNode = liste.get(i).get(0);
-						Node secondNode = liste.get(j).get(0);
-						Node thirdNode = liste.get(k).get(0);
-						
+					List<Node> thirdList = liste.get(k);
+
+					if (isLeave(thirdList) && k != j && k != i) {
+
+						Node thirdNode = thirdList.get(0);
+
 						List<Integer> x = firstNode.getIds();
 						List<Integer> y = secondNode.getIds();
 						List<Integer> z = thirdNode.getIds();
 
 						List<Integer> lcaXY = findLCA(x, y);
 						List<Integer> lcaXYZ = findLCA(z, lcaXY);
-
-						if (lcaXY.size() > lcaXYZ.size()) {
+						
+						// xy is the ingroup, z is the outgroup 
+						if (isTriple(lcaXY, lcaXYZ)) {
 							Edge edge = new Edge(firstNode, secondNode);
 							Triple tripel = new Triple(edge, thirdNode);
 							tripleList.add(tripel);
-							
-							leaves.add(firstNode);
 						}
 					}
 				}
 			}
 		}
-		
+
 		return tripleList;
+	}
+
+	private boolean isTriple(List<Integer> lcaXY, List<Integer> lcaXYZ) {
+		return lcaXY.size() > lcaXYZ.size();
 	}
 
 	public List<Integer> findLCA(List<Integer> a, List<Integer> b) {
@@ -73,6 +89,10 @@ public class TripleFinder {
 			v++;
 		}
 		return ancester;
+	}
+
+	private boolean isLeave(List<Node> nodes) {
+		return nodes.size() == 1;
 	}
 
 }
