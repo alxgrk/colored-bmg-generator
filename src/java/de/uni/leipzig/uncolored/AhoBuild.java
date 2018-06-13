@@ -1,4 +1,4 @@
-package de.uni.leipzig;
+package de.uni.leipzig.uncolored;
 
 import java.util.ArrayList;
 import java.util.List;

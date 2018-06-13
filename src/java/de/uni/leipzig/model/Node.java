@@ -41,7 +41,7 @@ public class Node {
     	if (isHelpNode())
     		return "*";
     	
-        return "(" + label + ")" + path;
+        return  label + "-" + path;
     }
 
 }
