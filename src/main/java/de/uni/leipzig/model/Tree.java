@@ -5,24 +5,27 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
+import lombok.NonNull;
 import lombok.Value;
 
 @Value
 public class Tree {
 
-    List<Tree> subTrees;
+    private List<Tree> subTrees;
 
-    List<Node> leafs;
+    private List<Node> leafs;
 
-    public Tree(List<Node> leafs) {
+    public Tree(@NonNull List<Node> leafs) {
         if (leafs.size() < 1)
             throw new IllegalArgumentException("Unable to create tree without any node.");
+        if (leafs.stream().filter(Node::isHelpNode).count() == leafs.size())
+            throw new IllegalArgumentException("Unable to create tree with only help nodes.");
 
         this.leafs = leafs;
         this.subTrees = new ArrayList<>();
     }
 
-    public Tree(Tree... subtrees) {
+    public Tree(@NonNull Tree... subtrees) {
         if (subtrees.length < 1)
             throw new IllegalArgumentException("Unable to create tree without any node.");
 
@@ -30,7 +33,7 @@ public class Tree {
         this.subTrees = Arrays.asList(subtrees);
     }
 
-    public Tree(TreeSet<Node> leafs) {
+    public Tree(@NonNull TreeSet<Node> leafs) {
         this(new ArrayList<>(leafs));
     }
 
@@ -46,7 +49,7 @@ public class Tree {
         return nodes;
     }
 
-    public Tree addSubTree(Tree t) {
+    public Tree addSubTree(@NonNull Tree t) {
         subTrees.add(t);
         return this;
     }
