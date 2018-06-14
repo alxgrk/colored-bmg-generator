@@ -1,9 +1,10 @@
 package de.uni.leipzig.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
+
+import com.google.common.collect.Lists;
 
 import lombok.NonNull;
 import lombok.Value;
@@ -30,7 +31,7 @@ public class Tree {
             throw new IllegalArgumentException("Unable to create tree without any node.");
 
         this.leafs = new ArrayList<>();
-        this.subTrees = Arrays.asList(subtrees);
+        this.subTrees = Lists.newArrayList(subtrees);
     }
 
     public Tree(@NonNull TreeSet<Node> leafs) {
