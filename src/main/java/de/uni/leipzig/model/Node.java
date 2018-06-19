@@ -11,17 +11,20 @@ import lombok.Setter;
 @Setter(AccessLevel.NONE)
 public class Node {
 
-    Integer label;
+    private Integer label;
 
-    List<Integer> ids;
+    private List<Integer> ids;
 
-    String path = "";
+    private String path = "";
 
     public static Node helpNode() {
         return new Node(-1, new ArrayList<>());
     }
 
     public static Node of(Integer label, List<Integer> id) {
+        if (label < 0)
+            throw new IllegalArgumentException("Could not create a node with negative label.");
+
         return new Node(label, id);
     }
 

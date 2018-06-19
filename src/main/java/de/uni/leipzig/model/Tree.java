@@ -12,9 +12,9 @@ import lombok.Value;
 @Value
 public class Tree {
 
-    private List<Tree> subTrees;
+    List<Tree> subTrees;
 
-    private List<Node> leafs;
+    List<Node> leafs;
 
     public Tree(@NonNull List<Node> leafs) {
         if (leafs.size() < 1)
