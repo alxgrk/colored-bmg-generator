@@ -51,16 +51,6 @@ public class TreeTest {
     }
 
     @Test
-    public void testNotOnlyHelpNodes() throws Exception {
-        Node node1 = Node.helpNode();
-        Node node2 = Node.helpNode();
-        List<Node> leaves = Lists.newArrayList(node1, node2);
-
-        assertThatThrownBy(() -> new Tree(leaves))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     public void testAtLeastOneNode() throws Exception {
         List<Node> leaves = Lists.newArrayList();
 

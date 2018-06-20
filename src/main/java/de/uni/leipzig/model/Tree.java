@@ -19,8 +19,6 @@ public class Tree {
     public Tree(@NonNull List<Node> leafs) {
         if (leafs.size() < 1)
             throw new IllegalArgumentException("Unable to create tree without any node.");
-        if (leafs.stream().filter(Node::isHelpNode).count() == leafs.size())
-            throw new IllegalArgumentException("Unable to create tree with only help nodes.");
 
         this.leafs = leafs;
         this.subTrees = new ArrayList<>();
