@@ -1,22 +1,22 @@
 package de.uni.leipzig.colored;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import de.uni.leipzig.model.DiEdge;
 import de.uni.leipzig.model.DiGraph;
-import de.uni.leipzig.model.Edge;
 import de.uni.leipzig.model.Node;
-import de.uni.leipzig.model.Triple;
-import lombok.Getter;
 
-@Getter
 public class DiGraphExtractor {
+
 	
-	private DiGraph graph = new DiGraph();
-	
-	public void extract(List<List<Node>> adjList){
+	public DiGraph extract(List<List<Node>> adjList){
 		
+		Set<Node> nodes = new HashSet<>();
+		Set<DiEdge> edges = new HashSet<>();
+
 		for (int i = 0; i < adjList.size(); i++) {
 
 			List<Node> firstList = adjList.get(i);
@@ -27,7 +27,7 @@ public class DiGraphExtractor {
 
 			Node firstNode = firstList.get(0);
 			// add every leave
-			graph.addNode(firstNode);
+			nodes.add(firstNode);
 			
 			for (int j = 0; j < adjList.size(); j++) {
 
@@ -67,20 +67,21 @@ public class DiGraphExtractor {
 								} else {
 									edge = new DiEdge(firstNode, secondNode);
 								}
-								graph.addEdge(edge);
+								edges.add(edge);
 							}
 						}
 					}
 				}
 			}
 		}
+		return new DiGraph(nodes, edges);
 	}
 
 	private boolean isLeave(List<Node> nodes) {
 		return nodes.size() == 1;
 	}
 	
-	public List<Integer> findLCA(List<Integer> a, List<Integer> b) {
+	private List<Integer> findLCA(List<Integer> a, List<Integer> b) {
 
 		List<Integer> ancester = new ArrayList<>();
 

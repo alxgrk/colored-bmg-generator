@@ -26,9 +26,8 @@ public class Main {
          */
 
         DiGraphExtractor extractor = new DiGraphExtractor();
-        extractor.extract(adjList);
 
-        System.out.println(extractor.getGraph());
+        System.out.println(extractor.extract(adjList));
     }
 
 }
