@@ -44,25 +44,19 @@ public class ÄquivalenzKlassenFinder {
 
 		for (Node n : graph.getNodes()) {
 
-			boolean skip = false;
-			
-			for (ÄquivalenzKlasse äk : ÄKlassen) {
-				skip = äk.contains(n);
-			}
-			
-			if (skip)
+			if (nodeAlreadyInÄk(n))
 				continue;
 
 			ÄquivalenzKlasse ÄK = new ÄquivalenzKlasse();
 			ÄK.hinzufügen(n);
 
 			for (Node nextNode : graph.getNodes()) {
-				
+
 				if (n == nextNode)
 					continue;
 
-				if (outerN.get(n).equals(outerN.get(nextNode)) 
-						&& innerN.get(n).equals(innerN.get(nextNode))) {
+				if (outerN.get(n).containsAll(outerN.get(nextNode)) && outerN.get(nextNode).containsAll(outerN.get(n))
+						&& innerN.get(n).containsAll(innerN.get(nextNode)) && innerN.get(nextNode).containsAll(innerN.get(n))) {
 					ÄK.hinzufügen(nextNode);
 				}
 			}
@@ -71,6 +65,16 @@ public class ÄquivalenzKlassenFinder {
 		}
 
 		return ÄKlassen;
+	}
+
+	private boolean nodeAlreadyInÄk(Node n) {
+		boolean skip= false;
+		for (ÄquivalenzKlasse äk : ÄKlassen) {
+			skip = äk.contains(n);
+			if (skip)
+				break;
+		}
+		return skip;
 	}
 
 }

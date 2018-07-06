@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 
 import de.uni.leipzig.colored.DiGraphExtractor;
+import de.uni.leipzig.colored.axiom.Axioms;
+import de.uni.leipzig.model.DiGraph;
 import de.uni.leipzig.model.Node;
 
 public class Main {
@@ -27,7 +29,20 @@ public class Main {
 
         DiGraphExtractor extractor = new DiGraphExtractor();
 
-        System.out.println(extractor.extract(adjList));
+        DiGraph graph = extractor.extract(adjList);
+        
+        System.out.println("Nodes: " + graph.getNodes());
+        System.out.println("Edges: " + graph.getEdges());
+        
+        System.out.println("Neighbourhood: " + graph.getNeighboursByÄk());
+        System.out.println("Reachables: " + graph.getReachablesByÄk());
+        
+        boolean axiomsFulfilled = Axioms.checkAll(graph);
+        
+        if (!axiomsFulfilled)
+        	throw new RuntimeException("Axioms not fulfilled!");
+        
+//		System.out.println(graph);
     }
 
 }
