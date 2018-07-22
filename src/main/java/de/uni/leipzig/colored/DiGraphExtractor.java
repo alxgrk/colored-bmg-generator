@@ -5,98 +5,96 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import de.uni.leipzig.model.DiEdge;
 import de.uni.leipzig.model.DiGraph;
 import de.uni.leipzig.model.Node;
+import de.uni.leipzig.model.edges.DiEdge;
 
 public class DiGraphExtractor {
 
-	
-	public DiGraph extract(List<List<Node>> adjList){
-		
-		Set<Node> nodes = new HashSet<>();
-		Set<DiEdge> edges = new HashSet<>();
+    public DiGraph extract(List<List<Node>> adjList) {
 
-		for (int i = 0; i < adjList.size(); i++) {
+        Set<Node> nodes = new HashSet<>();
+        Set<DiEdge> edges = new HashSet<>();
 
-			List<Node> firstList = adjList.get(i);
+        for (int i = 0; i < adjList.size(); i++) {
 
-			if (!isLeave(firstList)) {
-				continue;
-			}
+            List<Node> firstList = adjList.get(i);
 
-			Node firstNode = firstList.get(0);
-			// add every leave
-			nodes.add(firstNode);
-			
-			for (int j = 0; j < adjList.size(); j++) {
+            if (!isLeave(firstList)) {
+                continue;
+            }
 
-				List<Node> secondList = adjList.get(j);
+            Node firstNode = firstList.get(0);
+            // add every leave
+            nodes.add(firstNode);
 
-				if (!isLeave(secondList) || j == i) {
-					continue;
-				}
-				
-				Node secondNode = secondList.get(0);
+            for (int j = 0; j < adjList.size(); j++) {
 
-				for (int k = 0; k < adjList.size(); k++) {
+                List<Node> secondList = adjList.get(j);
 
-					List<Node> thirdList = adjList.get(k);
+                if (!isLeave(secondList) || j == i) {
+                    continue;
+                }
 
-					if (isLeave(thirdList) && k != j && k != i) {
+                Node secondNode = secondList.get(0);
 
-						Node thirdNode = thirdList.get(0);
+                for (int k = 0; k < adjList.size(); k++) {
 
-						if(firstNode.getLabel() != secondNode.getLabel() && 
-								( firstNode.getLabel() == thirdNode.getLabel() || secondNode.getLabel() == thirdNode.getLabel() ) ){
-							
-							List<Integer> x = firstNode.getIds();
-							List<Integer> y = secondNode.getIds();
-							List<Integer> z = thirdNode.getIds();
-	
-							List<Integer> lcaXY = findLCA(x, y);
-							List<Integer> lcaXZ = findLCA(x, z);
-							
-							// xy is the ingroup, z is the outgroup 
-							if (lcaXY.size() > lcaXZ.size() ) {
-								
-								DiEdge edge;
-								
-								if(firstNode.getLabel() == thirdNode.getLabel()){
-									edge = new DiEdge(secondNode, firstNode);
-								} else {
-									edge = new DiEdge(firstNode, secondNode);
-								}
-								edges.add(edge);
-							}
-						}
-					}
-				}
-			}
-		}
-		return new DiGraph(nodes, edges);
-	}
+                    List<Node> thirdList = adjList.get(k);
 
-	private boolean isLeave(List<Node> nodes) {
-		return nodes.size() == 1;
-	}
-	
-	private List<Integer> findLCA(List<Integer> a, List<Integer> b) {
+                    if (isLeave(thirdList) && k != j && k != i) {
 
-		List<Integer> ancester = new ArrayList<>();
+                        Node thirdNode = thirdList.get(0);
 
-		int v = 0;
+                        if (firstNode.getLabel() != secondNode.getLabel() &&
+                                (firstNode.getLabel() == thirdNode.getLabel() || secondNode
+                                        .getLabel() == thirdNode.getLabel())) {
 
-		while (a.get(v) == b.get(v)) {
+                            List<Integer> x = firstNode.getIds();
+                            List<Integer> y = secondNode.getIds();
+                            List<Integer> z = thirdNode.getIds();
 
-			ancester.add(a.get(v));
-			if (v == a.size() - 1 || v == b.size() - 1) {
-				return ancester;
-			}
-			v++;
-		}
-		return ancester;
-	}
+                            List<Integer> lcaXY = findLCA(x, y);
+                            List<Integer> lcaXZ = findLCA(x, z);
+
+                            // xy is the ingroup, z is the outgroup
+                            if (lcaXY.size() > lcaXZ.size()) {
+
+                                DiEdge edge;
+
+                                if (firstNode.getLabel() == thirdNode.getLabel()) {
+                                    edge = new DiEdge(secondNode, firstNode);
+                                } else {
+                                    edge = new DiEdge(firstNode, secondNode);
+                                }
+                                edges.add(edge);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return new DiGraph(nodes, edges);
+    }
+
+    private boolean isLeave(List<Node> nodes) {
+        return nodes.size() == 1;
+    }
+
+    private List<Integer> findLCA(List<Integer> a, List<Integer> b) {
+
+        List<Integer> ancester = new ArrayList<>();
+
+        int v = 0;
+
+        while (a.get(v) == b.get(v)) {
+
+            ancester.add(a.get(v));
+            if (v == a.size() - 1 || v == b.size() - 1) {
+                return ancester;
+            }
+            v++;
+        }
+        return ancester;
+    }
 }
-
-

@@ -1,10 +1,12 @@
-package de.uni.leipzig.model;
+package de.uni.leipzig.model.edges;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
+
+import de.uni.leipzig.model.Node;
 
 public class DiEdgeTest {
 
@@ -15,7 +17,7 @@ public class DiEdgeTest {
 
         DiEdge uut = new DiEdge(node1, node2);
 
-        assertThat(uut.toString()).isEqualTo("1-1,2-2");
+        assertThat(uut.toString()).isEqualTo("1-1->2-2");
     }
 
     @Test

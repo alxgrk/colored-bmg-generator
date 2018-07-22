@@ -2,29 +2,28 @@ package de.uni.leipzig.colored.axiom;
 
 import java.util.Set;
 
-import com.google.common.collect.Sets;
-
+import de.uni.leipzig.Util;
 import de.uni.leipzig.model.DiGraph;
 import de.uni.leipzig.model.Node;
-import de.uni.leipzig.model.ÄquivalenzKlasse;
+import de.uni.leipzig.model.EquivalenceClass;
 
 public class Axiom2 extends Axioms {
 
-	@Override
-	public boolean check(DiGraph graph, ÄquivalenzKlasse alpha, ÄquivalenzKlasse beta) {
+    @Override
+    public boolean check(DiGraph graph, EquivalenceClass alpha, EquivalenceClass beta) {
 
-		Set<Node> nAlpha = graph.getN1(alpha);
-		Set<Node> nnnAlpha = graph.getN3(alpha);
+        Set<Node> nAlpha = graph.getN1(alpha);
+        Set<Node> nnnAlpha = graph.getN3(alpha);
 
-		if (!Sets.difference(nnnAlpha, nAlpha).isEmpty()) {
-			return false;
-		}
+        if (!Util.equalSets(nnnAlpha, nAlpha)) {
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public String toString() {
-		return "Axiom 2";
-	}
+    @Override
+    public String toString() {
+        return "Axiom 2";
+    }
 }

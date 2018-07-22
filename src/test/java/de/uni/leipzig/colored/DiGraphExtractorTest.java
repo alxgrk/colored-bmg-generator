@@ -9,9 +9,9 @@ import com.google.common.collect.Lists;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import de.uni.leipzig.model.DiEdge;
 import de.uni.leipzig.model.DiGraph;
 import de.uni.leipzig.model.Node;
+import de.uni.leipzig.model.edges.DiEdge;
 
 public class DiGraphExtractorTest {
 

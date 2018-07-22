@@ -4,55 +4,59 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import de.uni.leipzig.model.edges.DiEdge;
 import lombok.Value;
 
 @Value
 public class Neighbourhood {
-	Set<Node> n1;
-	Set<Node> n2;
-	Set<Node> n3;
-	Set<Node> nIn;
-	
-	public Neighbourhood(ÄquivalenzKlasse äk, Set<DiEdge> edges){
-		n1 = neighboursCalc(äk, edges);
-		n2 = neighboursCalc(n1, edges);
-		n3 = neighboursCalc(n2, edges);
-		nIn = inNeighboursOf(äk, edges);
-	}
-	
-	private Set<Node> neighboursCalc(ÄquivalenzKlasse äk, Set<DiEdge> edges) {
-		return neighboursCalc(äk.getNodes(), edges);
-	}
+    Set<Node> n1;
 
-	private Set<Node> neighboursCalc(Set<Node> äk, Set<DiEdge> edges) {
-		Set<Node> neighbours = new HashSet<>();
+    Set<Node> n2;
 
-		Optional<Node> any = äk.stream().findAny();
-		any.ifPresent(n -> {
+    Set<Node> n3;
 
-			for (DiEdge diEdge : edges) {
+    Set<Node> nIn;
 
-				if (diEdge.getFirst() == n)
-					neighbours.add(diEdge.getSecond());
-			}
-		});
+    public Neighbourhood(EquivalenceClass äk, Set<DiEdge> edges) {
+        n1 = neighboursCalc(äk, edges);
+        n2 = neighboursCalc(n1, edges);
+        n3 = neighboursCalc(n2, edges);
+        nIn = inNeighboursOf(äk, edges);
+    }
 
-		return neighbours;
-	}
-	
-	private Set<Node> inNeighboursOf(ÄquivalenzKlasse äk, Set<DiEdge> edges) {
-		Set<Node> neighbours = new HashSet<>();
+    private Set<Node> neighboursCalc(EquivalenceClass äk, Set<DiEdge> edges) {
+        return neighboursCalc(äk.getNodes(), edges);
+    }
 
-		Optional<Node> any = äk.getNodes().stream().findAny();
-		any.ifPresent(n -> {
+    private Set<Node> neighboursCalc(Set<Node> äk, Set<DiEdge> edges) {
+        Set<Node> neighbours = new HashSet<>();
 
-			for (DiEdge diEdge : edges) {
+        Optional<Node> any = äk.stream().findAny();
+        any.ifPresent(n -> {
 
-				if (diEdge.getSecond() == n)
-					neighbours.add(diEdge.getFirst());
-			}
-		});
-		
-		return neighbours;
-	}
+            for (DiEdge diEdge : edges) {
+
+                if (diEdge.getFirst() == n)
+                    neighbours.add(diEdge.getSecond());
+            }
+        });
+
+        return neighbours;
+    }
+
+    private Set<Node> inNeighboursOf(EquivalenceClass äk, Set<DiEdge> edges) {
+        Set<Node> neighbours = new HashSet<>();
+
+        Optional<Node> any = äk.getNodes().stream().findAny();
+        any.ifPresent(n -> {
+
+            for (DiEdge diEdge : edges) {
+
+                if (diEdge.getSecond() == n)
+                    neighbours.add(diEdge.getFirst());
+            }
+        });
+
+        return neighbours;
+    }
 }

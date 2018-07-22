@@ -1,10 +1,14 @@
-package de.uni.leipzig.model;
+package de.uni.leipzig.model.edges;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
+
+import de.uni.leipzig.model.Node;
+
+import de.uni.leipzig.model.edges.Edge;
 
 public class EdgeTest {
 

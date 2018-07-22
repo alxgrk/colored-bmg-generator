@@ -7,6 +7,7 @@ import de.uni.leipzig.colored.DiGraphExtractor;
 import de.uni.leipzig.colored.axiom.Axioms;
 import de.uni.leipzig.model.DiGraph;
 import de.uni.leipzig.model.Node;
+import de.uni.leipzig.model.Tree;
 
 public class Main {
 
@@ -30,19 +31,20 @@ public class Main {
         DiGraphExtractor extractor = new DiGraphExtractor();
 
         DiGraph graph = extractor.extract(adjList);
-        
+
         System.out.println("Nodes: " + graph.getNodes());
         System.out.println("Edges: " + graph.getEdges());
-        
+
         System.out.println("Neighbourhood: " + graph.getNeighboursByÄk());
         System.out.println("Reachables: " + graph.getReachablesByÄk());
-        
+
         boolean axiomsFulfilled = Axioms.checkAll(graph);
-        
+
         if (!axiomsFulfilled)
-        	throw new RuntimeException("Axioms not fulfilled!");
-        
-//		System.out.println(graph);
+            throw new RuntimeException("Axioms not fulfilled!");
+
+        Tree leastResolvedTree = graph.getHasseDiagram();
+        System.out.println(leastResolvedTree);
     }
 
 }

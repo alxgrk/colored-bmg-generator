@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import de.uni.leipzig.model.DiGraph;
-import de.uni.leipzig.model.ÄquivalenzKlasse;
+import de.uni.leipzig.model.EquivalenceClass;
 
 public abstract class Axioms {
 
@@ -13,8 +13,8 @@ public abstract class Axioms {
 
 	public static final boolean checkAll(DiGraph graph) {
 
-		for (ÄquivalenzKlasse alpha : graph.getÄquivalenzKlassen()) {
-			for (ÄquivalenzKlasse beta : graph.getÄquivalenzKlassen()) {
+		for (EquivalenceClass alpha : graph.getÄquivalenzKlassen()) {
+			for (EquivalenceClass beta : graph.getÄquivalenzKlassen()) {
 
 				if (alpha == beta)
 					continue;
@@ -34,6 +34,6 @@ public abstract class Axioms {
 		return true;
 	}
 
-	abstract boolean check(DiGraph graph, ÄquivalenzKlasse alpha, ÄquivalenzKlasse beta);
+	abstract boolean check(DiGraph graph, EquivalenceClass alpha, EquivalenceClass beta);
 
 }

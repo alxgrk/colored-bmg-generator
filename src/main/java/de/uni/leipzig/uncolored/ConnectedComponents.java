@@ -1,9 +1,9 @@
 package de.uni.leipzig.uncolored;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import de.uni.leipzig.model.Node;
@@ -21,9 +21,8 @@ public class ConnectedComponents {
         // iterate over remaining nodes as long, as there are some left
         while (!leftOvers.isEmpty()) {
 
-            // store nodes contained by a connected component in a sorted set
-            TreeSet<Node> subTree = new TreeSet<>((c1, c2) -> c1.getPath().compareTo(c2
-                    .getPath()));
+            // store nodes contained by a connected component in a set
+            Set<Node> subTree = new HashSet<>();
 
             leftOvers = leftOvers.stream()
                     .filter(n -> {

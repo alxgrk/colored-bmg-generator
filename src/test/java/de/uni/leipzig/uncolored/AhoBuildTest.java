@@ -7,21 +7,21 @@ import org.junit.Test;
 
 import com.google.common.collect.Sets;
 
-import de.uni.leipzig.model.Edge;
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Tree;
 import de.uni.leipzig.model.Triple;
+import de.uni.leipzig.model.edges.Edge;
 
 public class AhoBuildTest {
 
     @Test
     public void testAhoBuild() throws Exception {
         // *
-        // / \
+        // | \
         // * \
-        // / \ \
+        // | \ \
         // * \ \
-        // / \ \ \
+        // | \ \ \
         // * * * *
         // 1 2 3 4
 
@@ -38,8 +38,9 @@ public class AhoBuildTest {
         Tree result = AhoBuild.build(Sets.newHashSet(tripleOne, tripleTwo, tripleThree, tripleFour),
                 Lists.newArrayList(one, two, three, four));
 
-        assertThat(result.getLeafs()).containsExactly(one, two, three, four);
-        assertThat(result.getNodes()).hasSize(7);
-        assertThat(result.toNewickNotation()).isEqualTo("(((1,2),3),4)");
+        assertThat(result.getNodes()).containsExactly(Node.helpNode(), one, two, three, four);
+        assertThat(result.getNodes()).hasSize(5);
+        assertThat(result.toNewickNotation()).isEqualTo("(((" + one + "," + two + "),"
+                + three + ")," + four + ")");
     }
 }

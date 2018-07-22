@@ -1,11 +1,12 @@
 package de.uni.leipzig.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.TreeSet;
 
 import com.google.common.collect.Lists;
 
+import de.uni.leipzig.Util;
 import lombok.NonNull;
 import lombok.Value;
 
@@ -16,11 +17,14 @@ public class Tree {
 
     List<Node> leafs;
 
-    public Tree(@NonNull List<Node> leafs) {
+    public Tree(@NonNull Collection<Node> leafs) {
+        List<Node> leafsAsList = Lists.newArrayList(leafs);
+        leafsAsList.sort(Util.nodeByPathComparator);
+
         if (leafs.size() < 1)
             throw new IllegalArgumentException("Unable to create tree without any node.");
 
-        this.leafs = leafs;
+        this.leafs = leafsAsList;
         this.subTrees = new ArrayList<>();
     }
 
@@ -30,10 +34,6 @@ public class Tree {
 
         this.leafs = new ArrayList<>();
         this.subTrees = Lists.newArrayList(subtrees);
-    }
-
-    public Tree(@NonNull TreeSet<Node> leafs) {
-        this(new ArrayList<>(leafs));
     }
 
     public List<Node> getNodes() {
@@ -49,7 +49,9 @@ public class Tree {
     }
 
     public Tree addSubTree(@NonNull Tree t) {
+        leafs.removeAll(t.getNodes());
         subTrees.add(t);
+
         return this;
     }
 

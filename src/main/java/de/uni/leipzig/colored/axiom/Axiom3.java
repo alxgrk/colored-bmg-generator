@@ -4,42 +4,45 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
+import de.uni.leipzig.Util;
 import de.uni.leipzig.model.DiGraph;
 import de.uni.leipzig.model.Node;
-import de.uni.leipzig.model.ÄquivalenzKlasse;
+import de.uni.leipzig.model.EquivalenceClass;
 
 public class Axiom3 extends Axioms {
 
-	@Override
-	public boolean check(DiGraph graph, ÄquivalenzKlasse alpha, ÄquivalenzKlasse beta) {
+    @Override
+    public boolean check(DiGraph graph, EquivalenceClass alpha, EquivalenceClass beta) {
 
-		Set<Node> inAlpha = graph.inNeighboursOf(alpha);
-		Set<Node> inBeta = graph.inNeighboursOf(beta);
+        Set<Node> inAlpha = graph.inNeighboursOf(alpha);
+        Set<Node> inBeta = graph.inNeighboursOf(beta);
 
-		Set<Node> nAlpha = graph.getN2(alpha);
-		Set<Node> nBeta = graph.getN2(beta);
+        Set<Node> nAlpha = graph.getN2(alpha);
+        Set<Node> nBeta = graph.getN2(beta);
 
-		Set<Node> nnAlpha = graph.getN2(alpha);
-		Set<Node> nnBeta = graph.getN2(beta);
+        Set<Node> nnAlpha = graph.getN2(alpha);
+        Set<Node> nnBeta = graph.getN2(beta);
 
-		Set<Node> intersectionAlphaAndNNBeta = Sets.intersection(alpha.getNodes(), nnBeta).immutableCopy();
-		Set<Node> intersectionBetaAndNNAlpha = Sets.intersection(beta.getNodes(), nnAlpha).immutableCopy();
-		Set<Node> intersectionNAlphaAndNBeta = Sets.intersection(nAlpha, nBeta).immutableCopy();
+        Set<Node> intersectionAlphaAndNNBeta = Sets.intersection(alpha.getNodes(), nnBeta)
+                .immutableCopy();
+        Set<Node> intersectionBetaAndNNAlpha = Sets.intersection(beta.getNodes(), nnAlpha)
+                .immutableCopy();
+        Set<Node> intersectionNAlphaAndNBeta = Sets.intersection(nAlpha, nBeta).immutableCopy();
 
-		if (intersectionAlphaAndNNBeta.isEmpty() && intersectionBetaAndNNAlpha.isEmpty()
-				&& !intersectionNAlphaAndNBeta.isEmpty()) {
+        if (intersectionAlphaAndNNBeta.isEmpty() && intersectionBetaAndNNAlpha.isEmpty()
+                && !intersectionNAlphaAndNBeta.isEmpty()) {
 
-			if (!inAlpha.containsAll(inBeta)
-					|| (!Sets.difference(nAlpha, nBeta).isEmpty() && !Sets.difference(nBeta, nAlpha).isEmpty())) {
-				return false;
-			}
-		}
+            if (!inAlpha.containsAll(inBeta)
+                    || (!Util.equalSets(nAlpha, nBeta) && !Util.equalSets(nBeta, nAlpha))) {
+                return false;
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public String toString() {
-		return "Axiom 3";
-	}
+    @Override
+    public String toString() {
+        return "Axiom 3";
+    }
 }

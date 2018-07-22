@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 
+import de.uni.leipzig.model.edges.Edge;
+
 public class TripleTest {
 
     @Test

@@ -5,9 +5,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import de.uni.leipzig.model.Edge;
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Triple;
+import de.uni.leipzig.model.edges.Edge;
 import lombok.Getter;
 
 @Getter

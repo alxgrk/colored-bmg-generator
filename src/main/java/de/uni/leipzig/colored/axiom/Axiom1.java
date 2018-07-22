@@ -6,12 +6,12 @@ import com.google.common.collect.Sets;
 
 import de.uni.leipzig.model.DiGraph;
 import de.uni.leipzig.model.Node;
-import de.uni.leipzig.model.ÄquivalenzKlasse;
+import de.uni.leipzig.model.EquivalenceClass;
 
 public class Axiom1 extends Axioms {
 
 	@Override
-	public boolean check(DiGraph graph, ÄquivalenzKlasse alpha, ÄquivalenzKlasse beta) {
+	public boolean check(DiGraph graph, EquivalenceClass alpha, EquivalenceClass beta) {
 
 		Set<Node> nAlpha = graph.getN1(alpha);
 		Set<Node> nBeta = graph.getN1(beta);
