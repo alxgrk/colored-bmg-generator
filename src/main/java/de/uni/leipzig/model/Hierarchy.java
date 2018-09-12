@@ -30,6 +30,13 @@ public class Hierarchy {
                 .filter(rq -> !rq.isEmpty())
                 .forEach(rq -> setBuilder.add(ImmutableSet.copyOf(rq)));
 
+        ImmutableSet.Builder<Node> parentSetBuilder = ImmutableSet.builder();
+        reachablesByÄk.keySet()
+        .forEach(äk -> {
+        	parentSetBuilder.addAll(äk.getNodes());
+        });
+        setBuilder.add(parentSetBuilder.build());
+        
         sets = setBuilder.build();
     }
 
@@ -56,6 +63,12 @@ public class Hierarchy {
 
     private Tree recursive(Set<SetDiEdge> finalEdges, Set<Set<Node>> remainingSets,
             Set<Tree> leafsAsTree) {
+    	
+    	System.out.println("-----------------------------------");
+    	System.out.println("Final edges: " + finalEdges);
+    	System.out.println("Remaining sets: " + remainingSets);
+    	System.out.println("Leafs as tree: " + leafsAsTree);
+    	System.out.println("-----------------------------------");
 
         if (remainingSets.size() == 1) {
             Tree root = new Tree(Lists.newArrayList(remainingSets).get(0));
