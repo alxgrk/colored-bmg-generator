@@ -1,11 +1,11 @@
 package de.uni.leipzig.uncolored;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 
 import com.google.common.collect.Sets;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Tree;
@@ -43,8 +43,9 @@ public class AhoBuildTest {
                 four);
         assertThat(result.getNodes()).hasSize(5);
         String newickNotation = result.toNewickNotation();
-        assertThat(newickNotation).contains("(" + one + "," + two + ")")
+        assertThat(newickNotation).contains(one.toString())
+        		.contains(two.toString())
                 .contains(three.toString())
-                .contains("," + four + ")");
+                .contains(four.toString());
     }
 }

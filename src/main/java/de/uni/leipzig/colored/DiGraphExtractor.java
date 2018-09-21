@@ -46,9 +46,9 @@ public class DiGraphExtractor {
 
                         Node thirdNode = thirdList.get(0);
 
-                        if (firstNode.getLabel() != secondNode.getLabel() &&
-                                (firstNode.getLabel() == thirdNode.getLabel() || secondNode
-                                        .getLabel() == thirdNode.getLabel())) {
+                        if (!firstNode.getLabel().equals(secondNode.getLabel()) &&
+                                (firstNode.getLabel().equals(thirdNode.getLabel()) || secondNode
+                                        .getLabel().equals(thirdNode.getLabel()))) {
 
                             List<Integer> x = firstNode.getIds();
                             List<Integer> y = secondNode.getIds();
@@ -62,7 +62,7 @@ public class DiGraphExtractor {
 
                                 DiEdge edge;
 
-                                if (firstNode.getLabel() == thirdNode.getLabel()) {
+                                if (firstNode.getLabel().equals(thirdNode.getLabel())) {
                                     edge = new DiEdge(secondNode, firstNode);
                                 } else {
                                     edge = new DiEdge(firstNode, secondNode);

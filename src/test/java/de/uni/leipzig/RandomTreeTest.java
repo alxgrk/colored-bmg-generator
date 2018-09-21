@@ -1,11 +1,11 @@
 package de.uni.leipzig;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.List;
 
 import org.assertj.core.api.Condition;
 import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import de.uni.leipzig.model.Node;
 
@@ -35,7 +35,7 @@ public class RandomTreeTest {
         assertThat(adjList).allMatch(n -> n.size() <= 3);
 
         assertThat(adjList).allSatisfy(n -> {
-            assertThat(n).allMatch(c -> c.getLabel() == 0 || c.getLabel() == 1);
+            assertThat(n).allMatch(c -> c.getLabel().equals("0") || c.getLabel().equals("1"));
         });
     }
 }

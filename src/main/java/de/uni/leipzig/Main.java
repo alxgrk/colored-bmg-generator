@@ -41,7 +41,7 @@ public class Main {
         List<String> argList = Arrays.asList(args);
 
         // TODO disable with "no-random"
-        RandomTree randomTree = new RandomTree(2, 4, 2);
+        RandomTree randomTree = new RandomTree(3, 4, 2);
         List<List<Node>> adjList = randomTree.create();
 
         if (argList.contains("aho")) {

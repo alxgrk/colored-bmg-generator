@@ -1,11 +1,11 @@
 package de.uni.leipzig.model;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class NodeTest {
 
@@ -15,7 +15,7 @@ public class NodeTest {
         Node uut = Node.helpNode();
 
         assertThat(uut.getIds()).isEmpty();
-        assertThat(uut.getLabel()).isEqualTo(-1);
+        assertThat(uut.getLabel()).isEqualTo("*");
         assertThat(uut.getPath()).isBlank();
         assertThat(uut.isHelpNode()).isTrue();
         assertThat(uut.toString()).isEqualTo("*");
@@ -27,7 +27,7 @@ public class NodeTest {
         Node uut = Node.of(1, Lists.newArrayList(0, 1, 2));
 
         assertThat(uut.getIds()).containsSequence(0, 1, 2);
-        assertThat(uut.getLabel()).isEqualTo(1);
+        assertThat(uut.getLabel()).isEqualTo("1");
         assertThat(uut.getPath()).isEqualTo("012");
         assertThat(uut.isHelpNode()).isFalse();
         assertThat(uut.toString()).isEqualTo("1-012");

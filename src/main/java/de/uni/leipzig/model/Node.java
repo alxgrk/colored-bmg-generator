@@ -11,24 +11,28 @@ import lombok.Setter;
 @Setter(AccessLevel.NONE)
 public class Node {
 
-    private Integer label;
+    private String label;
 
     private List<Integer> ids;
 
     private String path = "";
 
     public static Node helpNode() {
-        return new Node(-1, new ArrayList<>());
+        return new Node("*", new ArrayList<>());
     }
 
     public static Node of(Integer label, List<Integer> id) {
-        if (label < 0)
+        return of(label.toString(), id);
+    }
+
+    public static Node of(String label, List<Integer> id) {
+        if (label.isEmpty())
             throw new IllegalArgumentException("Could not create a node with negative label.");
 
         return new Node(label, id);
     }
-
-    private Node(Integer label, List<Integer> id) {
+    
+    private Node(String label, List<Integer> id) {
         this.label = label;
         this.ids = id;
         for (Integer i : id) {
@@ -37,13 +41,13 @@ public class Node {
     }
 
     public boolean isHelpNode() {
-        return label == -1;
+        return label.equals("*");
     }
 
     @Override
     public String toString() {
         if (isHelpNode())
-            return "*";
+            return label;
 
         return label + "-" + path;
     }
