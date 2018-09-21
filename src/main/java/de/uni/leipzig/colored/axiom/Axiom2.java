@@ -4,9 +4,11 @@ import java.util.Set;
 
 import de.uni.leipzig.Util;
 import de.uni.leipzig.model.DiGraph;
-import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.EquivalenceClass;
+import de.uni.leipzig.model.Node;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = false)
 public class Axiom2 extends Axioms {
 
     @Override

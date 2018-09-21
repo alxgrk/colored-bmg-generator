@@ -10,9 +10,11 @@ import com.google.common.collect.Sets;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Value;
+import lombok.Getter;
+import lombok.experimental.FieldDefaults;
 
-@Value
+@Getter
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@VisibleForTesting))
 public class Reachables {
 
@@ -37,8 +39,8 @@ public class Reachables {
 
             // also necessary for equal ÄK
 
-            if (equalInNeighbours(alpha, beta)
-                    && alpha.getValue().getN1().containsAll(beta.getValue().getN1())) {
+            if (inNeighboursAreEqual(alpha, beta)
+                    && neighboursOfAlphaAreSupersetOfBeta(alpha, beta)) {
                 q.addAll(beta.getKey().getNodes());
             }
 
@@ -47,9 +49,20 @@ public class Reachables {
         return q;
     }
 
-    private boolean equalInNeighbours(Entry<EquivalenceClass, Neighbourhood> entry,
-            Entry<EquivalenceClass, Neighbourhood> e) {
-        return e.getValue().getNIn().containsAll(entry.getValue().getNIn())
-                & entry.getValue().getNIn().containsAll(e.getValue().getNIn());
+    @VisibleForTesting
+    protected static boolean neighboursOfAlphaAreSupersetOfBeta(
+            Entry<EquivalenceClass, Neighbourhood> alpha,
+            Entry<EquivalenceClass, Neighbourhood> beta) {
+        return alpha.getValue().getN1().containsAll(beta.getValue().getN1());
+    }
+
+    @VisibleForTesting
+    protected static boolean inNeighboursAreEqual(Entry<EquivalenceClass, Neighbourhood> alpha,
+            Entry<EquivalenceClass, Neighbourhood> beta) {
+        Set<Node> nInAlpha = alpha.getValue().getNIn();
+        Set<Node> nInBeta = beta.getValue().getNIn();
+
+        return nInBeta.containsAll(nInAlpha)
+                && nInAlpha.containsAll(nInBeta);
     }
 }

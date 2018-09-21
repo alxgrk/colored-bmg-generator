@@ -13,86 +13,93 @@ import lombok.Getter;
 @Getter
 public class TripleFinder {
 
-	private Set<Node> leaves = new HashSet<>();
+    private Set<Node> leaves = new HashSet<>();
 
-	public List<Triple> findTriple(List<List<Node>> liste) {
+    /**
+     * Extracts all possible triples from the adjacent list.<br>
+     * <b>Be careful:</b> triples could be equal, but inverted!
+     * 
+     * @param list
+     * @return
+     */
+    public Set<Triple> findTriple(List<List<Node>> list) {
 
-		List<Triple> tripleList = new ArrayList<>();
+        Set<Triple> triples = new HashSet<>();
 
-		for (int i = 0; i < liste.size(); i++) {
+        for (int i = 0; i < list.size(); i++) {
 
-			List<Node> firstList = liste.get(i);
+            List<Node> firstList = list.get(i);
 
-			if (!isLeave(firstList)) {
-				continue;
-			}
+            if (!isLeave(firstList)) {
+                continue;
+            }
 
-			Node firstNode = firstList.get(0);
-			// add every leave
-			leaves.add(firstNode);
-			
-			for (int j = 0; j < liste.size(); j++) {
+            Node firstNode = firstList.get(0);
+            // add every leave
+            leaves.add(firstNode);
 
-				List<Node> secondList = liste.get(j);
+            for (int j = 0; j < list.size(); j++) {
 
-				if (!isLeave(secondList) || j == i) {
-					continue;
-				}
-				
-				Node secondNode = secondList.get(0);
+                List<Node> secondList = list.get(j);
 
-				for (int k = 0; k < liste.size(); k++) {
+                if (!isLeave(secondList) || j == i) {
+                    continue;
+                }
 
-					List<Node> thirdList = liste.get(k);
+                Node secondNode = secondList.get(0);
 
-					if (isLeave(thirdList) && k != j && k != i) {
+                for (int k = 0; k < list.size(); k++) {
 
-						Node thirdNode = thirdList.get(0);
+                    List<Node> thirdList = list.get(k);
 
-						List<Integer> x = firstNode.getIds();
-						List<Integer> y = secondNode.getIds();
-						List<Integer> z = thirdNode.getIds();
+                    if (isLeave(thirdList) && k != j && k != i) {
 
-						List<Integer> lcaXY = findLCA(x, y);
-						List<Integer> lcaXYZ = findLCA(z, lcaXY);
-						
-						// xy is the ingroup, z is the outgroup 
-						if (isTriple(lcaXY, lcaXYZ)) {
-							Edge edge = new Edge(firstNode, secondNode);
-							Triple tripel = new Triple(edge, thirdNode);
-							tripleList.add(tripel);
-						}
-					}
-				}
-			}
-		}
+                        Node thirdNode = thirdList.get(0);
 
-		return tripleList;
-	}
+                        List<Integer> x = firstNode.getIds();
+                        List<Integer> y = secondNode.getIds();
+                        List<Integer> z = thirdNode.getIds();
 
-	private boolean isTriple(List<Integer> lcaXY, List<Integer> lcaXYZ) {
-		return lcaXY.size() > lcaXYZ.size();
-	}
+                        List<Integer> lcaXY = findLCA(x, y);
+                        List<Integer> lcaXYZ = findLCA(z, lcaXY);
 
-	public List<Integer> findLCA(List<Integer> a, List<Integer> b) {
+                        // xy is the ingroup, z is the outgroup
+                        if (isTriple(lcaXY, lcaXYZ)) {
+                            Edge edge = new Edge(firstNode, secondNode);
+                            Triple tripel = new Triple(edge, thirdNode);
+                            triples.add(tripel);
+                        }
+                    }
+                }
+            }
+        }
 
-		List<Integer> ancester = new ArrayList<>();
+        return triples;
+    }
 
-		int v = 0;
+    private boolean isTriple(List<Integer> lcaXY, List<Integer> lcaXYZ) {
+        return lcaXY.size() > lcaXYZ.size();
+    }
 
-		while (a.get(v) == b.get(v)) {
+    public List<Integer> findLCA(List<Integer> a, List<Integer> b) {
 
-			ancester.add(a.get(v));
-			if (v == a.size() - 1 || v == b.size() - 1) {
-				return ancester;
-			}
-			v++;
-		}
-		return ancester;
-	}
+        List<Integer> ancester = new ArrayList<>();
 
-	private boolean isLeave(List<Node> nodes) {
-		return nodes.size() == 1;
-	}
+        int v = 0;
+
+        while (a.get(v) == b.get(v)) {
+
+            ancester.add(a.get(v));
+            if (v == a.size() - 1 || v == b.size() - 1) {
+                return ancester;
+            }
+            v++;
+        }
+        return ancester;
+    }
+
+    private boolean isLeave(List<Node> nodes) {
+        return nodes.size() == 1;
+    }
 
 }

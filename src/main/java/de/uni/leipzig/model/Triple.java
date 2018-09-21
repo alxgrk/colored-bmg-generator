@@ -1,6 +1,7 @@
 package de.uni.leipzig.model;
 
 import de.uni.leipzig.model.edges.Edge;
+import lombok.NonNull;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 
@@ -8,8 +9,10 @@ import lombok.experimental.NonFinal;
 @NonFinal
 public class Triple {
 
+    @NonNull
     Edge edge;
 
+    @NonNull
     Node node;
 
     @Override
@@ -17,10 +20,10 @@ public class Triple {
         return "(" + edge + "|" + node + ")";
     }
 
-	public boolean contains(Node contained) {
-		return contained.equals(edge.getFirst()) 
-				|| contained.equals(edge.getSecond())
-				|| contained.equals(node);
-	}
+    public boolean contains(Node contained) {
+        return contained.equals(edge.getFirst())
+                || contained.equals(edge.getSecond())
+                || contained.equals(node);
+    }
 
 }

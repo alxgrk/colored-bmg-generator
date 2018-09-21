@@ -5,9 +5,12 @@ import java.util.Optional;
 import java.util.Set;
 
 import de.uni.leipzig.model.edges.DiEdge;
-import lombok.Value;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.experimental.FieldDefaults;
 
-@Value
+@Getter
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class Neighbourhood {
     Set<Node> n1;
 

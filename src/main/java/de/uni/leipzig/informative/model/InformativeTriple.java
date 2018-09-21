@@ -1,4 +1,4 @@
-package de.uni.leipzig.informative;
+package de.uni.leipzig.informative.model;
 
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Triple;

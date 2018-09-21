@@ -1,64 +1,81 @@
 package de.uni.leipzig.informative;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 
 import de.uni.leipzig.colored.DiGraphExtractor;
+import de.uni.leipzig.informative.model.InformativeTriple;
+import de.uni.leipzig.informative.model.ThreeNodeGraph;
 import de.uni.leipzig.model.DiGraph;
 import de.uni.leipzig.model.Node;
-import de.uni.leipzig.model.ThreeNodeGraph;
 import de.uni.leipzig.model.Triple;
-import de.uni.leipzig.model.edges.DiEdge;
 import de.uni.leipzig.uncolored.TripleFinder;
+import lombok.Getter;
 
 public class InformativeTripleFinder {
 
-	private static final List<String> POSSIBILITIES = Lists.newArrayList(
-			"220", "202", "022", // X1
-			"321", "231", "132", "123", // X2
-			"110", "101", "011", // X3
-			"211", "121", "112" // X4
-			);
+    /**
+     * The allowed frequencies for an {@link ThreeNodeGraph} to be isomorphic to the subgraphs X1,
+     * X2, X3 and X4, which are required for informative triples.
+     */
+    private static final List<String> POSSIBILITIES = Lists.newArrayList(
+            "220", "202", "022", // X1
+            "321", "231", "132", "123", // X2
+            "110", "101", "011", // X3
+            "211", "121", "112" // X4
+    );
 
-	private TripleFinder tripleFinder = new TripleFinder();
-	private DiGraphExtractor graphExtractor = new DiGraphExtractor();
+    private TripleFinder tripleFinder = new TripleFinder();
 
-	public List<InformativeTriple> findInformativeTriples(List<List<Node>> adjList) {
-		List<Triple> triples = tripleFinder.findTriple(adjList);
-		DiGraph graph = graphExtractor.extract(adjList);
+    private DiGraphExtractor graphExtractor = new DiGraphExtractor();
 
-		List<ThreeNodeGraph> subgraphs = Lists.newArrayList();
+    @Getter
+    private Set<Node> leaves = new HashSet<>();
 
-		for (Triple triple : triples) {
+    public Set<InformativeTriple> findInformativeTriples(List<List<Node>> adjList) {
+        Set<Triple> triples = tripleFinder.findTriple(adjList);
+        DiGraph graph = graphExtractor.extract(adjList);
 
-			ThreeNodeGraph subgraph = new ThreeNodeGraph(triple);
+        List<ThreeNodeGraph> subgraphs = Lists.newArrayList();
 
-			for (DiEdge edge : graph.getEdges()) {
+        for (Triple triple : triples) {
 
-				if (triple.contains(edge.getFirst()) && triple.contains(edge.getSecond())) {
-					subgraph.add(edge);
-				}
+            ThreeNodeGraph subgraph = new ThreeNodeGraph(triple);
 
-			}
+            // add every edge that belongs to the subgraph
+            graph.getEdges().forEach(subgraph::add);
 
-			String nodeFrequencyAsString = subgraph.getNodeFrequency().values().stream().map(i -> i.toString())
-					.reduce("", (i, s) -> i.concat(s));
+            // add subgraph when created by informative triple
+            if (isIsomorphicToOneX(subgraph))
+                subgraphs.add(subgraph);
+        }
 
-			System.out.println(nodeFrequencyAsString);
+        return subgraphs.stream()
+                .map(ThreeNodeGraph::getTriple)
+                .peek(t -> {
+                    leaves.add(t.getEdge().getFirst());
+                    leaves.add(t.getEdge().getSecond());
+                    leaves.add(t.getNode());
+                })
+                .map(t -> new InformativeTriple(t.getEdge(), t.getNode()))
+                .collect(Collectors.toSet());
+    }
 
-			// add node when informative
-			if (POSSIBILITIES.contains(nodeFrequencyAsString))
-				subgraphs.add(subgraph);
-		}
+    private boolean isIsomorphicToOneX(ThreeNodeGraph subgraph) {
 
-		return subgraphs.stream()
-			.map(g -> {
-				Triple t = g.getThreeNodes();
-				return new InformativeTriple(t.getEdge(), t.getNode());
-			})
-			.collect(Collectors.toList());
-	}
+        String nodeFrequencyAsString = subgraph.getNodeFrequency()
+                .values()
+                .stream()
+                .map(i -> i.toString())
+                .reduce("", (i, s) -> i.concat(s));
+
+        System.out.println(nodeFrequencyAsString);
+
+        return POSSIBILITIES.contains(nodeFrequencyAsString);
+    }
 
 }

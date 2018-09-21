@@ -5,16 +5,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.Sets;
+
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Tree;
 import de.uni.leipzig.model.Triple;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class AhoBuild {
+public class AhoBuild<T extends Triple> {
 
-    public static Tree build(final Set<Triple> tripleSetR, List<Node> leaveSetL) {
+    public Tree build(final Set<T> tripleSetR, Set<Node> leaveSetL) {
 
         // if there is only one leave, return a tree containing only this leave
         if (leaveSetL.size() == 1)
@@ -35,10 +34,10 @@ public class AhoBuild {
                 .map(component -> {
 
                     // get all nodes of this component recursively
-                    List<Node> subLeaveSet = component.getNodes();
+                    Set<Node> subLeaveSet = Sets.newHashSet(component.getNodes());
 
                     // filter all triples describing this component
-                    Set<Triple> subTripleSet = filter(subLeaveSet, tripleSetR);
+                    Set<T> subTripleSet = filter(subLeaveSet, tripleSetR);
 
                     // recursively invoke 'build' with the triples/leaves of
                     // this component
@@ -54,10 +53,10 @@ public class AhoBuild {
     }
 
     /**
-     * Returns a new set of triples with each triple only containing nodes from
-     * the provided leave set.
+     * Returns a new set of triples with each triple only containing nodes from the provided leave
+     * set.
      */
-    private static Set<Triple> filter(List<Node> subLeaveSet, Set<Triple> tripleSetR) {
+    private Set<T> filter(Set<Node> subLeaveSet, Set<T> tripleSetR) {
         return tripleSetR.stream()
                 .filter(t -> subLeaveSet.contains(t.getEdge().getFirst())
                         && subLeaveSet.contains(t.getEdge().getSecond())

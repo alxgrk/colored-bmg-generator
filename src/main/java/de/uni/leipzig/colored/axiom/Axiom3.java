@@ -6,9 +6,11 @@ import com.google.common.collect.Sets;
 
 import de.uni.leipzig.Util;
 import de.uni.leipzig.model.DiGraph;
-import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.EquivalenceClass;
+import de.uni.leipzig.model.Node;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = false)
 public class Axiom3 extends Axioms {
 
     @Override

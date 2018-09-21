@@ -35,12 +35,16 @@ public class AhoBuildTest {
         Triple tripleThree = new Triple(new Edge(one, three), four);
         Triple tripleFour = new Triple(new Edge(two, three), four);
 
-        Tree result = AhoBuild.build(Sets.newHashSet(tripleOne, tripleTwo, tripleThree, tripleFour),
-                Lists.newArrayList(one, two, three, four));
+        AhoBuild<Triple> ahoBuild = new AhoBuild<>();
+        Tree result = ahoBuild.build(Sets.newHashSet(tripleOne, tripleTwo, tripleThree, tripleFour),
+                Sets.newHashSet(one, two, three, four));
 
-        assertThat(result.getNodes()).containsExactly(Node.helpNode(), one, two, three, four);
+        assertThat(result.getNodes()).containsExactlyInAnyOrder(Node.helpNode(), one, two, three,
+                four);
         assertThat(result.getNodes()).hasSize(5);
-        assertThat(result.toNewickNotation()).isEqualTo("(((" + one + "," + two + "),"
-                + three + ")," + four + ")");
+        String newickNotation = result.toNewickNotation();
+        assertThat(newickNotation).contains("(" + one + "," + two + ")")
+                .contains(three.toString())
+                .contains("," + four + ")");
     }
 }

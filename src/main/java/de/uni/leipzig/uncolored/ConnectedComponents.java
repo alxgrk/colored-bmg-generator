@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConnectedComponents {
 
-    public static List<Tree> construct(Set<Triple> tripleSetR, List<Node> leftOvers) {
+    public static List<Tree> construct(Set<? extends Triple> tripleSetR, Set<Node> leftOvers) {
         List<Tree> subTrees = new ArrayList<>();
 
         // iterate over remaining nodes as long, as there are some left
@@ -60,7 +60,7 @@ public class ConnectedComponents {
                         // leave it in 'leftOvers' for the next iteration
                         return true;
                     })
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
 
             subTrees.add(new Tree(subTree));
         }
