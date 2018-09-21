@@ -1,6 +1,9 @@
 package de.uni.leipzig.parser;
 
+import java.util.List;
 import java.util.stream.Collectors;
+
+import com.google.common.primitives.Chars;
 
 import de.uni.leipzig.model.Node;
 import lombok.Value;
@@ -41,7 +44,11 @@ public class BlastGraphLine {
 			label = split[0];
 			name = split[1];
 			
-			node = Node.of(label, name.chars().boxed().collect(Collectors.toList()));
+			List<Integer> id = Chars.asList(name.toCharArray())
+					.stream()
+					.map(c -> Integer.parseInt(c.toString()))
+					.collect(Collectors.toList());
+			node = Node.of(label, id);
 		}
 		
 		public Node asNode() {

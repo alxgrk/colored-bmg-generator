@@ -26,7 +26,7 @@ public class Parser {
             Set<DiEdge> edges = Sets.newHashSet();
 
             reader.lines()
-                    .filter(f -> f.startsWith("#"))
+                    .filter(f -> !f.startsWith("#"))
                     .map(l -> new BlastGraphLine(l))
                     .forEach(l -> {
                         Node node1 = l.getGene1().asNode();
