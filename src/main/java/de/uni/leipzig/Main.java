@@ -1,5 +1,6 @@
 package de.uni.leipzig;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -14,14 +15,15 @@ import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Reachables;
 import de.uni.leipzig.model.Tree;
 import de.uni.leipzig.model.Triple;
+import de.uni.leipzig.parser.Parser;
 import de.uni.leipzig.uncolored.AhoBuild;
 import de.uni.leipzig.uncolored.TripleFinder;
 
 public class Main {
 
     /**
-     * Uses a random tree (disable with <code>-Dno-random</code>). Three possible arguments (can be
-     * mixed):<br>
+     * Uses a random tree or a specified file ending with '.blast-graph'. Three possible arguments
+     * (can be mixed):<br>
      * <ul>
      * <li><b>aho</b> - the normal Aho-Build algorithm</li>
      * <li><b>equivalence-class-based</b> - calculates the least resolved tree using equivalence
@@ -37,25 +39,48 @@ public class Main {
         new Main(args);
     }
 
-    public Main(String[] args) {
+    public Main(String[] args) throws IOException {
         List<String> argList = Arrays.asList(args);
 
-        // TODO user input via CLI
-        RandomTree randomTree = new RandomTree(2, 10, 2);
-        List<List<Node>> adjList = randomTree.create();
+        File file = getBlastGraphFile(argList);
+        if (file != null) {
+            Parser parser = new Parser();
+            DiGraph diGraph = parser.parse(file);
 
-        if (argList.contains("aho")) {
-            // TODO triples random sortieren & zerstören - einlesen und wieder rausschreiben
-            ahoBuild(adjList);
+            if (argList.contains("equivalence-class-based")) {
+                equivalenceClassBased(diGraph);
+            }
+
+        } else {
+            // TODO user input via CLI
+            RandomTree randomTree = new RandomTree(3, 4, 2);
+            List<List<Node>> adjList = randomTree.create();
+
+            if (argList.contains("aho")) {
+                // TODO triples random sortieren & zerstören - einlesen und wieder rausschreiben
+                ahoBuild(adjList);
+            }
+
+            if (argList.contains("equivalence-class-based")) {
+                equivalenceClassBased(adjList);
+            }
+
+            if (argList.contains("aho-informative")) {
+                ahoWithInformativeTriples(adjList);
+            }
+        }
+    }
+
+    private File getBlastGraphFile(List<String> argList) {
+        File file = null;
+
+        for (String arg : argList) {
+            if (arg.endsWith(".blast-graph")) {
+                file = new File(arg);
+            }
         }
 
-        if (argList.contains("equivalence-class-based")) {
-            equivalenceClassBased(adjList);
-        }
-
-        if (argList.contains("aho-informative")) {
-            ahoWithInformativeTriples(adjList);
-        }
+        return file;
     }
 
     private void ahoBuild(List<List<Node>> adjList) {
@@ -75,6 +100,11 @@ public class Main {
         // **** Equivalence class based part ****
         DiGraphExtractor extractor = new DiGraphExtractor();
         DiGraph graph = extractor.extract(adjList);
+        equivalenceClassBased(graph);
+    }
+
+    private void equivalenceClassBased(DiGraph graph) {
+        // **** Equivalence class based part ****
 
         System.out.println("Nodes: " + graph.getNodes());
         System.out.println("Edges: " + graph.getEdges());
