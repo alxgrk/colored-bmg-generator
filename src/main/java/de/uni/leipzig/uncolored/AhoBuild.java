@@ -23,6 +23,7 @@ public class AhoBuild<T extends Triple> {
         List<Tree> connectedComponents = ConnectedComponents.construct(tripleSetR, leaveSetL);
 
         // exit if tree is no phylogenetic one
+        // TODO mincut
         if (connectedComponents.size() == 1)
             throw new RuntimeException("no phylogenetic tree");
 

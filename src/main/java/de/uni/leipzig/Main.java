@@ -40,11 +40,12 @@ public class Main {
     public Main(String[] args) {
         List<String> argList = Arrays.asList(args);
 
-        // TODO disable with "no-random"
-        RandomTree randomTree = new RandomTree(3, 4, 2);
+        // TODO user input via CLI
+        RandomTree randomTree = new RandomTree(2, 10, 2);
         List<List<Node>> adjList = randomTree.create();
 
         if (argList.contains("aho")) {
+            // TODO triples random sortieren & zerstören - einlesen und wieder rausschreiben
             ahoBuild(adjList);
         }
 
