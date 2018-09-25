@@ -73,9 +73,32 @@ public class Tree {
                 .concat(")");
     }
 
-    // TODO print tree to CLI
-    //https://github.com/cjb/libnewicktree
-    
+    public String print() {
+        StringBuilder sb = new StringBuilder();
+        print(sb, "", true);
+        return sb.toString();
+    }
+
+    private void print(StringBuilder sb, String prefix, boolean isTail) {
+        String nodes = leafs.stream()
+                .filter(n -> !n.isHelpNode())
+                .map(Node::toString)
+                .reduce("", (u, n) -> u + n + ",");
+        nodes = !nodes.isEmpty() ? nodes.substring(0, nodes.length() - 1) : nodes;
+
+        sb.append(prefix)
+                .append(isTail ? "└── " : "├── ")
+                .append(nodes.isEmpty() ? "*" : nodes)
+                .append("\n");
+        for (int i = 0; i < subTrees.size() - 1; i++) {
+            subTrees.get(i).print(sb, prefix + (isTail ? "    " : "│   "), false);
+        }
+        if (subTrees.size() > 0) {
+            subTrees.get(subTrees.size() - 1)
+                    .print(sb, prefix + (isTail ? "    " : "│   "), true);
+        }
+    }
+
     @Override
     public String toString() {
         return toNewickNotation();

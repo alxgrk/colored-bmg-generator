@@ -73,8 +73,6 @@ public class InformativeTripleFinder {
                 .map(i -> i.toString())
                 .reduce("", (i, s) -> i.concat(s));
 
-        System.out.println(nodeFrequencyAsString);
-
         return POSSIBILITIES.contains(nodeFrequencyAsString);
     }
 

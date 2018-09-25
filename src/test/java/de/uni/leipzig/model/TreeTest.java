@@ -104,4 +104,22 @@ public class TreeTest {
         assertThat(uut.getSubTrees()).containsExactly(leave1Tree, leave2Tree);
     }
 
+    @Test
+    public void testPrintTree() throws Exception {
+        Node node1 = Node.of(0, Lists.newArrayList(1));
+        List<Node> leave1 = Lists.newArrayList(node1);
+        Tree leave1Tree = new Tree(leave1);
+        Node node2 = Node.of(1, Lists.newArrayList(2));
+        Node node3 = Node.of(0, Lists.newArrayList(3));
+        List<Node> leave2 = Lists.newArrayList(node2, node3);
+        Tree leave2Tree = new Tree(leave2);
+
+        Tree uut = new Tree(leave1Tree, leave2Tree);
+
+        assertThat(uut.print()).isEqualTo(
+                "└── *\n" +
+                        "    ├── 0-1\n" +
+                        "    └── 1-2,0-3\n");
+    }
+
 }

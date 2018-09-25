@@ -36,7 +36,16 @@ public class Main {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-        new Main();
+        while (true) {
+            UserInput repeat = new UserInput();
+            new Main();
+
+            repeat.register("quit", () -> {
+                System.exit(0);
+            });
+
+            repeat.ask("Type 'quit' to exit the program - anything else will repeat it.");
+        }
     }
 
     public Main() throws Exception {
@@ -57,7 +66,7 @@ public class Main {
         });
 
         main.register("create a random tree", () -> {
-            RandomTree randomTree = new RandomTree(3, 10, 2);
+            RandomTree randomTree = new RandomTree(3, 5, 2);
             List<List<Node>> adjList = randomTree.create();
 
             UserInput random = new UserInput();
@@ -85,27 +94,39 @@ public class Main {
         Set<Triple> triples = tripleFinder.findTriple(adjList);
 
         System.out.println(triples.toString());
-        
+
         // TODO triples random sortieren & zerstören - einlesen und wieder rausschreiben
         UserInput manipulate = new UserInput();
-        
-        manipulate.register("yes", () -> {
-        	UserInput percentageInput = new UserInput();
-          
-        	System.out.println("How many percent of the triple set should be deleted?");
-        	Integer percentage = Integer.parseInt(percentageInput.listenForResult());
-        	TripleManipulator<Triple> manipulator = new TripleManipulator<>(percentage);
-        	manipulator.manipulate(triples);
+
+        manipulate.register("no", () -> {
         });
-        
-        manipulate.register("no", () -> {});
-        
+
+        manipulate.register("yes", () -> {
+            UserInput percentageInput = new UserInput();
+
+            System.out.println("How many percent of the triple set should be deleted?");
+            Integer percentage = Integer.parseInt(percentageInput.listenForResult());
+
+            System.out.println("How the tree looked before:");
+            AhoBuild<Triple> ahoBuild = new AhoBuild<>();
+            Tree result = ahoBuild.build(triples, tripleFinder.getLeaves());
+
+            System.out.println(result.toNewickNotation());
+            System.out.println(result.print());
+
+            TripleManipulator<Triple> manipulator = new TripleManipulator<>(percentage);
+            manipulator.manipulate(triples);
+
+            System.out.println("How the tree looks after manipulating:");
+        });
+
         manipulate.askWithOptions("Do you want to manipulate the triple set?");
-    	
+
         AhoBuild<Triple> ahoBuild = new AhoBuild<>();
         Tree result = ahoBuild.build(triples, tripleFinder.getLeaves());
 
         System.out.println(result.toNewickNotation());
+        System.out.println(result.print());
     }
 
     private void equivalenceClassBased(List<List<Node>> adjList) {
@@ -135,6 +156,7 @@ public class Main {
 
         Tree leastResolvedTree = graph.getHasseDiagram();
         System.out.println(leastResolvedTree);
+        System.out.println(leastResolvedTree.print());
     }
 
     private void ahoWithInformativeTriples(List<List<Node>> adjList) {
@@ -149,6 +171,7 @@ public class Main {
         Tree result = ahoBuild.build(informativeTriples, informativeTripleFinder.getLeaves());
 
         System.out.println(result.toNewickNotation());
+        System.out.println(result.print());
     }
 
     private File getBlastGraphFile() throws Exception {
