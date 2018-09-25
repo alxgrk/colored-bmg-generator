@@ -8,6 +8,7 @@ import de.uni.leipzig.colored.DiGraphExtractor;
 import de.uni.leipzig.colored.axiom.Axioms;
 import de.uni.leipzig.informative.InformativeTripleFinder;
 import de.uni.leipzig.informative.model.InformativeTriple;
+import de.uni.leipzig.manipulation.TripleManipulator;
 import de.uni.leipzig.model.DiGraph;
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Reachables;
@@ -56,12 +57,11 @@ public class Main {
         });
 
         main.register("create a random tree", () -> {
-            RandomTree randomTree = new RandomTree(3, 4, 2);
+            RandomTree randomTree = new RandomTree(3, 10, 2);
             List<List<Node>> adjList = randomTree.create();
 
             UserInput random = new UserInput();
             random.register("aho", () -> {
-                // TODO triples random sortieren & zerstören - einlesen und wieder rausschreiben
                 ahoBuild(adjList);
             });
 
@@ -85,7 +85,23 @@ public class Main {
         Set<Triple> triples = tripleFinder.findTriple(adjList);
 
         System.out.println(triples.toString());
-
+        
+        // TODO triples random sortieren & zerstören - einlesen und wieder rausschreiben
+        UserInput manipulate = new UserInput();
+        
+        manipulate.register("yes", () -> {
+        	UserInput percentageInput = new UserInput();
+          
+        	System.out.println("How many percent of the triple set should be deleted?");
+        	Integer percentage = Integer.parseInt(percentageInput.listenForResult());
+        	TripleManipulator<Triple> manipulator = new TripleManipulator<>(percentage);
+        	manipulator.manipulate(triples);
+        });
+        
+        manipulate.register("no", () -> {});
+        
+        manipulate.askWithOptions("Do you want to manipulate the triple set?");
+    	
         AhoBuild<Triple> ahoBuild = new AhoBuild<>();
         Tree result = ahoBuild.build(triples, tripleFinder.getLeaves());
 

@@ -36,7 +36,7 @@ public class NodeTest {
     @Test
     public void testNodeWithNegativeLabel() throws Exception {
 
-        assertThatThrownBy(() -> Node.of(-1, Lists.newArrayList()))
+        assertThatThrownBy(() -> Node.of("", Lists.newArrayList()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

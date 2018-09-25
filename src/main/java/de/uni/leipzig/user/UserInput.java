@@ -18,19 +18,19 @@ public class UserInput {
         scanner = new Scanner(System.in);
     }
 
-    public void register(String trigger, ThrowingRunnable<Exception> action) throws Exception {
+    public void register(String trigger, ThrowingRunnable<Exception> action) throws RuntimeException {
         actions.put(trigger, action);
     }
 
-    public String listenForResult() throws Exception {
+    public String listenForResult() throws RuntimeException {
         return scanner.next();
     }
 
-    public void listen() throws Exception {
+    public void listen() throws RuntimeException {
         listen(e -> e);
     }
 
-    public void listen(Function<String, String> conversion) throws Exception {
+    public void listen(Function<String, String> conversion) throws RuntimeException {
 
         String input = scanner.next();
         String convertedInput = conversion.apply(input);
@@ -42,12 +42,12 @@ public class UserInput {
                 .ifPresent(e -> e.getValue().run());
     }
 
-    public void ask(String question) throws Exception {
+    public void ask(String question) throws RuntimeException {
         System.out.println(question);
         listen();
     }
 
-    public void askWithOptions(String question) throws Exception {
+    public void askWithOptions(String question) throws RuntimeException {
         System.out.println(question);
 
         Map<String, String> shortHand = Maps.newHashMap();

@@ -73,6 +73,9 @@ public class Tree {
                 .concat(")");
     }
 
+    // TODO print tree to CLI
+    //https://github.com/cjb/libnewicktree
+    
     @Override
     public String toString() {
         return toNewickNotation();
