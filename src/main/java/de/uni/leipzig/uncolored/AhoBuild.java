@@ -1,15 +1,20 @@
 package de.uni.leipzig.uncolored;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.jgrapht.Graph;
+import org.jgrapht.alg.flow.GusfieldGomoryHuCutTree;
 
 import com.google.common.collect.Sets;
 
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Tree;
 import de.uni.leipzig.model.Triple;
+import de.uni.leipzig.model.edges.DiEdge;
 
 public class AhoBuild<T extends Triple> {
 
@@ -24,9 +29,30 @@ public class AhoBuild<T extends Triple> {
 
         // exit if tree is no phylogenetic one
         // TODO mincut
-        if (connectedComponents.size() == 1)
-            throw new RuntimeException("no phylogenetic tree");
+        if (connectedComponents.size() == 1){
+        	DiGraphFromTripleSet graphCreator = new DiGraphFromTripleSet();
+        	Graph<Node, DiEdge> graph = graphCreator.diGraphFromTripleSet(tripleSetR);
+        	GusfieldGomoryHuCutTree<Node, DiEdge> minCutGraph = new GusfieldGomoryHuCutTree<>(graph);
+        	minCutGraph.calculateMinCut();
+        	Set<Node> sink = minCutGraph.getSinkPartition();
+        	Set<Node> source = minCutGraph.getSourcePartition();
+        	
+        	Set<T> cutTripleSet = new HashSet<>();
+        	
+        	for (T triple : tripleSetR) {
+				if(sink.contains(triple.getEdge().getFirst()) && source.contains(triple.getEdge().getSecond())
+						|| source.contains(triple.getEdge().getFirst()) && sink.contains(triple.getEdge().getSecond())){
+					continue;
+				}else{
+					cutTripleSet.add(triple);
+				}
+			}
+        	
+//            throw new RuntimeException("no phylogenetic tree");
 
+        	connectedComponents = ConnectedComponents.construct(cutTripleSet, leaveSetL);
+        }
+        	
         // create invisible root node
         List<Node> root = new ArrayList<>();
         root.add(Node.helpNode());
