@@ -48,8 +48,9 @@ public class AhoBuild<T extends Triple> {
 				}
 			}
         	
-            throw new RuntimeException("no phylogenetic tree");
+//            throw new RuntimeException("no phylogenetic tree");
 
+        	connectedComponents = ConnectedComponents.construct(cutTripleSet, leaveSetL);
         }
         	
         // create invisible root node
