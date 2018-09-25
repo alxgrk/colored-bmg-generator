@@ -1,8 +1,6 @@
 package de.uni.leipzig;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -18,12 +16,13 @@ import de.uni.leipzig.model.Triple;
 import de.uni.leipzig.parser.Parser;
 import de.uni.leipzig.uncolored.AhoBuild;
 import de.uni.leipzig.uncolored.TripleFinder;
+import de.uni.leipzig.user.UserInput;
 
 public class Main {
 
     /**
-     * Uses a random tree or a specified file ending with '.blast-graph'. Three possible arguments
-     * (can be mixed):<br>
+     * Uses a random tree or a specified file ending with '.blast-graph'. Three possible
+     * constructions methods are:<br>
      * <ul>
      * <li><b>aho</b> - the normal Aho-Build algorithm</li>
      * <li><b>equivalence-class-based</b> - calculates the least resolved tree using equivalence
@@ -33,54 +32,51 @@ public class Main {
      * </ul>
      * 
      * @param args
-     * @throws IOException
+     * @throws Exception
      */
-    public static void main(String[] args) throws IOException {
-        new Main(args);
+    public static void main(String[] args) throws Exception {
+        new Main();
     }
 
-    public Main(String[] args) throws IOException {
-        List<String> argList = Arrays.asList(args);
+    public Main() throws Exception {
+        UserInput main = new UserInput();
 
-        File file = getBlastGraphFile(argList);
-        if (file != null) {
-            Parser parser = new Parser();
-            DiGraph diGraph = parser.parse(file);
+        main.register("parse a file", () -> {
+            File file = getBlastGraphFile();
+            if (file != null) {
+                Parser parser = new Parser();
+                DiGraph diGraph = parser.parse(file);
 
-            if (argList.contains("equivalence-class-based")) {
-                equivalenceClassBased(diGraph);
+                UserInput parsed = new UserInput();
+                parsed.register("equivalence class based", () -> {
+                    equivalenceClassBased(diGraph);
+                });
+                parsed.askWithOptions("How do you want to create the LRT?");
             }
+        });
 
-        } else {
-            // TODO user input via CLI
+        main.register("create a random tree", () -> {
             RandomTree randomTree = new RandomTree(3, 4, 2);
             List<List<Node>> adjList = randomTree.create();
 
-            if (argList.contains("aho")) {
+            UserInput random = new UserInput();
+            random.register("aho", () -> {
                 // TODO triples random sortieren & zerstören - einlesen und wieder rausschreiben
                 ahoBuild(adjList);
-            }
+            });
 
-            if (argList.contains("equivalence-class-based")) {
+            random.register("equivalence class based", () -> {
                 equivalenceClassBased(adjList);
-            }
+            });
 
-            if (argList.contains("aho-informative")) {
+            random.register("aho informative", () -> {
                 ahoWithInformativeTriples(adjList);
-            }
-        }
-    }
+            });
 
-    private File getBlastGraphFile(List<String> argList) {
-        File file = null;
+            random.askWithOptions("How do you want to create the LRT?");
+        });
 
-        for (String arg : argList) {
-            if (arg.endsWith(".blast-graph")) {
-                file = new File(arg);
-            }
-        }
-
-        return file;
+        main.askWithOptions("Do you want to...");
     }
 
     private void ahoBuild(List<List<Node>> adjList) {
@@ -139,4 +135,11 @@ public class Main {
         System.out.println(result.toNewickNotation());
     }
 
+    private File getBlastGraphFile() throws Exception {
+        UserInput blastFile = new UserInput();
+        System.out.println("Enter file path relative to your execution directory...");
+        String result = blastFile.listenForResult();
+
+        return new File(result);
+    }
 }
