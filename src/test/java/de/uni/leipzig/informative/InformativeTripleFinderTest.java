@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 
 import de.uni.leipzig.informative.model.InformativeTriple;
 import de.uni.leipzig.model.Node;
+import de.uni.leipzig.model.Triple;
 import de.uni.leipzig.model.edges.Edge;
 
 public class InformativeTripleFinderTest {
@@ -48,8 +49,9 @@ public class InformativeTripleFinderTest {
     public void testFind() throws Exception {
 
         InformativeTripleFinder uut = new InformativeTripleFinder();
-        Set<InformativeTriple> actual = uut.findInformativeTriples(adjList);
+        Set<Triple> actual = uut.findInformativeTriples(adjList);
 
+        assertThat(actual).allMatch(t -> t instanceof InformativeTriple);
         assertThat(actual).containsExactlyInAnyOrder(
                 new InformativeTriple(new Edge(n0111, n0112), n012),
                 new InformativeTriple(new Edge(n0111, n0112), n02),

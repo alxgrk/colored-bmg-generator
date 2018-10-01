@@ -15,7 +15,7 @@ public class TripleTest {
         Node node2 = Node.of(1, Lists.newArrayList(2));
         Node node3 = Node.of(0, Lists.newArrayList(3));
 
-        Triple uut = new Triple(new Edge(node1, node2), node3);
+        Triple uut = new DefaultTriple(new Edge(node1, node2), node3);
 
         assertThat(uut.toString()).isEqualTo("(0-1,1-2|0-3)");
     }
@@ -27,7 +27,7 @@ public class TripleTest {
         Node node3 = Node.of(0, Lists.newArrayList(3));
         Node node4 = Node.of(1, Lists.newArrayList(4));
 
-        Triple uut = new Triple(new Edge(node1, node2), node3);
+        Triple uut = new DefaultTriple(new Edge(node1, node2), node3);
 
         assertThat(uut.contains(node1)).isTrue();
         assertThat(uut.contains(node2)).isTrue();
@@ -41,10 +41,24 @@ public class TripleTest {
         Node node2 = Node.of(1, Lists.newArrayList(2));
         Node node3 = Node.of(0, Lists.newArrayList(3));
 
-        Triple uut1 = new Triple(new Edge(node1, node2), node3);
-        Triple uut2 = new Triple(new Edge(node2, node1), node3);
+        Triple uut1 = new DefaultTriple(new Edge(node1, node2), node3);
+        Triple uut2 = new DefaultTriple(new Edge(node2, node1), node3);
 
         assertThat(uut1).isEqualTo(uut2);
+    }
+
+    @Test
+    public void testInvertEdges() throws Exception {
+        Node node1 = Node.of(0, Lists.newArrayList(1));
+        Node node2 = Node.of(1, Lists.newArrayList(2));
+        Node node3 = Node.of(0, Lists.newArrayList(3));
+
+        Triple uut = new DefaultTriple(new Edge(node1, node2), node3);
+        uut.invertEdge();
+
+        assertThat(uut.getEdge())
+                .extracting("first", "second")
+                .contains(node2, node1);
     }
 
 }

@@ -13,42 +13,45 @@ import de.uni.leipzig.model.Tree;
 import de.uni.leipzig.model.Triple;
 import de.uni.leipzig.model.edges.DiEdge;
 
-public class DiGraphFromTripleSet<T extends Triple> {
+public class DiGraphFromTripleSet {
 
-	private Graph<Node, DiEdge> g = new SimpleDirectedGraph<>(DiEdge.class);
+    private Graph<Node, DiEdge> g = new SimpleDirectedGraph<>(DiEdge.class);
 
-	public List<Tree> create(Set<T> tripleSetR, Set<Node> leaveSetL) {
+    public List<Tree> create(Set<Triple> tripleSetR, Set<Node> leaveSetL) {
 
-		Graph<Node, DiEdge> graph = diGraphFromTripleSet(tripleSetR);
-		GusfieldGomoryHuCutTree<Node, DiEdge> minCutGraph = new GusfieldGomoryHuCutTree<>(graph);
-		minCutGraph.calculateMinCut();
-		Set<Node> sink = minCutGraph.getSinkPartition();
-		Set<Node> source = minCutGraph.getSourcePartition();
+        Graph<Node, DiEdge> graph = diGraphFromTripleSet(tripleSetR);
+        GusfieldGomoryHuCutTree<Node, DiEdge> minCutGraph = new GusfieldGomoryHuCutTree<>(graph);
+        minCutGraph.calculateMinCut();
+        Set<Node> sink = minCutGraph.getSinkPartition();
+        Set<Node> source = minCutGraph.getSourcePartition();
 
-		Set<T> cutTripleSet = new HashSet<>();
+        Set<Triple> cutTripleSet = new HashSet<>();
 
-		for (T triple : tripleSetR) {
-			if (sink.contains(triple.getEdge().getFirst()) && source.contains(triple.getEdge().getSecond())
-					|| source.contains(triple.getEdge().getFirst()) && sink.contains(triple.getEdge().getSecond())) {
-				continue;
-			} else {
-				cutTripleSet.add(triple);
-			}
-		}
+        for (Triple triple : tripleSetR) {
+            if (sink.contains(triple.getEdge().getFirst()) && source.contains(triple.getEdge()
+                    .getSecond())
+                    || source.contains(triple.getEdge().getFirst()) && sink.contains(triple
+                            .getEdge()
+                            .getSecond())) {
+                continue;
+            } else {
+                cutTripleSet.add(triple);
+            }
+        }
 
-		return ConnectedComponents.construct(cutTripleSet, leaveSetL);
-	}
+        return ConnectedComponents.construct(cutTripleSet, leaveSetL);
+    }
 
-	private Graph<Node, DiEdge> diGraphFromTripleSet(Set<T> tripleSetR) {
+    private Graph<Node, DiEdge> diGraphFromTripleSet(Set<Triple> tripleSetR) {
 
-		for (T triple : tripleSetR) {
-			g.addVertex(triple.getNode());
-			g.addVertex(triple.getEdge().getFirst());
-			g.addVertex(triple.getEdge().getSecond());
+        for (Triple triple : tripleSetR) {
+            g.addVertex(triple.getNode());
+            g.addVertex(triple.getEdge().getFirst());
+            g.addVertex(triple.getEdge().getSecond());
 
-			g.addEdge(triple.getEdge().getFirst(), triple.getEdge().getSecond());
-		}
+            g.addEdge(triple.getEdge().getFirst(), triple.getEdge().getSecond());
+        }
 
-		return g;
-	}
+        return g;
+    }
 }

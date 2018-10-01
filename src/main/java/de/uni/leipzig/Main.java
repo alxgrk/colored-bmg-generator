@@ -7,8 +7,7 @@ import java.util.Set;
 import de.uni.leipzig.colored.DiGraphExtractor;
 import de.uni.leipzig.colored.axiom.Axioms;
 import de.uni.leipzig.informative.InformativeTripleFinder;
-import de.uni.leipzig.informative.model.InformativeTriple;
-import de.uni.leipzig.manipulation.TripleManipulator;
+import de.uni.leipzig.manipulation.Manipulation;
 import de.uni.leipzig.model.DiGraph;
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Reachables;
@@ -102,27 +101,13 @@ public class Main {
         });
 
         manipulate.register("yes", () -> {
-            UserInput percentageInput = new UserInput();
-
-            System.out.println("How many percent of the triple set should be deleted?");
-            Integer percentage = Integer.parseInt(percentageInput.listenForResult());
-
-            System.out.println("How the tree looked before:");
-            AhoBuild<Triple> ahoBuild = new AhoBuild<>();
-            Tree result = ahoBuild.build(triples, tripleFinder.getLeaves());
-
-            System.out.println(result.toNewickNotation());
-            System.out.println(result.print());
-
-            TripleManipulator<Triple> manipulator = new TripleManipulator<>(percentage);
-            manipulator.manipulate(triples);
-
-            System.out.println("How the tree looks after manipulating:");
+            Manipulation manipulation = new Manipulation(triples, tripleFinder);
+            manipulation.apply();
         });
 
         manipulate.askWithOptions("Do you want to manipulate the triple set?");
 
-        AhoBuild<Triple> ahoBuild = new AhoBuild<>();
+        AhoBuild ahoBuild = new AhoBuild();
         Tree result = ahoBuild.build(triples, tripleFinder.getLeaves());
 
         System.out.println(result.toNewickNotation());
@@ -163,11 +148,11 @@ public class Main {
         // **** Aho Build mit informative triple ****
 
         InformativeTripleFinder informativeTripleFinder = new InformativeTripleFinder();
-        Set<InformativeTriple> informativeTriples = informativeTripleFinder
+        Set<Triple> informativeTriples = informativeTripleFinder
                 .findInformativeTriples(adjList);
         System.out.println(informativeTriples);
 
-        AhoBuild<InformativeTriple> ahoBuild = new AhoBuild<>();
+        AhoBuild ahoBuild = new AhoBuild();
         Tree result = ahoBuild.build(informativeTriples, informativeTripleFinder.getLeaves());
 
         System.out.println(result.toNewickNotation());

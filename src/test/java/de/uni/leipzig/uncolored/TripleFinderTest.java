@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
+import de.uni.leipzig.model.DefaultTriple;
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Triple;
 import de.uni.leipzig.model.edges.Edge;
@@ -51,14 +52,14 @@ public class TripleFinderTest {
         Set<Triple> actual = uut.findTriple(adjList);
 
         assertThat(actual).containsExactlyInAnyOrder(
-                new Triple(new Edge(n0111, n0112), n012),
-                new Triple(new Edge(n0111, n0112), n02),
-                new Triple(new Edge(n0111, n012), n02),
-                new Triple(new Edge(n0112, n012), n02),
-                new Triple(new Edge(n0112, n0111), n012),
-                new Triple(new Edge(n0112, n0111), n02),
-                new Triple(new Edge(n012, n0111), n02),
-                new Triple(new Edge(n012, n0112), n02));
+                new DefaultTriple(new Edge(n0111, n0112), n012),
+                new DefaultTriple(new Edge(n0111, n0112), n02),
+                new DefaultTriple(new Edge(n0111, n012), n02),
+                new DefaultTriple(new Edge(n0112, n012), n02),
+                new DefaultTriple(new Edge(n0112, n0111), n012),
+                new DefaultTriple(new Edge(n0112, n0111), n02),
+                new DefaultTriple(new Edge(n012, n0111), n02),
+                new DefaultTriple(new Edge(n012, n0112), n02));
     }
 
 }

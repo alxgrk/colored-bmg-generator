@@ -12,70 +12,73 @@ import de.uni.leipzig.model.Tree;
 import de.uni.leipzig.model.Triple;
 import de.uni.leipzig.user.UserInput;
 
-public class AhoBuild<T extends Triple> {
+public class AhoBuild {
 
-	private List<Tree> connectedComponents;
-	
-	public Tree build(final Set<T> tripleSetR, Set<Node> leaveSetL) {
+    private List<Tree> connectedComponents;
 
-		// if there is only one leave, return a tree containing only this leave
-		if (leaveSetL.size() == 1)
-			return new Tree(leaveSetL);
+    public Tree build(Set<Triple> tripleSetR, Set<Node> leaveSetL) {
 
-		connectedComponents = ConnectedComponents.construct(tripleSetR, leaveSetL);
+        // if there is only one leave, return a tree containing only this leave
+        if (leaveSetL.size() == 1)
+            return new Tree(leaveSetL);
 
-		// exit if tree is no phylogenetic one
-		if (connectedComponents.size() == 1) {
+        connectedComponents = ConnectedComponents.construct(tripleSetR, leaveSetL);
 
-			UserInput ui = new UserInput();
+        // exit if tree is no phylogenetic one
+        if (connectedComponents.size() == 1) {
 
-			ui.register("exit", () -> {
-				throw new RuntimeException("no phylogenetic tree");
-			});
+            UserInput ui = new UserInput();
 
-			ui.register("min cut", () -> {
-				DiGraphFromTripleSet<T> creator = new DiGraphFromTripleSet<>();
+            ui.register("exit", () -> {
+                throw new RuntimeException("no phylogenetic tree");
+            });
 
-				connectedComponents = creator.create(tripleSetR, leaveSetL);
-			});
+            ui.register("min cut", () -> {
+                DiGraphFromTripleSet creator = new DiGraphFromTripleSet();
 
-			ui.askWithOptions("How do you want to handle that there is only one connected component?");
-		}
+                connectedComponents = creator.create(tripleSetR, leaveSetL);
+            });
 
-		// create invisible root node
-		List<Node> root = new ArrayList<>();
-		root.add(Node.helpNode());
+            ui.askWithOptions(
+                    "How do you want to handle that there is only one connected component?");
+        }
 
-		return connectedComponents.stream().map(component -> {
+        // create invisible root node
+        List<Node> root = new ArrayList<>();
+        root.add(Node.helpNode());
 
-			// get all nodes of this component recursively
-			Set<Node> subLeaveSet = Sets.newHashSet(component.getNodes());
+        return connectedComponents.stream()
+                .map(component -> {
 
-			// filter all triples describing this component
-			Set<T> subTripleSet = filter(subLeaveSet, tripleSetR);
+                    // get all nodes of this component recursively
+                    Set<Node> subLeaveSet = Sets.newHashSet(component.getNodes());
 
-			// recursively invoke 'build' with the triples/leaves of
-			// this component
-			Tree subTree = build(subTripleSet, subLeaveSet);
+                    // filter all triples describing this component
+                    Set<Triple> subTripleSet = filter(subLeaveSet, tripleSetR);
 
-			return subTree;
-		})
-				// concatenate all components under the root tree
-				.reduce(new Tree(root), (i, t) -> {
-					Tree newTree = i.addSubTree(t);
-					return newTree;
-				});
-	}
+                    // recursively invoke 'build' with the triples/leaves of
+                    // this component
+                    Tree subTree = build(subTripleSet, subLeaveSet);
 
-	/**
-	 * Returns a new set of triples with each triple only containing nodes from
-	 * the provided leave set.
-	 */
-	private Set<T> filter(Set<Node> subLeaveSet, Set<T> tripleSetR) {
-		return tripleSetR.stream()
-				.filter(t -> subLeaveSet.contains(t.getEdge().getFirst())
-						&& subLeaveSet.contains(t.getEdge().getSecond()) && subLeaveSet.contains(t.getNode()))
-				.collect(Collectors.toSet());
-	}
+                    return subTree;
+                })
+                // concatenate all components under the root tree
+                .reduce(new Tree(root), (i, t) -> {
+                    Tree newTree = i.addSubTree(t);
+                    return newTree;
+                });
+    }
+
+    /**
+     * Returns a new set of triples with each triple only containing nodes from the provided leave
+     * set.
+     */
+    private Set<Triple> filter(Set<Node> subLeaveSet, Set<Triple> tripleSetR) {
+        return tripleSetR.stream()
+                .filter(t -> subLeaveSet.contains(t.getEdge().getFirst())
+                        && subLeaveSet.contains(t.getEdge().getSecond()) && subLeaveSet.contains(t
+                                .getNode()))
+                .collect(Collectors.toSet());
+    }
 
 }

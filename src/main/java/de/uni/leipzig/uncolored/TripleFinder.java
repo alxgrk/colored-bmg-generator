@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import de.uni.leipzig.model.DefaultTriple;
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Triple;
 import de.uni.leipzig.model.edges.Edge;
@@ -66,7 +67,7 @@ public class TripleFinder {
                         // xy is the ingroup, z is the outgroup
                         if (isTriple(lcaXY, lcaXYZ)) {
                             Edge edge = new Edge(firstNode, secondNode);
-                            Triple tripel = new Triple(edge, thirdNode);
+                            Triple tripel = new DefaultTriple(edge, thirdNode);
                             triples.add(tripel);
                         }
                     }

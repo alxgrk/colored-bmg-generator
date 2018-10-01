@@ -1,29 +1,15 @@
 package de.uni.leipzig.model;
 
 import de.uni.leipzig.model.edges.Edge;
-import lombok.NonNull;
-import lombok.Value;
-import lombok.experimental.NonFinal;
 
-@Value
-@NonFinal
-public class Triple {
+public interface Triple {
 
-    @NonNull
-    Edge edge;
+    Edge getEdge();
 
-    @NonNull
-    Node node;
+    Node getNode();
 
-    @Override
-    public String toString() {
-        return "(" + edge + "|" + node + ")";
-    }
+    boolean contains(Node node);
 
-    public boolean contains(Node contained) {
-        return contained.equals(edge.getFirst())
-                || contained.equals(edge.getSecond())
-                || contained.equals(node);
-    }
+    void invertEdge();
 
 }

@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
+import de.uni.leipzig.model.DefaultTriple;
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Triple;
 import de.uni.leipzig.model.edges.DiEdge;
@@ -31,7 +32,7 @@ public class ThreeNodeGraph {
      * @param three
      */
     public ThreeNodeGraph(Node one, Node two, Node three) {
-        this(new Triple(new Edge(one, two), three));
+        this(new DefaultTriple(new Edge(one, two), three));
     }
 
     public ThreeNodeGraph(@NonNull Triple triple) {

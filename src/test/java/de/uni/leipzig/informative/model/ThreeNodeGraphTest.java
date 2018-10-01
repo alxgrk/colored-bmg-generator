@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 
+import de.uni.leipzig.model.DefaultTriple;
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Triple;
 import de.uni.leipzig.model.edges.DiEdge;
@@ -17,7 +18,7 @@ public class ThreeNodeGraphTest {
         Node node1 = Node.of(0, Lists.newArrayList(1));
         Node node2 = Node.of(1, Lists.newArrayList(2));
         Node node3 = Node.of(0, Lists.newArrayList(3));
-        Triple triple = new Triple(new Edge(node1, node2), node3);
+        Triple triple = new DefaultTriple(new Edge(node1, node2), node3);
 
         ThreeNodeGraph uutByTriple = new ThreeNodeGraph(triple);
         ThreeNodeGraph uutByNodes = new ThreeNodeGraph(node1, node2, node3);
