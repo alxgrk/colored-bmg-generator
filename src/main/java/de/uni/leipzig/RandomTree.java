@@ -8,9 +8,12 @@ import java.util.Random;
 import de.uni.leipzig.model.Node;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 @Getter
 @RequiredArgsConstructor
+@Accessors(fluent = true)
 public class RandomTree {
 
     private final int maxKinder;
@@ -20,6 +23,12 @@ public class RandomTree {
     private final int maxLabel;
 
     private List<List<Node>> adjList = new ArrayList<>();
+
+    @Setter
+    private boolean maximalNodesWithChildren = false;
+
+    @Setter
+    private boolean maximalDepth = false;
 
     public List<List<Node>> create() {
         ArrayList<Integer> arrayList = new ArrayList<>();
@@ -43,7 +52,7 @@ public class RandomTree {
         if (shouldHaveChildren == true && ids.size() < maxTiefe) {
 
             // bestimme wie viele Abzweige
-            int zahl = randomInt(maxKinder);
+            int zahl = howManyChildren();
             // System.out.println("erzeuge verzweigung mit " + zahl + "
             // Kindern");
 
@@ -53,7 +62,7 @@ public class RandomTree {
                 copy.add(i);
 
                 // rekursive Funktion
-                create(copy, randomBoolean());
+                create(copy, shouldHaveChildren());
             }
         } else {
             return;
@@ -90,14 +99,12 @@ public class RandomTree {
         }
     }
 
-    private int randomInt(int max) {
-        Random rand = new Random();
-        return rand.nextInt(max - 2 + 1) + 2;
+    private int howManyChildren() {
+        return maximalNodesWithChildren ? maxKinder : new Random().nextInt(maxKinder - 2 + 1) + 2;
     }
 
-    private Boolean randomBoolean() {
-        Random rand = new Random();
-        return rand.nextBoolean();
+    private Boolean shouldHaveChildren() {
+        return maximalDepth ? maximalDepth : new Random().nextBoolean();
     }
 
     private int randomLabel() {

@@ -65,7 +65,18 @@ public class Main {
         });
 
         main.register("create a random tree", () -> {
-            RandomTree randomTree = new RandomTree(3, 5, 2);
+            RandomTree randomTree = new RandomTree(2, 5, 2);
+
+            UserInput maxDepth = new UserInput();
+            System.out.println("Do you want to have a tree with maximal depth? "
+                    + "(type 'yes' or leave blank)");
+            randomTree.maximalDepth("yes".equals(maxDepth.listenForResult()));
+
+            UserInput maxChildren = new UserInput();
+            System.out.println("Do you want to have every node having the maximal "
+                    + "amount of children? (type 'yes' or leave blank)");
+            randomTree.maximalNodesWithChildren("yes".equals(maxChildren.listenForResult()));
+
             List<List<Node>> adjList = randomTree.create();
 
             UserInput random = new UserInput();
