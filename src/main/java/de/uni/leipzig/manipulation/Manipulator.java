@@ -3,6 +3,7 @@ package de.uni.leipzig.manipulation;
 import java.util.Set;
 
 import de.uni.leipzig.model.Triple;
+import de.uni.leipzig.uncolored.TripleFinder;
 import lombok.Getter;
 
 @Getter
@@ -17,6 +18,6 @@ public abstract class Manipulator {
         this.percentage = percentage;
     }
 
-    public abstract void manipulate(Set<Triple> tripleSet);
+    public abstract void manipulate(Set<Triple> tripleSet, TripleFinder tripleFinder);
 
 }

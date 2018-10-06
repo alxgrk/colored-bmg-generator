@@ -22,9 +22,7 @@ public class Manipulation {
         UserInput manipulationKind = new UserInput();
 
         manipulationKind.register("deletion", kind(DeletionManipulator.class));
-        manipulationKind.register("insertion", () -> {
-            throw new UnsupportedOperationException("Insertion of triples currently not supported");
-        });
+        manipulationKind.register("insertion", kind(InsertionManipulator.class));
         manipulationKind.register("invert triples", kind(InversionManipulator.class));
 
         manipulationKind.askWithOptions("What kind of manipulation do you want to apply?");
@@ -46,7 +44,7 @@ public class Manipulation {
 
             Manipulator manipulator = manipulatorClass.getDeclaredConstructor(Integer.class)
                     .newInstance(percentage);
-            manipulator.manipulate(triples);
+            manipulator.manipulate(triples, tripleFinder);
 
             System.out.println("How the tree looks after manipulating:");
         };
