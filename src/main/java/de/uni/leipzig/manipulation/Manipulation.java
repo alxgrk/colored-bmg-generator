@@ -4,10 +4,10 @@ import java.util.Set;
 
 import org.zalando.fauxpas.ThrowingRunnable;
 
+import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Tree;
 import de.uni.leipzig.model.Triple;
 import de.uni.leipzig.uncolored.AhoBuild;
-import de.uni.leipzig.uncolored.TripleFinder;
 import de.uni.leipzig.user.UserInput;
 import lombok.AllArgsConstructor;
 
@@ -16,7 +16,7 @@ public class Manipulation {
 
     private final Set<Triple> triples;
 
-    private final TripleFinder tripleFinder;
+    private final Set<Node> leaves;
 
     public void apply() {
         UserInput manipulationKind = new UserInput();
@@ -37,14 +37,14 @@ public class Manipulation {
 
             System.out.println("How the tree looked before:");
             AhoBuild ahoBuild = new AhoBuild();
-            Tree result = ahoBuild.build(triples, tripleFinder.getLeaves());
+            Tree result = ahoBuild.build(triples, leaves);
 
             System.out.println(result.toNewickNotation());
             System.out.println(result.print());
 
             Manipulator manipulator = manipulatorClass.getDeclaredConstructor(Integer.class)
                     .newInstance(percentage);
-            manipulator.manipulate(triples, tripleFinder);
+            manipulator.manipulate(triples, leaves);
 
             System.out.println("How the tree looks after manipulating:");
         };

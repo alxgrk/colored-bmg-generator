@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Data
 @Setter(AccessLevel.NONE)
-public class Node {
+public class Node implements Comparable<Node> {
 
     private String label;
 
@@ -31,7 +31,7 @@ public class Node {
 
         return new Node(label, id);
     }
-    
+
     private Node(String label, List<Integer> id) {
         this.label = label;
         this.ids = id;
@@ -50,6 +50,11 @@ public class Node {
             return label;
 
         return label + "-" + path;
+    }
+
+    @Override
+    public int compareTo(Node o) {
+        return this.getPath().compareTo(o.getPath());
     }
 
 }

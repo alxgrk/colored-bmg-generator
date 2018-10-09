@@ -79,6 +79,7 @@ public class DiGraph {
 
     public Tree getHasseDiagram() {
         Hierarchy hierarchy = new Hierarchy(getReachablesByEc());
+        System.out.println("Hierarchy sets: " + hierarchy.getSets());
         return hierarchy.toHasseTree();
     }
 }

@@ -11,7 +11,6 @@ import de.uni.leipzig.model.DefaultTriple;
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Triple;
 import de.uni.leipzig.model.edges.Edge;
-import de.uni.leipzig.uncolored.TripleFinder;
 
 public class InsertionManipulator extends Manipulator {
 
@@ -19,7 +18,7 @@ public class InsertionManipulator extends Manipulator {
         super(percentage);
     }
 
-    public void manipulate(Set<Triple> tripleSet, TripleFinder tripleFinder) {
+    public void manipulate(Set<Triple> tripleSet, Set<Node> leaves) {
         if (getPercentage() == 0)
             return;
 
@@ -31,7 +30,7 @@ public class InsertionManipulator extends Manipulator {
         while (toBeInserted-- != 0) {
             if (iterator.hasNext()) {
                 Triple nextTriple = iterator.next();
-                addSimilar(nextTriple, triplesToAdd, tripleFinder);
+                addSimilar(nextTriple, triplesToAdd, leaves);
             } else
                 break;
         }
@@ -40,7 +39,7 @@ public class InsertionManipulator extends Manipulator {
     }
 
     private void addSimilar(Triple nextTriple, Set<Triple> triplesToAdd,
-            TripleFinder tripleFinder) {
+            Set<Node> leaves) {
         Node x = nextTriple.getEdge().getFirst();
         Node y = nextTriple.getEdge().getSecond();
         Node z = nextTriple.getNode();
@@ -60,9 +59,9 @@ public class InsertionManipulator extends Manipulator {
         Node newZ = Node.of(z.getLabel(), z.getIds());
 
         triplesToAdd.add(new DefaultTriple(new Edge(newX, newY), newZ));
-        tripleFinder.getLeaves().add(newX);
-        tripleFinder.getLeaves().add(newY);
-        tripleFinder.getLeaves().add(newZ);
+        leaves.add(newX);
+        leaves.add(newY);
+        leaves.add(newZ);
     }
 
 }

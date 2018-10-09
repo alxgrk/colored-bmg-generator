@@ -18,7 +18,8 @@ public class UserInput {
         scanner = new Scanner(System.in);
     }
 
-    public void register(String trigger, ThrowingRunnable<Exception> action) throws RuntimeException {
+    public void register(String trigger, ThrowingRunnable<Exception> action)
+            throws RuntimeException {
         actions.put(trigger, action);
     }
 

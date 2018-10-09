@@ -32,11 +32,11 @@ public class Hierarchy {
 
         ImmutableSet.Builder<Node> parentSetBuilder = ImmutableSet.builder();
         reachablesByÄk.keySet()
-        .forEach(äk -> {
-        	parentSetBuilder.addAll(äk.getNodes());
-        });
+                .forEach(äk -> {
+                    parentSetBuilder.addAll(äk.getNodes());
+                });
         setBuilder.add(parentSetBuilder.build());
-        
+
         sets = setBuilder.build();
     }
 
@@ -63,12 +63,15 @@ public class Hierarchy {
 
     private Tree recursive(Set<SetDiEdge> finalEdges, Set<Set<Node>> remainingSets,
             Set<Tree> leafsAsTree) {
-    	
-    	System.out.println("-----------------------------------");
-    	System.out.println("Final edges: " + finalEdges);
-    	System.out.println("Remaining sets: " + remainingSets);
-    	System.out.println("Leafs as tree: " + leafsAsTree);
-    	System.out.println("-----------------------------------");
+
+        System.out.println("-----------------------------------");
+        System.out.println("Final edges: " + finalEdges);
+        System.out.println("Remaining sets: " + remainingSets);
+        System.out.println("Leafs as tree: " + leafsAsTree);
+        System.out.println("-----------------------------------");
+
+        if (leafsAsTree.size() == 1)
+            return Lists.newArrayList(leafsAsTree).get(0);
 
         if (remainingSets.size() == 1) {
             Tree root = new Tree(Lists.newArrayList(remainingSets).get(0));
@@ -79,28 +82,36 @@ public class Hierarchy {
         }
 
         if (!leafsAsTree.isEmpty()) {
-            leafsAsTree = leafsAsTree.stream()
-                    .map(t -> {
-                        Predicate<? super SetDiEdge> treeEqualFirstOfEdge = e -> Util.equalSets(e
-                                .getFirst(), t.getNodes());
+            Set<Tree> tmpTrees = Sets.newHashSet(leafsAsTree);
 
-                        SetDiEdge edgeWithLeafAsFirst = finalEdges.stream()
-                                .filter(treeEqualFirstOfEdge)
-                                .findFirst()
-                                .get();
+            leafsAsTree.stream()
+                    .filter(t -> edgeWithLeafAsFirst(finalEdges, t, false).isPresent())
+                    .forEach(t -> {
+                        Set<Node> newLeafSet = edgeWithLeafAsFirst(finalEdges, t, true)
+                                .get()
+                                .getSecond();
 
-                        finalEdges.removeIf(treeEqualFirstOfEdge);
+                        Optional<Tree> existingTmpTree = tmpTrees.stream()
+                                .filter(tmp -> Util.equalSets(tmp.getNodes(), newLeafSet))
+                                .findFirst();
 
-                        Set<Node> newLeafSet = edgeWithLeafAsFirst.getSecond();
-                        Tree newLeaf = new Tree(newLeafSet);
+                        Tree newLeaf;
+                        if (existingTmpTree.isPresent())
+                            newLeaf = existingTmpTree.get();
+                        else {
+                            newLeaf = new Tree(newLeafSet);
+                            tmpTrees.add(newLeaf);
+                            remainingSets.removeIf(s -> Util.equalSets(s, newLeafSet));
+                        }
                         newLeaf.addSubTree(t);
-                        remainingSets.removeIf(s -> Util.equalSets(s, newLeafSet));
+                        tmpTrees.remove(t);
+                    });
 
-                        return newLeaf;
-                    })
-                    .collect(Collectors.toSet());
+            leafsAsTree = tmpTrees;
         } else {
 
+            // get all sets, where this set IS NEVER the second component of an edges - this means,
+            // that there are only outgoing edges in the transitive closure
             Set<Set<Node>> leafs = remainingSets.stream()
                     .filter(s -> finalEdges.stream()
                             .noneMatch(e -> e.getSecond() == s))
@@ -116,6 +127,21 @@ public class Hierarchy {
         }
 
         return recursive(finalEdges, remainingSets, leafsAsTree);
+    }
+
+    private Optional<SetDiEdge> edgeWithLeafAsFirst(Set<SetDiEdge> finalEdges, Tree t,
+            boolean andRemove) {
+        Predicate<? super SetDiEdge> treeEqualFirstOfEdge = e -> Util.equalSets(e
+                .getFirst(), t.getNodes());
+
+        Optional<SetDiEdge> first = finalEdges.stream()
+                .filter(treeEqualFirstOfEdge)
+                .findFirst();
+
+        if (andRemove)
+            finalEdges.removeIf(treeEqualFirstOfEdge);
+
+        return first;
     }
 
     private Set<SetDiEdge> getTransitiveClosure(Set<Set<Node>> sets) {

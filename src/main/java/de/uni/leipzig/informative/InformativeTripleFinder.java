@@ -36,9 +36,14 @@ public class InformativeTripleFinder {
     @Getter
     private Set<Node> leaves = new HashSet<>();
 
-    public Set<Triple> findInformativeTriples(List<List<Node>> adjList) {
+    public Set<InformativeTriple> findInformativeTriples(List<List<Node>> adjList) {
         Set<Triple> triples = tripleFinder.findTriple(adjList);
         DiGraph graph = graphExtractor.extract(adjList);
+
+        return findInformativeTriples(triples, graph);
+    }
+
+    public Set<InformativeTriple> findInformativeTriples(Set<Triple> triples, DiGraph graph) {
 
         List<ThreeNodeGraph> subgraphs = Lists.newArrayList();
 

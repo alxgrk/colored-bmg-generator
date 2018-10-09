@@ -1,19 +1,18 @@
 package de.uni.leipzig.model;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HierarchyTest {
@@ -100,7 +99,6 @@ public class HierarchyTest {
     }
 
     @Test
-    @Ignore("FIXME")
     public void testToHasseTree() throws Exception {
         // INIT
         Tree tree12 = new Tree(rq12);

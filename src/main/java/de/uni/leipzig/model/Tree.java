@@ -2,16 +2,16 @@ package de.uni.leipzig.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import de.uni.leipzig.Util;
 import lombok.NonNull;
 import lombok.Value;
 
 @Value
-public class Tree {
+public class Tree implements Comparable<Tree> {
 
     List<Tree> subTrees;
 
@@ -19,7 +19,7 @@ public class Tree {
 
     public Tree(@NonNull Collection<Node> leafs) {
         List<Node> leafsAsList = Lists.newArrayList(leafs);
-        leafsAsList.sort(Util.nodeByPathComparator);
+        Collections.sort(leafsAsList);
 
         if (leafs.size() < 1)
             throw new IllegalArgumentException("Unable to create tree without any node.");
@@ -34,6 +34,7 @@ public class Tree {
 
         this.leafs = new ArrayList<>();
         this.subTrees = Lists.newArrayList(subtrees);
+        Collections.sort(this.subTrees);
     }
 
     public List<Node> getNodes() {
@@ -50,7 +51,9 @@ public class Tree {
 
     public Tree addSubTree(@NonNull Tree t) {
         leafs.removeAll(t.getNodes());
+        Collections.sort(leafs);
         subTrees.add(t);
+        Collections.sort(this.subTrees);
 
         return this;
     }
@@ -102,6 +105,19 @@ public class Tree {
     @Override
     public String toString() {
         return toNewickNotation();
+    }
+
+    @Override
+    public int compareTo(Tree o) {
+        List<Node> thisNodes = this.getNodes();
+        List<Node> otherNodes = o.getNodes();
+
+        if (thisNodes.isEmpty())
+            return 1;
+        if (otherNodes.isEmpty())
+            return -1;
+
+        return thisNodes.get(0).compareTo(otherNodes.get(0));
     }
 
 }

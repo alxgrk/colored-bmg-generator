@@ -5,8 +5,8 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
+import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Triple;
-import de.uni.leipzig.uncolored.TripleFinder;
 
 public class DeletionManipulator extends Manipulator {
 
@@ -14,7 +14,7 @@ public class DeletionManipulator extends Manipulator {
         super(percentage);
     }
 
-    public void manipulate(Set<Triple> tripleSet, TripleFinder tripleFinder) {
+    public void manipulate(Set<Triple> tripleSet, Set<Node> leaves) {
         if (getPercentage() == 0)
             return;
 

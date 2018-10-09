@@ -4,16 +4,19 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
+import org.jgrapht.alg.util.Pair;
+
 import de.uni.leipzig.colored.DiGraphExtractor;
 import de.uni.leipzig.colored.axiom.Axioms;
 import de.uni.leipzig.informative.InformativeTripleFinder;
+import de.uni.leipzig.informative.model.InformativeTriple;
 import de.uni.leipzig.manipulation.Manipulation;
 import de.uni.leipzig.model.DiGraph;
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Reachables;
 import de.uni.leipzig.model.Tree;
 import de.uni.leipzig.model.Triple;
-import de.uni.leipzig.parser.Parser;
+import de.uni.leipzig.parser.BlastGraphParser;
 import de.uni.leipzig.uncolored.AhoBuild;
 import de.uni.leipzig.uncolored.TripleFinder;
 import de.uni.leipzig.user.UserInput;
@@ -51,17 +54,34 @@ public class Main {
         UserInput main = new UserInput();
 
         main.register("parse a file", () -> {
-            File file = getBlastGraphFile();
-            if (file != null) {
-                Parser parser = new Parser();
-                DiGraph diGraph = parser.parse(file);
+            BlastGraphParser blastGraphParser = new BlastGraphParser();
+            File file = blastGraphParser.getBlastGraphFile();
 
-                UserInput parsed = new UserInput();
-                parsed.register("equivalence class based", () -> {
-                    equivalenceClassBased(diGraph);
-                });
-                parsed.askWithOptions("How do you want to create the LRT?");
-            }
+            UserInput parsed = new UserInput();
+
+            parsed.register("aho", () -> {
+                Pair<Set<Node>, Set<Triple>> nodesAndTriples = blastGraphParser.parseTriple(file);
+
+                ahoBuild(nodesAndTriples.getSecond(), nodesAndTriples.getFirst());
+            });
+
+            parsed.register("equivalence class based", () -> {
+                DiGraph diGraph = blastGraphParser.parseDiGraph(file);
+
+                System.out.println("Graph nodes: " + diGraph.getNodes());
+                System.out.println("Graph edges: " + diGraph.getEdges());
+
+                equivalenceClassBased(diGraph);
+            });
+
+            parsed.register("aho informative", () -> {
+                Pair<Set<Node>, Set<Triple>> nodesAndTriples = blastGraphParser.parseTriple(file);
+                DiGraph diGraph = blastGraphParser.parseDiGraph(file);
+
+                ahoWithInformativeTriples(nodesAndTriples.getSecond(), diGraph);
+            });
+
+            parsed.askWithOptions("How do you want to create the LRT?");
         });
 
         main.register("create a random tree", () -> {
@@ -69,13 +89,13 @@ public class Main {
 
             UserInput maxDepth = new UserInput();
             System.out.println("Do you want to have a tree with maximal depth? "
-                    + "(type 'yes' or leave blank)");
-            randomTree.maximalDepth("yes".equals(maxDepth.listenForResult()));
+                    + "(type 'y' or leave blank)");
+            randomTree.maximalDepth("y".equals(maxDepth.listenForResult()));
 
             UserInput maxChildren = new UserInput();
             System.out.println("Do you want to have every node having the maximal "
-                    + "amount of children? (type 'yes' or leave blank)");
-            randomTree.maximalNodesWithChildren("yes".equals(maxChildren.listenForResult()));
+                    + "amount of children? (type 'y' or leave blank)");
+            randomTree.maximalNodesWithChildren("y".equals(maxChildren.listenForResult()));
 
             List<List<Node>> adjList = randomTree.create();
 
@@ -101,25 +121,27 @@ public class Main {
     private void ahoBuild(List<List<Node>> adjList) {
         // **** Aho Build ohne informative triple ****
         TripleFinder tripleFinder = new TripleFinder();
-        Set<Triple> triples = tripleFinder.findTriple(adjList);
+        ahoBuild(tripleFinder.findTriple(adjList), tripleFinder.getLeaves());
+    }
 
+    private void ahoBuild(Set<Triple> triples, Set<Node> leaves) {
+        // **** Aho Build ohne informative triple ****
         System.out.println(triples.toString());
 
-        // TODO triples random sortieren & zerstören - einlesen und wieder rausschreiben
         UserInput manipulate = new UserInput();
 
         manipulate.register("no", () -> {
         });
 
         manipulate.register("yes", () -> {
-            Manipulation manipulation = new Manipulation(triples, tripleFinder);
+            Manipulation manipulation = new Manipulation(triples, leaves);
             manipulation.apply();
         });
 
         manipulate.askWithOptions("Do you want to manipulate the triple set?");
 
         AhoBuild ahoBuild = new AhoBuild();
-        Tree result = ahoBuild.build(triples, tripleFinder.getLeaves());
+        Tree result = ahoBuild.build(triples, leaves);
 
         System.out.println(result.toNewickNotation());
         System.out.println(result.print());
@@ -159,22 +181,20 @@ public class Main {
         // **** Aho Build mit informative triple ****
 
         InformativeTripleFinder informativeTripleFinder = new InformativeTripleFinder();
-        Set<Triple> informativeTriples = informativeTripleFinder
+        Set<InformativeTriple> informativeTriples = informativeTripleFinder
                 .findInformativeTriples(adjList);
-        System.out.println(informativeTriples);
 
-        AhoBuild ahoBuild = new AhoBuild();
-        Tree result = ahoBuild.build(informativeTriples, informativeTripleFinder.getLeaves());
-
-        System.out.println(result.toNewickNotation());
-        System.out.println(result.print());
+        ahoBuild(Util.uglyCast(informativeTriples), informativeTripleFinder.getLeaves());
     }
 
-    private File getBlastGraphFile() throws Exception {
-        UserInput blastFile = new UserInput();
-        System.out.println("Enter file path relative to your execution directory...");
-        String result = blastFile.listenForResult();
+    private void ahoWithInformativeTriples(Set<Triple> triples, DiGraph diGraph) {
+        // **** Aho Build mit informative triple ****
 
-        return new File(result);
+        InformativeTripleFinder informativeTripleFinder = new InformativeTripleFinder();
+        Set<InformativeTriple> informativeTriples = informativeTripleFinder
+                .findInformativeTriples(triples, diGraph);
+
+        ahoBuild(Util.uglyCast(informativeTriples), informativeTripleFinder.getLeaves());
     }
+
 }

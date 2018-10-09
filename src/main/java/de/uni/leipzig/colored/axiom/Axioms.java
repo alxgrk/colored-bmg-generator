@@ -25,12 +25,12 @@ public abstract class Axioms {
 
                 for (Axioms a : axioms) {
                     if (!a.check(graph, alpha, beta)) {
-                        System.out.println(a + " not fulfilled for alpha=" + alpha + " & beta="
-                                + beta);
+                        // System.out.println(a + " not fulfilled for alpha=" + alpha + " & beta="
+                        // + beta);
                         return false;
                     }
 
-                    System.out.println(a + " fulfilled for alpha=" + alpha + " & beta=" + beta);
+                    // System.out.println(a + " fulfilled for alpha=" + alpha + " & beta=" + beta);
                 }
 
             }
