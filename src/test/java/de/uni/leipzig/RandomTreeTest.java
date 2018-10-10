@@ -1,12 +1,13 @@
 package de.uni.leipzig;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.List;
 
 import org.assertj.core.api.Condition;
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
+import de.uni.leipzig.model.AdjacencyList;
 import de.uni.leipzig.model.Node;
 
 public class RandomTreeTest {
@@ -24,7 +25,7 @@ public class RandomTreeTest {
         int maxLabel = 2;
 
         RandomTree uut = new RandomTree(maxKinder, maxTiefe, maxLabel);
-        List<List<Node>> adjList = uut.create();
+        AdjacencyList adjList = uut.create();
 
         assertThat(adjList).areAtLeast(1, childNodes);
         assertThat(adjList).areAtMost(4, childNodes);

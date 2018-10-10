@@ -2,7 +2,6 @@ package de.uni.leipzig.informative;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
@@ -10,6 +9,7 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 
 import de.uni.leipzig.informative.model.InformativeTriple;
+import de.uni.leipzig.model.AdjacencyList;
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.edges.Edge;
 
@@ -33,14 +33,16 @@ public class InformativeTripleFinderTest {
     Node n012 = Node.of(1, Lists.newArrayList(0, 1, 2));
     Node n02 = Node.of(0, Lists.newArrayList(0, 2));
 
-    List<List<Node>> adjList = Lists.newArrayList(
-            Lists.newArrayList(n0, n01, n02),
-            Lists.newArrayList(n01, n011, n012),
-            Lists.newArrayList(n011, n0111, n0112),
-            Lists.newArrayList(n0111),
-            Lists.newArrayList(n0112),
-            Lists.newArrayList(n012),
-            Lists.newArrayList(n02));
+    AdjacencyList adjList = new AdjacencyList(
+            Lists.newArrayList(
+                Lists.newArrayList(n0, n01, n02),
+                Lists.newArrayList(n01, n011, n012),
+                Lists.newArrayList(n011, n0111, n0112),
+                Lists.newArrayList(n0111),
+                Lists.newArrayList(n0112),
+                Lists.newArrayList(n012),
+                Lists.newArrayList(n02))
+            );
 
     // @formatter:on
 

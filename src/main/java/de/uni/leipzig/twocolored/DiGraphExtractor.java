@@ -5,13 +5,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import de.uni.leipzig.model.AdjacencyList;
 import de.uni.leipzig.model.DiGraph;
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.edges.DiEdge;
 
 public class DiGraphExtractor {
 
-    public DiGraph extract(List<List<Node>> adjList) {
+    public DiGraph extract(AdjacencyList adjList) {
 
         Set<Node> nodes = new HashSet<>();
         Set<DiEdge> edges = new HashSet<>();
@@ -48,7 +49,8 @@ public class DiGraphExtractor {
 
                         if (!firstNode.getLabel().equals(secondNode.getLabel()) &&
                                 (firstNode.getLabel().equals(thirdNode.getLabel()) || secondNode
-                                        .getLabel().equals(thirdNode.getLabel()))) {
+                                        .getLabel()
+                                        .equals(thirdNode.getLabel()))) {
 
                             List<Integer> x = firstNode.getIds();
                             List<Integer> y = secondNode.getIds();

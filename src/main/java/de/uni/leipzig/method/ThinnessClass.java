@@ -1,9 +1,7 @@
 package de.uni.leipzig.method;
 
-import java.util.List;
-
+import de.uni.leipzig.model.AdjacencyList;
 import de.uni.leipzig.model.DiGraph;
-import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Reachables;
 import de.uni.leipzig.model.Tree;
 import de.uni.leipzig.twocolored.DiGraphExtractor;
@@ -12,7 +10,7 @@ import de.uni.leipzig.twocolored.axiom.Axioms;
 class ThinnessClass implements TreeCreation {
 
     @Override
-    public void create(List<List<Node>> adjList) {
+    public void create(AdjacencyList adjList) {
         DiGraphExtractor extractor = new DiGraphExtractor();
         DiGraph graph = extractor.extract(adjList);
         create(graph);

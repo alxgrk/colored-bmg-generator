@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import de.uni.leipzig.model.AdjacencyList;
 import de.uni.leipzig.model.DefaultTriple;
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Triple;
@@ -23,7 +24,7 @@ public class TripleFinder {
      * @param list
      * @return
      */
-    public Set<Triple> findTriple(List<List<Node>> list) {
+    public Set<Triple> findTriple(AdjacencyList list) {
 
         Set<Triple> triples = new HashSet<>();
 

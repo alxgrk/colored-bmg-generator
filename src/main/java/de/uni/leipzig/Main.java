@@ -5,11 +5,11 @@ import static de.uni.leipzig.method.TreeCreation.Method.AHO_INFORMATIVE;
 import static de.uni.leipzig.method.TreeCreation.Method.THINNESS_CLASS;
 
 import java.io.File;
-import java.util.List;
 import java.util.Set;
 
 import org.jgrapht.alg.util.Pair;
 
+import de.uni.leipzig.model.AdjacencyList;
 import de.uni.leipzig.model.DiGraph;
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Triple;
@@ -86,7 +86,7 @@ public class Main {
             // FIXME if >2 colors then ...
             // something like NColored.pass(this::thinnessClassBased, ...)
 
-            List<List<Node>> adjList = randomTree.create();
+            AdjacencyList adjList = randomTree.create();
 
             UserInput random = new UserInput();
             random.register(AHO, adjList);

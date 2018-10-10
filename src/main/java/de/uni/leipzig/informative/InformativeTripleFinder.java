@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 
 import de.uni.leipzig.informative.model.InformativeTriple;
 import de.uni.leipzig.informative.model.ThreeNodeGraph;
+import de.uni.leipzig.model.AdjacencyList;
 import de.uni.leipzig.model.DiGraph;
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Triple;
@@ -36,7 +37,7 @@ public class InformativeTripleFinder {
     @Getter
     private Set<Node> leaves = new HashSet<>();
 
-    public Set<InformativeTriple> findInformativeTriples(List<List<Node>> adjList) {
+    public Set<InformativeTriple> findInformativeTriples(AdjacencyList adjList) {
         Set<Triple> triples = tripleFinder.findTriple(adjList);
         DiGraph graph = graphExtractor.extract(adjList);
 

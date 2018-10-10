@@ -1,9 +1,9 @@
 package de.uni.leipzig.method;
 
-import java.util.List;
 import java.util.Set;
 
 import de.uni.leipzig.manipulation.Manipulation;
+import de.uni.leipzig.model.AdjacencyList;
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Tree;
 import de.uni.leipzig.model.Triple;
@@ -13,7 +13,7 @@ import de.uni.leipzig.uncolored.TripleFinder;
 class Aho implements TreeCreation {
 
     @Override
-    public void create(List<List<Node>> adjList) {
+    public void create(AdjacencyList adjList) {
         TripleFinder tripleFinder = new TripleFinder();
         create(tripleFinder.findTriple(adjList), tripleFinder.getLeaves());
     }

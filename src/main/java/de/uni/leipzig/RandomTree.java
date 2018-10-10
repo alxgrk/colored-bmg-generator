@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import de.uni.leipzig.model.AdjacencyList;
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.user.UserInput;
 import lombok.Getter;
@@ -23,7 +24,7 @@ public class RandomTree {
 
     private final int maxLabel;
 
-    private List<List<Node>> adjList = new ArrayList<>();
+    private AdjacencyList adjList = new AdjacencyList();
 
     @Setter
     private boolean maximalNodesWithChildren = false;
@@ -55,7 +56,7 @@ public class RandomTree {
         return randomTree;
     }
 
-    public List<List<Node>> create() {
+    public AdjacencyList create() {
         ArrayList<Integer> arrayList = new ArrayList<>();
         arrayList.add(0);
 

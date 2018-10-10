@@ -1,8 +1,8 @@
 package de.uni.leipzig.method;
 
-import java.util.List;
 import java.util.Set;
 
+import de.uni.leipzig.model.AdjacencyList;
 import de.uni.leipzig.model.DiGraph;
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Triple;
@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
  */
 public interface TreeCreation {
 
-    void create(List<List<Node>> adjList);
+    void create(AdjacencyList adjList);
 
     default void create(Set<Triple> triples, DiGraph diGraph) {
     }

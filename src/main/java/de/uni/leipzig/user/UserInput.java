@@ -1,6 +1,5 @@
 package de.uni.leipzig.user;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.function.Function;
@@ -11,7 +10,7 @@ import org.zalando.fauxpas.ThrowingRunnable;
 import com.google.common.collect.Maps;
 
 import de.uni.leipzig.method.TreeCreation;
-import de.uni.leipzig.model.Node;
+import de.uni.leipzig.model.AdjacencyList;
 
 public class UserInput {
 
@@ -34,7 +33,7 @@ public class UserInput {
         register(creation.get().getClass().getSimpleName(), () -> action.accept(creation.get()));
     }
 
-    public void register(TreeCreation.Method creation, List<List<Node>> adjList)
+    public void register(TreeCreation.Method creation, AdjacencyList adjList)
             throws RuntimeException {
         register(creation.get().getClass().getSimpleName(), () -> creation.get().create(adjList));
     }
