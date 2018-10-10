@@ -1,4 +1,4 @@
-package de.uni.leipzig.colored.axiom;
+package de.uni.leipzig.twocolored.axiom;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -14,6 +14,10 @@ import com.google.common.collect.Sets;
 import de.uni.leipzig.model.DiGraph;
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.edges.DiEdge;
+import de.uni.leipzig.twocolored.axiom.Axiom1;
+import de.uni.leipzig.twocolored.axiom.Axiom2;
+import de.uni.leipzig.twocolored.axiom.Axiom3;
+import de.uni.leipzig.twocolored.axiom.Axioms;
 
 public class AxiomsTest {
 

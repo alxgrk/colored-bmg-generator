@@ -6,8 +6,6 @@ import java.util.Set;
 
 import org.jgrapht.alg.util.Pair;
 
-import de.uni.leipzig.colored.DiGraphExtractor;
-import de.uni.leipzig.colored.axiom.Axioms;
 import de.uni.leipzig.informative.InformativeTripleFinder;
 import de.uni.leipzig.informative.model.InformativeTriple;
 import de.uni.leipzig.manipulation.Manipulation;
@@ -17,6 +15,8 @@ import de.uni.leipzig.model.Reachables;
 import de.uni.leipzig.model.Tree;
 import de.uni.leipzig.model.Triple;
 import de.uni.leipzig.parser.BlastGraphParser;
+import de.uni.leipzig.twocolored.DiGraphExtractor;
+import de.uni.leipzig.twocolored.axiom.Axioms;
 import de.uni.leipzig.uncolored.AhoBuild;
 import de.uni.leipzig.uncolored.TripleFinder;
 import de.uni.leipzig.user.UserInput;

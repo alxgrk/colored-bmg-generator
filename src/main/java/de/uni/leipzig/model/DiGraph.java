@@ -7,8 +7,8 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
-import de.uni.leipzig.colored.EquivalenceClassFinder;
 import de.uni.leipzig.model.edges.DiEdge;
+import de.uni.leipzig.twocolored.EquivalenceClassFinder;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;

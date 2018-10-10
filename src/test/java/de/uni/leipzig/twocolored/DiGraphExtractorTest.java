@@ -1,4 +1,4 @@
-package de.uni.leipzig.colored;
+package de.uni.leipzig.twocolored;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import de.uni.leipzig.model.DiGraph;
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.edges.DiEdge;
+import de.uni.leipzig.twocolored.DiGraphExtractor;
 
 public class DiGraphExtractorTest {
 

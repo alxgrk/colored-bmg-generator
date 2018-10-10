@@ -1,4 +1,4 @@
-package de.uni.leipzig.colored.axiom;
+package de.uni.leipzig.twocolored.axiom;
 
 import java.util.Set;
 

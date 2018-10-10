@@ -7,12 +7,12 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 
-import de.uni.leipzig.colored.DiGraphExtractor;
 import de.uni.leipzig.informative.model.InformativeTriple;
 import de.uni.leipzig.informative.model.ThreeNodeGraph;
 import de.uni.leipzig.model.DiGraph;
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Triple;
+import de.uni.leipzig.twocolored.DiGraphExtractor;
 import de.uni.leipzig.uncolored.TripleFinder;
 import lombok.Getter;
 

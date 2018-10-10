@@ -1,4 +1,4 @@
-package de.uni.leipzig.colored;
+package de.uni.leipzig.twocolored;
 
 import java.util.ArrayList;
 import java.util.HashSet;
