@@ -18,6 +18,20 @@ public class Manipulation {
 
     private final Set<Node> leaves;
 
+    public static void askForManipulation(Set<Triple> triples, Set<Node> leaves) {
+        UserInput manipulate = new UserInput();
+
+        manipulate.register("no", () -> {
+        });
+
+        manipulate.register("yes", () -> {
+            Manipulation manipulation = new Manipulation(triples, leaves);
+            manipulation.apply();
+        });
+
+        manipulate.askWithOptions("Do you want to manipulate the triple set?");
+    }
+
     public void apply() {
         UserInput manipulationKind = new UserInput();
 

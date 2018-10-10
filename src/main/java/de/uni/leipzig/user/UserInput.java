@@ -1,12 +1,17 @@
 package de.uni.leipzig.user;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.function.Function;
 
+import org.zalando.fauxpas.ThrowingConsumer;
 import org.zalando.fauxpas.ThrowingRunnable;
 
 import com.google.common.collect.Maps;
+
+import de.uni.leipzig.method.TreeCreation;
+import de.uni.leipzig.model.Node;
 
 public class UserInput {
 
@@ -21,6 +26,17 @@ public class UserInput {
     public void register(String trigger, ThrowingRunnable<Exception> action)
             throws RuntimeException {
         actions.put(trigger, action);
+    }
+
+    public void register(TreeCreation.Method creation,
+            ThrowingConsumer<TreeCreation, Exception> action)
+            throws RuntimeException {
+        register(creation.get().getClass().getSimpleName(), () -> action.accept(creation.get()));
+    }
+
+    public void register(TreeCreation.Method creation, List<List<Node>> adjList)
+            throws RuntimeException {
+        register(creation.get().getClass().getSimpleName(), () -> creation.get().create(adjList));
     }
 
     public String listenForResult() throws RuntimeException {

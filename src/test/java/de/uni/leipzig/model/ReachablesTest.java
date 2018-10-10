@@ -35,19 +35,19 @@ public class ReachablesTest {
     // EC(nodes=[1-01])=N(n1=[], n2=[], n3=[], nIn=[]),
     // EC(nodes=[0-0212, 0-0211])=N(n1=[1-0221], n2=[0-0222],n3=[1-0221], nIn=[]),
     // EC(nodes=[0-0222])=N(n1=[1-0221], n2=[0-0222], n3=[1-0221],nIn=[1-0221])
-    EquivalenceClass alpha = new EquivalenceClass(n0221);
-    EquivalenceClass beta = new EquivalenceClass(n01);
-    EquivalenceClass gamma = new EquivalenceClass(n0212, n0211);
-    EquivalenceClass delta = new EquivalenceClass(n0222);
+    ThinnessClass alpha = new ThinnessClass(n0221);
+    ThinnessClass beta = new ThinnessClass(n01);
+    ThinnessClass gamma = new ThinnessClass(n0212, n0211);
+    ThinnessClass delta = new ThinnessClass(n0222);
 
-    Map<EquivalenceClass, Neighbourhood> allN = Maps.asMap(Sets.newHashSet(alpha, beta, gamma, delta), 
+    Map<ThinnessClass, Neighbourhood> allN = Maps.asMap(Sets.newHashSet(alpha, beta, gamma, delta), 
             ec -> new Neighbourhood(ec, edges));
     // @formatter:on
 
     @Test
     public void testCreation() throws Exception {
-        Entry<EquivalenceClass, Neighbourhood> eBeta = getNeighbourhoodEntry(beta);
-        Entry<EquivalenceClass, Neighbourhood> eGamma = getNeighbourhoodEntry(gamma);
+        Entry<ThinnessClass, Neighbourhood> eBeta = getNeighbourhoodEntry(beta);
+        Entry<ThinnessClass, Neighbourhood> eGamma = getNeighbourhoodEntry(gamma);
 
         Reachables uutBeta = new Reachables(eBeta, allN);
         Reachables uutGamma = new Reachables(eGamma, allN);
@@ -63,9 +63,9 @@ public class ReachablesTest {
 
     @Test
     public void testInNeighboursAreEqual() throws Exception {
-        Entry<EquivalenceClass, Neighbourhood> e1 = getNeighbourhoodEntry(alpha);
-        Entry<EquivalenceClass, Neighbourhood> e2 = getNeighbourhoodEntry(beta);
-        Entry<EquivalenceClass, Neighbourhood> e3 = getNeighbourhoodEntry(gamma);
+        Entry<ThinnessClass, Neighbourhood> e1 = getNeighbourhoodEntry(alpha);
+        Entry<ThinnessClass, Neighbourhood> e2 = getNeighbourhoodEntry(beta);
+        Entry<ThinnessClass, Neighbourhood> e3 = getNeighbourhoodEntry(gamma);
 
         boolean alphaBeta = Reachables.inNeighboursAreEqual(e1, e2);
         boolean betaAlpha = Reachables.inNeighboursAreEqual(e2, e1);
@@ -78,10 +78,10 @@ public class ReachablesTest {
 
     @Test
     public void testNeighboursOfAlphaAreSupersetOfBeta() throws Exception {
-        Entry<EquivalenceClass, Neighbourhood> e1 = getNeighbourhoodEntry(alpha);
-        Entry<EquivalenceClass, Neighbourhood> e2 = getNeighbourhoodEntry(beta);
-        Entry<EquivalenceClass, Neighbourhood> e3 = getNeighbourhoodEntry(gamma);
-        Entry<EquivalenceClass, Neighbourhood> e4 = getNeighbourhoodEntry(delta);
+        Entry<ThinnessClass, Neighbourhood> e1 = getNeighbourhoodEntry(alpha);
+        Entry<ThinnessClass, Neighbourhood> e2 = getNeighbourhoodEntry(beta);
+        Entry<ThinnessClass, Neighbourhood> e3 = getNeighbourhoodEntry(gamma);
+        Entry<ThinnessClass, Neighbourhood> e4 = getNeighbourhoodEntry(delta);
 
         boolean alphaBeta = Reachables.neighboursOfAlphaAreSupersetOfBeta(e1, e2);
         boolean betaAlpha = Reachables.neighboursOfAlphaAreSupersetOfBeta(e2, e1);
@@ -94,7 +94,7 @@ public class ReachablesTest {
         assertThat(gammaDelta).isTrue();
     }
 
-    private Entry<EquivalenceClass, Neighbourhood> getNeighbourhoodEntry(EquivalenceClass ec) {
+    private Entry<ThinnessClass, Neighbourhood> getNeighbourhoodEntry(ThinnessClass ec) {
         return allN.entrySet()
                 .stream()
                 .filter(e -> e.getKey().equals(ec))

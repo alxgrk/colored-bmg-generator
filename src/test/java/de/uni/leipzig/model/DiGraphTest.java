@@ -33,19 +33,19 @@ public class DiGraphTest {
     // EC(nodes=[1-01])=N(n1=[], n2=[], n3=[], nIn=[]),
     // EC(nodes=[0-0212, 0-0211])=N(n1=[1-0221], n2=[0-0222],n3=[1-0221], nIn=[]),
     // EC(nodes=[0-0222])=N(n1=[1-0221], n2=[0-0222], n3=[1-0221],nIn=[1-0221])
-    EquivalenceClass alpha = new EquivalenceClass(n0221);
-    EquivalenceClass beta = new EquivalenceClass(n01);
-    EquivalenceClass gamma = new EquivalenceClass(n0212, n0211);
-    EquivalenceClass delta = new EquivalenceClass(n0222);
+    ThinnessClass alpha = new ThinnessClass(n0221);
+    ThinnessClass beta = new ThinnessClass(n01);
+    ThinnessClass gamma = new ThinnessClass(n0212, n0211);
+    ThinnessClass delta = new ThinnessClass(n0222);
     
     // @formatter:on
 
     @Test
-    public void testEquivalenceClasses() throws Exception {
+    public void testThinnessClasses() throws Exception {
 
         DiGraph uut = new DiGraph(nodes, edges);
 
-        assertThat(uut.getEquivalenceClasses())
+        assertThat(uut.getThinnessClasses())
                 .containsExactlyInAnyOrder(alpha, beta, gamma, delta);
     }
 
@@ -54,9 +54,9 @@ public class DiGraphTest {
 
         DiGraph uut = new DiGraph(nodes, edges);
 
-        assertThat(uut.getNeighboursByEc().keySet())
+        assertThat(uut.getNeighboursByTc().keySet())
                 .containsExactlyInAnyOrder(alpha, beta, gamma, delta);
-        assertThat(uut.getNeighboursByEc().values())
+        assertThat(uut.getNeighboursByTc().values())
                 .doesNotContainNull();
         assertThat(uut.getN1(gamma)).containsExactly(n0221);
         assertThat(uut.getN2(gamma)).containsExactly(n0222);
@@ -68,9 +68,9 @@ public class DiGraphTest {
 
         DiGraph uut = new DiGraph(nodes, edges);
 
-        assertThat(uut.getReachablesByEc().keySet())
+        assertThat(uut.getReachablesByTc().keySet())
                 .containsExactlyInAnyOrder(alpha, beta, gamma, delta);
-        assertThat(uut.getReachablesByEc().values())
+        assertThat(uut.getReachablesByTc().values())
                 .doesNotContainNull();
     }
 

@@ -50,7 +50,6 @@ public class DiGraphFromTripleSet {
             g.addVertex(triple.getEdge().getFirst());
             g.addVertex(triple.getEdge().getSecond());
 
-            // FIXME
             g.addEdge(triple.getEdge().getFirst(), triple.getEdge().getSecond(),
                     triple.getEdge());
         }

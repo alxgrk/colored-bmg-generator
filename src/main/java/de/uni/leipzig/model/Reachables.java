@@ -24,20 +24,20 @@ public class Reachables {
 
     Set<Node> rq;
 
-    public Reachables(Entry<EquivalenceClass, Neighbourhood> entry,
-            Map<EquivalenceClass, Neighbourhood> allN) {
+    public Reachables(Entry<ThinnessClass, Neighbourhood> entry,
+            Map<ThinnessClass, Neighbourhood> allN) {
         this.r = Sets.union(entry.getValue().getN1(), entry.getValue().getN2()).immutableCopy();
         this.q = calculateQ(entry, allN);
         this.rq = Sets.union(r, q).immutableCopy();
     }
 
-    private Set<Node> calculateQ(Entry<EquivalenceClass, Neighbourhood> alpha,
-            Map<EquivalenceClass, Neighbourhood> allN) {
+    private Set<Node> calculateQ(Entry<ThinnessClass, Neighbourhood> alpha,
+            Map<ThinnessClass, Neighbourhood> allN) {
         Set<Node> q = new HashSet<>();
 
-        for (Entry<EquivalenceClass, Neighbourhood> beta : allN.entrySet()) {
+        for (Entry<ThinnessClass, Neighbourhood> beta : allN.entrySet()) {
 
-            // also necessary for equal ÄK
+            // also necessary for equal TC
 
             if (inNeighboursAreEqual(alpha, beta)
                     && neighboursOfAlphaAreSupersetOfBeta(alpha, beta)) {
@@ -51,14 +51,14 @@ public class Reachables {
 
     @VisibleForTesting
     protected static boolean neighboursOfAlphaAreSupersetOfBeta(
-            Entry<EquivalenceClass, Neighbourhood> alpha,
-            Entry<EquivalenceClass, Neighbourhood> beta) {
+            Entry<ThinnessClass, Neighbourhood> alpha,
+            Entry<ThinnessClass, Neighbourhood> beta) {
         return alpha.getValue().getN1().containsAll(beta.getValue().getN1());
     }
 
     @VisibleForTesting
-    protected static boolean inNeighboursAreEqual(Entry<EquivalenceClass, Neighbourhood> alpha,
-            Entry<EquivalenceClass, Neighbourhood> beta) {
+    protected static boolean inNeighboursAreEqual(Entry<ThinnessClass, Neighbourhood> alpha,
+            Entry<ThinnessClass, Neighbourhood> beta) {
         Set<Node> nInAlpha = alpha.getValue().getNIn();
         Set<Node> nInBeta = beta.getValue().getNIn();
 

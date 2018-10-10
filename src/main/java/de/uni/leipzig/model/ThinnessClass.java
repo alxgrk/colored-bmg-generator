@@ -15,12 +15,12 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 @NoArgsConstructor
-public class EquivalenceClass {
+public class ThinnessClass {
 
     private Set<Node> nodes = new HashSet<>();
 
     @VisibleForTesting
-    protected EquivalenceClass(Node... nodes) {
+    protected ThinnessClass(Node... nodes) {
         this.nodes = Sets.newHashSet(nodes);
     }
 

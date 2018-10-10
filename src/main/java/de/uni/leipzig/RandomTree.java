@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 
 import de.uni.leipzig.model.Node;
+import de.uni.leipzig.user.UserInput;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -29,6 +30,30 @@ public class RandomTree {
 
     @Setter
     private boolean maximalDepth = false;
+
+    public static RandomTree askRandomTreeConfig() {
+        UserInput config = new UserInput();
+
+        System.out.println("Maximum amount of children?");
+        int maxChildren = Integer.parseInt(config.listenForResult());
+        System.out.println("Maximum depth?");
+        int maxDepth = Integer.parseInt(config.listenForResult());
+        System.out.println("Maximum number of labels?");
+        int maxLabel = Integer.parseInt(config.listenForResult());
+
+        RandomTree randomTree = new RandomTree(maxChildren, maxDepth, maxLabel);
+
+        boolean wasTriggered = config.askForTrigger(
+                "Do you want to have a tree with maximal depth? "
+                        + "(type 'y' or leave blank)", "y");
+        randomTree.maximalDepth(wasTriggered);
+
+        wasTriggered = config.askForTrigger(
+                "Do you want to have every node having the maximal "
+                        + "amount of children? (type 'y' or leave blank)", "y");
+        randomTree.maximalNodesWithChildren(wasTriggered);
+        return randomTree;
+    }
 
     public List<List<Node>> create() {
         ArrayList<Integer> arrayList = new ArrayList<>();
@@ -100,7 +125,8 @@ public class RandomTree {
     }
 
     private int howManyChildren() {
-        return maximalNodesWithChildren ? maxChildren : new Random().nextInt(maxChildren - 2 + 1) + 2;
+        return maximalNodesWithChildren ? maxChildren
+                : new Random().nextInt(maxChildren - 2 + 1) + 2;
     }
 
     private Boolean shouldHaveChildren() {

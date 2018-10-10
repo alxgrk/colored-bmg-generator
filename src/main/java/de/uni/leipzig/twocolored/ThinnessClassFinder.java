@@ -9,18 +9,18 @@ import java.util.Set;
 
 import de.uni.leipzig.model.DiGraph;
 import de.uni.leipzig.model.Node;
-import de.uni.leipzig.model.EquivalenceClass;
+import de.uni.leipzig.model.ThinnessClass;
 import de.uni.leipzig.model.edges.DiEdge;
 
-public class EquivalenceClassFinder {
+public class ThinnessClassFinder {
 
-    private Set<EquivalenceClass> ÄKlassen = new HashSet<EquivalenceClass>();
+    private Set<ThinnessClass> thinnessClasses = new HashSet<ThinnessClass>();
 
     private Map<Node, List<Node>> outerN = new HashMap<>();
 
     private Map<Node, List<Node>> innerN = new HashMap<>();
 
-    public Set<EquivalenceClass> findFrom(DiGraph graph) {
+    public Set<ThinnessClass> findFrom(DiGraph graph) {
 
         // erstelle listen-listen mit inneren und äußeren Nachbarn
 
@@ -46,11 +46,11 @@ public class EquivalenceClassFinder {
 
         for (Node n : graph.getNodes()) {
 
-            if (nodeAlreadyInÄk(n))
+            if (nodeAlreadyInTc(n))
                 continue;
 
-            EquivalenceClass ÄK = new EquivalenceClass();
-            ÄK.add(n);
+            ThinnessClass tc = new ThinnessClass();
+            tc.add(n);
 
             for (Node nextNode : graph.getNodes()) {
 
@@ -61,20 +61,20 @@ public class EquivalenceClassFinder {
                         .containsAll(outerN.get(n))
                         && innerN.get(n).containsAll(innerN.get(nextNode)) && innerN.get(nextNode)
                                 .containsAll(innerN.get(n))) {
-                    ÄK.add(nextNode);
+                    tc.add(nextNode);
                 }
             }
 
-            ÄKlassen.add(ÄK);
+            thinnessClasses.add(tc);
         }
 
-        return ÄKlassen;
+        return thinnessClasses;
     }
 
-    private boolean nodeAlreadyInÄk(Node n) {
+    private boolean nodeAlreadyInTc(Node n) {
         boolean skip = false;
-        for (EquivalenceClass äk : ÄKlassen) {
-            skip = äk.contains(n);
+        for (ThinnessClass tc : thinnessClasses) {
+            skip = tc.contains(n);
             if (skip)
                 break;
         }

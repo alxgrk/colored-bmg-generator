@@ -52,22 +52,22 @@ public class HierarchyTest {
     Set<Node> rq1_10 = Sets.newHashSet(one, two, three, four, five,
             six, seven, eight, nine, ten);
     
-    Map<EquivalenceClass, Reachables> rqs;
+    Map<ThinnessClass, Reachables> rqs;
     
     // @formatter:on
 
     @Before
     public void setUp() throws Exception {
 
-        // Äks:
-        EquivalenceClass a = new EquivalenceClass(one);
-        EquivalenceClass b = new EquivalenceClass(two);
-        EquivalenceClass c = new EquivalenceClass(three);
-        EquivalenceClass d = new EquivalenceClass(four);
-        EquivalenceClass e = new EquivalenceClass(five);
-        EquivalenceClass f = new EquivalenceClass(six);
-        EquivalenceClass g = new EquivalenceClass(seven, eight);
-        EquivalenceClass h = new EquivalenceClass(nine, ten);
+        // TCs:
+        ThinnessClass a = new ThinnessClass(one);
+        ThinnessClass b = new ThinnessClass(two);
+        ThinnessClass c = new ThinnessClass(three);
+        ThinnessClass d = new ThinnessClass(four);
+        ThinnessClass e = new ThinnessClass(five);
+        ThinnessClass f = new ThinnessClass(six);
+        ThinnessClass g = new ThinnessClass(seven, eight);
+        ThinnessClass h = new ThinnessClass(nine, ten);
 
         Reachables r12 = new Reachables(null, null, rq12);
         Reachables r1234 = new Reachables(null, null, rq1234);

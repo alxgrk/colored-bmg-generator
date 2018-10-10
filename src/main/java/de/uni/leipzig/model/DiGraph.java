@@ -8,7 +8,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
 import de.uni.leipzig.model.edges.DiEdge;
-import de.uni.leipzig.twocolored.EquivalenceClassFinder;
+import de.uni.leipzig.twocolored.ThinnessClassFinder;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
@@ -21,64 +21,64 @@ public class DiGraph {
 
     final Set<DiEdge> edges;
 
-    Set<EquivalenceClass> equivalenceClasses;
+    Set<ThinnessClass> thinnessClasses;
 
-    Map<EquivalenceClass, Neighbourhood> neighboursByEc;
+    Map<ThinnessClass, Neighbourhood> neighboursByTc;
 
-    Map<EquivalenceClass, Reachables> reachablesByEc;
+    Map<ThinnessClass, Reachables> reachablesByTc;
 
     public DiGraph(Set<Node> nodes, Set<DiEdge> edges) {
         this.nodes = ImmutableSet.copyOf(nodes);
         this.edges = ImmutableSet.copyOf(edges);
     }
 
-    public Set<EquivalenceClass> getEquivalenceClasses() {
-        if (equivalenceClasses == null) {
-            EquivalenceClassFinder ecFinder = new EquivalenceClassFinder();
-            this.equivalenceClasses = ImmutableSet.copyOf(ecFinder.findFrom(this));
+    public Set<ThinnessClass> getThinnessClasses() {
+        if (thinnessClasses == null) {
+            ThinnessClassFinder tcFinder = new ThinnessClassFinder();
+            this.thinnessClasses = ImmutableSet.copyOf(tcFinder.findFrom(this));
         }
 
-        return equivalenceClasses;
+        return thinnessClasses;
     }
 
-    public Map<EquivalenceClass, Neighbourhood> getNeighboursByEc() {
-        if (neighboursByEc == null) {
-            this.neighboursByEc = Maps.asMap(getEquivalenceClasses(),
-                    ec -> new Neighbourhood(ec, edges));
+    public Map<ThinnessClass, Neighbourhood> getNeighboursByTc() {
+        if (neighboursByTc == null) {
+            this.neighboursByTc = Maps.asMap(getThinnessClasses(),
+                    tc -> new Neighbourhood(tc, edges));
         }
 
-        return neighboursByEc;
+        return neighboursByTc;
     }
 
-    public Set<Node> getN1(EquivalenceClass ec) {
-        return getNeighboursByEc().get(ec).getN1();
+    public Set<Node> getN1(ThinnessClass tc) {
+        return getNeighboursByTc().get(tc).getN1();
     }
 
-    public Set<Node> getN2(EquivalenceClass ec) {
-        return getNeighboursByEc().get(ec).getN2();
+    public Set<Node> getN2(ThinnessClass tc) {
+        return getNeighboursByTc().get(tc).getN2();
     }
 
-    public Set<Node> getN3(EquivalenceClass ec) {
-        return getNeighboursByEc().get(ec).getN3();
+    public Set<Node> getN3(ThinnessClass tc) {
+        return getNeighboursByTc().get(tc).getN3();
     }
 
-    public Set<Node> inNeighboursOf(EquivalenceClass ec) {
-        return getNeighboursByEc().get(ec).getNIn();
+    public Set<Node> inNeighboursOf(ThinnessClass tc) {
+        return getNeighboursByTc().get(tc).getNIn();
     }
 
-    public Map<EquivalenceClass, Reachables> getReachablesByEc() {
-        if (reachablesByEc == null) {
-            this.reachablesByEc = Maps.newHashMap();
-            for (Entry<EquivalenceClass, Neighbourhood> entry : getNeighboursByEc().entrySet()) {
-                reachablesByEc.put(entry.getKey(), new Reachables(entry, getNeighboursByEc()));
+    public Map<ThinnessClass, Reachables> getReachablesByTc() {
+        if (reachablesByTc == null) {
+            this.reachablesByTc = Maps.newHashMap();
+            for (Entry<ThinnessClass, Neighbourhood> entry : getNeighboursByTc().entrySet()) {
+                reachablesByTc.put(entry.getKey(), new Reachables(entry, getNeighboursByTc()));
             }
         }
 
-        return reachablesByEc;
+        return reachablesByTc;
     }
 
     public Tree getHasseDiagram() {
-        Hierarchy hierarchy = new Hierarchy(getReachablesByEc());
+        Hierarchy hierarchy = new Hierarchy(getReachablesByTc());
         System.out.println("Hierarchy sets: " + hierarchy.getSets());
         return hierarchy.toHasseTree();
     }

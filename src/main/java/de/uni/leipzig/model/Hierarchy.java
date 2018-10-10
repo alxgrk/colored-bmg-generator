@@ -21,19 +21,19 @@ import lombok.Value;
 public class Hierarchy {
     Set<Set<Node>> sets;
 
-    public Hierarchy(Map<EquivalenceClass, Reachables> reachablesByÄk) {
+    public Hierarchy(Map<ThinnessClass, Reachables> reachablesByTc) {
         ImmutableSet.Builder<Set<Node>> setBuilder = ImmutableSet.builder();
 
-        reachablesByÄk.values()
+        reachablesByTc.values()
                 .stream()
                 .map(Reachables::getRq)
                 .filter(rq -> !rq.isEmpty())
                 .forEach(rq -> setBuilder.add(ImmutableSet.copyOf(rq)));
 
         ImmutableSet.Builder<Node> parentSetBuilder = ImmutableSet.builder();
-        reachablesByÄk.keySet()
-                .forEach(äk -> {
-                    parentSetBuilder.addAll(äk.getNodes());
+        reachablesByTc.keySet()
+                .forEach(tc -> {
+                    parentSetBuilder.addAll(tc.getNodes());
                 });
         setBuilder.add(parentSetBuilder.build());
 

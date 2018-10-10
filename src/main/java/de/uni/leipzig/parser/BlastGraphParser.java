@@ -82,7 +82,7 @@ public class BlastGraphParser {
         }
     }
 
-    public Pair<Set<Node>, Set<Triple>> parseTriple(File input) throws IOException {
+    public Pair<Set<Triple>, Set<Node>> parseTriple(File input) throws IOException {
 
         if (!input.exists() || !input.canRead()) {
             throw new IllegalArgumentException("File not readable!!");
@@ -121,7 +121,7 @@ public class BlastGraphParser {
                         });
                     });
 
-            return new Pair<>(nodes, triples);
+            return new Pair<>(triples, nodes);
         }
     }
 

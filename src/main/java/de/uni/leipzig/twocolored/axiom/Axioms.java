@@ -6,7 +6,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 
 import de.uni.leipzig.model.DiGraph;
-import de.uni.leipzig.model.EquivalenceClass;
+import de.uni.leipzig.model.ThinnessClass;
 import lombok.AccessLevel;
 import lombok.Getter;
 
@@ -17,8 +17,8 @@ public abstract class Axioms {
 
     public static final boolean checkAll(DiGraph graph) {
 
-        for (EquivalenceClass alpha : graph.getEquivalenceClasses()) {
-            for (EquivalenceClass beta : graph.getEquivalenceClasses()) {
+        for (ThinnessClass alpha : graph.getThinnessClasses()) {
+            for (ThinnessClass beta : graph.getThinnessClasses()) {
 
                 if (alpha == beta)
                     continue;
@@ -39,6 +39,6 @@ public abstract class Axioms {
         return true;
     }
 
-    abstract boolean check(DiGraph graph, EquivalenceClass alpha, EquivalenceClass beta);
+    abstract boolean check(DiGraph graph, ThinnessClass alpha, ThinnessClass beta);
 
 }

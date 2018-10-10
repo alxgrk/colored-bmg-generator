@@ -5,7 +5,7 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import de.uni.leipzig.model.DiGraph;
-import de.uni.leipzig.model.EquivalenceClass;
+import de.uni.leipzig.model.ThinnessClass;
 import de.uni.leipzig.model.Node;
 import lombok.EqualsAndHashCode;
 
@@ -13,7 +13,7 @@ import lombok.EqualsAndHashCode;
 public class Axiom1 extends Axioms {
 
     @Override
-    public boolean check(DiGraph graph, EquivalenceClass alpha, EquivalenceClass beta) {
+    public boolean check(DiGraph graph, ThinnessClass alpha, ThinnessClass beta) {
 
         Set<Node> nAlpha = graph.getN1(alpha);
         Set<Node> nBeta = graph.getN1(beta);
