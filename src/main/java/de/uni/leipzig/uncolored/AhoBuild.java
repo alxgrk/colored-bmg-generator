@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.zalando.fauxpas.ThrowingRunnable;
+
 import com.google.common.collect.Sets;
 
 import de.uni.leipzig.model.Node;
@@ -15,6 +17,8 @@ import de.uni.leipzig.user.UserInput;
 public class AhoBuild {
 
     private List<Tree> connectedComponents;
+
+    private boolean alwaysMinCut = false;
 
     public Tree build(Set<Triple> tripleSetR, Set<Node> leaveSetL) {
 
@@ -27,20 +31,32 @@ public class AhoBuild {
         // exit if tree is no phylogenetic one
         if (connectedComponents.size() == 1) {
 
-            UserInput ui = new UserInput();
-
-            ui.register("exit", () -> {
-                throw new RuntimeException("no phylogenetic tree");
-            });
-
-            ui.register("min cut", () -> {
+            ThrowingRunnable<Exception> minCut = () -> {
                 DiGraphFromTripleSet creator = new DiGraphFromTripleSet();
 
                 connectedComponents = creator.create(tripleSetR, leaveSetL);
-            });
+            };
 
-            ui.askWithOptions(
-                    "How do you want to handle that there is only one connected component?");
+            if (alwaysMinCut)
+                minCut.run();
+            else {
+
+                UserInput ui = new UserInput();
+
+                ui.register("exit", () -> {
+                    throw new RuntimeException("no phylogenetic tree");
+                });
+
+                ui.register("min cut", minCut);
+
+                ui.register("always min cut", () -> {
+                    alwaysMinCut = true;
+                    minCut.run();
+                });
+
+                ui.askWithOptions(
+                        "How do you want to handle that there is only one connected component?");
+            }
         }
 
         // create invisible root node

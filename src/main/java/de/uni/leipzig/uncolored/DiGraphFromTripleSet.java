@@ -6,21 +6,22 @@ import java.util.Set;
 
 import org.jgrapht.Graph;
 import org.jgrapht.alg.flow.GusfieldGomoryHuCutTree;
-import org.jgrapht.graph.SimpleDirectedGraph;
+import org.jgrapht.graph.SimpleGraph;
 
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Tree;
 import de.uni.leipzig.model.Triple;
-import de.uni.leipzig.model.edges.DiEdge;
+import de.uni.leipzig.model.edges.Edge;
 
 public class DiGraphFromTripleSet {
 
-    private Graph<Node, DiEdge> g = new SimpleDirectedGraph<>(DiEdge.class);
+    private Graph<Node, Edge> g = new SimpleGraph<>(Edge.class);
 
     public List<Tree> create(Set<Triple> tripleSetR, Set<Node> leaveSetL) {
 
-        Graph<Node, DiEdge> graph = diGraphFromTripleSet(tripleSetR);
-        GusfieldGomoryHuCutTree<Node, DiEdge> minCutGraph = new GusfieldGomoryHuCutTree<>(graph);
+        // note that the GusfieldGomoryHuCutTree requires the graph to be undirected
+        Graph<Node, Edge> graph = diGraphFromTripleSet(tripleSetR);
+        GusfieldGomoryHuCutTree<Node, Edge> minCutGraph = new GusfieldGomoryHuCutTree<>(graph);
         minCutGraph.calculateMinCut();
         Set<Node> sink = minCutGraph.getSinkPartition();
         Set<Node> source = minCutGraph.getSourcePartition();
@@ -42,14 +43,16 @@ public class DiGraphFromTripleSet {
         return ConnectedComponents.construct(cutTripleSet, leaveSetL);
     }
 
-    private Graph<Node, DiEdge> diGraphFromTripleSet(Set<Triple> tripleSetR) {
+    private Graph<Node, Edge> diGraphFromTripleSet(Set<Triple> tripleSetR) {
 
         for (Triple triple : tripleSetR) {
             g.addVertex(triple.getNode());
             g.addVertex(triple.getEdge().getFirst());
             g.addVertex(triple.getEdge().getSecond());
 
-            g.addEdge(triple.getEdge().getFirst(), triple.getEdge().getSecond());
+            // FIXME
+            g.addEdge(triple.getEdge().getFirst(), triple.getEdge().getSecond(),
+                    triple.getEdge());
         }
 
         return g;

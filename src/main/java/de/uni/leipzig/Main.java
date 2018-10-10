@@ -85,17 +85,8 @@ public class Main {
         });
 
         main.register("create a random tree", () -> {
-            RandomTree randomTree = new RandomTree(2, 5, 2);
 
-            UserInput maxDepth = new UserInput();
-            System.out.println("Do you want to have a tree with maximal depth? "
-                    + "(type 'y' or leave blank)");
-            randomTree.maximalDepth("y".equals(maxDepth.listenForResult()));
-
-            UserInput maxChildren = new UserInput();
-            System.out.println("Do you want to have every node having the maximal "
-                    + "amount of children? (type 'y' or leave blank)");
-            randomTree.maximalNodesWithChildren("y".equals(maxChildren.listenForResult()));
+            RandomTree randomTree = configRandomTree();
 
             List<List<Node>> adjList = randomTree.create();
 
@@ -195,6 +186,30 @@ public class Main {
                 .findInformativeTriples(triples, diGraph);
 
         ahoBuild(Util.uglyCast(informativeTriples), informativeTripleFinder.getLeaves());
+    }
+
+    private RandomTree configRandomTree() {
+        UserInput config = new UserInput();
+
+        System.out.println("Maximum amount of children?");
+        int maxChildren = Integer.parseInt(config.listenForResult());
+        System.out.println("Maximum depth?");
+        int maxDepth = Integer.parseInt(config.listenForResult());
+        System.out.println("Maximum number of labels?");
+        int maxLabel = Integer.parseInt(config.listenForResult());
+
+        RandomTree randomTree = new RandomTree(maxChildren, maxDepth, maxLabel);
+
+        boolean wasTriggered = config.askForTrigger(
+                "Do you want to have a tree with maximal depth? "
+                        + "(type 'y' or leave blank)", "y");
+        randomTree.maximalDepth(wasTriggered);
+
+        wasTriggered = config.askForTrigger(
+                "Do you want to have every node having the maximal "
+                        + "amount of children? (type 'y' or leave blank)", "y");
+        randomTree.maximalNodesWithChildren(wasTriggered);
+        return randomTree;
     }
 
 }

@@ -16,9 +16,9 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public class RandomTree {
 
-    private final int maxKinder;
+    private final int maxChildren;
 
-    private final int maxTiefe;
+    private final int maxDepth;
 
     private final int maxLabel;
 
@@ -49,7 +49,7 @@ public class RandomTree {
         Node node = Node.of(randomLabel(), ids);
         childList.add(node);
 
-        if (shouldHaveChildren == true && ids.size() < maxTiefe) {
+        if (shouldHaveChildren == true && ids.size() < maxDepth) {
 
             // bestimme wie viele Abzweige
             int zahl = howManyChildren();
@@ -100,7 +100,7 @@ public class RandomTree {
     }
 
     private int howManyChildren() {
-        return maximalNodesWithChildren ? maxKinder : new Random().nextInt(maxKinder - 2 + 1) + 2;
+        return maximalNodesWithChildren ? maxChildren : new Random().nextInt(maxChildren - 2 + 1) + 2;
     }
 
     private Boolean shouldHaveChildren() {

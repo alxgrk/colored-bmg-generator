@@ -18,4 +18,8 @@ public class Edge extends AbstractEdge<Node> {
     public String toString() {
         return getFirst() + "," + getSecond();
     }
+
+    public DiEdge asDiEdge() {
+        return new DiEdge(getFirst(), getSecond());
+    }
 }

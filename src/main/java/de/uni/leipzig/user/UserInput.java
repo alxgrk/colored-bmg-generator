@@ -12,7 +12,7 @@ public class UserInput {
 
     private Scanner scanner;
 
-    private Map<String, Runnable> actions = Maps.newHashMap();
+    private Map<String, Runnable> actions = Maps.newLinkedHashMap();
 
     public UserInput() {
         scanner = new Scanner(System.in);
@@ -60,6 +60,11 @@ public class UserInput {
         }
 
         listen(i -> shortHand.get(i));
+    }
+
+    public boolean askForTrigger(String question, String trigger) {
+        System.out.println(question);
+        return listenForResult().equals(trigger);
     }
 
 }

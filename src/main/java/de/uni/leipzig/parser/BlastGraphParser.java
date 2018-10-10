@@ -112,6 +112,9 @@ public class BlastGraphParser {
                                 Triple t1 = new DefaultTriple(new Edge(node1, node2), n);
                                 Triple t2 = new DefaultTriple(new Edge(node2, node1), n);
 
+                                // FIXME only use triples that make sense (for ab|c, c needs to be
+                                // selected carefully)
+
                                 triples.add(t1);
                                 triples.add(t2);
                             }
