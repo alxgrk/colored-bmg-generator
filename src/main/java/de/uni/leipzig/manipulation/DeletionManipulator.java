@@ -24,10 +24,7 @@ public class DeletionManipulator extends Manipulator {
 
         Iterator<Triple> iterator = tripleSet.iterator();
         while (toBeDeleted-- != 0) {
-            if (iterator.hasNext()) {
-                triplesToRemove.add(iterator.next());
-            } else
-                break;
+            triplesToRemove.add(iterator.next());
         }
 
         tripleSet.removeAll(triplesToRemove);

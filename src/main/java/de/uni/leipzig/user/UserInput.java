@@ -1,25 +1,32 @@
 package de.uni.leipzig.user;
 
-import java.util.Map;
-import java.util.Scanner;
+import java.io.InputStream;
+import java.util.*;
 import java.util.function.Function;
 
-import org.zalando.fauxpas.ThrowingConsumer;
-import org.zalando.fauxpas.ThrowingRunnable;
+import org.zalando.fauxpas.*;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
 
 import de.uni.leipzig.method.TreeCreation;
 import de.uni.leipzig.model.AdjacencyList;
+import lombok.*;
 
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@VisibleForTesting))
 public class UserInput {
 
-    private Scanner scanner;
+    private final Scanner scanner;
 
+    @Getter(value = AccessLevel.PROTECTED, onMethod = @__(@VisibleForTesting))
     private Map<String, Runnable> actions = Maps.newLinkedHashMap();
 
     public UserInput() {
-        scanner = new Scanner(System.in);
+        this(System.in);
+    }
+
+    public UserInput(InputStream in) {
+        this.scanner = new Scanner(in);
     }
 
     public void register(String trigger, ThrowingRunnable<Exception> action)
@@ -80,6 +87,10 @@ public class UserInput {
     public boolean askForTrigger(String question, String trigger) {
         System.out.println(question);
         return listenForResult().equals(trigger);
+    }
+
+    public void clear() {
+        actions.clear();
     }
 
 }

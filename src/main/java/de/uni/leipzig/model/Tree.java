@@ -1,16 +1,14 @@
 package de.uni.leipzig.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.*;
 
-import lombok.NonNull;
-import lombok.Value;
+import lombok.*;
+import lombok.experimental.*;
 
 @Value
+@NonFinal
 public class Tree implements Comparable<Tree> {
 
     List<Tree> subTrees;

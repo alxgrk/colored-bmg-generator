@@ -7,7 +7,7 @@ import lombok.experimental.NonFinal;
 
 @Value
 @NonFinal
-public class DefaultTriple implements Triple {
+public class DefaultTriple implements Triple, Comparable<Triple> {
 
     @NonNull
     @NonFinal
@@ -30,6 +30,19 @@ public class DefaultTriple implements Triple {
     @Override
     public void invertEdge() {
         edge = new Edge(edge.getSecond(), edge.getFirst());
+    }
+
+    @Override
+    public int compareTo(Triple o) {
+        int firstNodeComp = getEdge().getFirst().compareTo(o.getEdge().getFirst());
+        if (firstNodeComp == 0) {
+            int secondNodeComp = getEdge().getSecond().compareTo(o.getEdge().getSecond());
+            if (secondNodeComp == 0) {
+                return getNode().compareTo(o.getNode());
+            } else
+                return secondNodeComp;
+        } else
+            return firstNodeComp;
     }
 
 }

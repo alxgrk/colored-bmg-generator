@@ -32,8 +32,7 @@ public class RandomTree {
     @Setter
     private boolean maximalDepth = false;
 
-    public static RandomTree askRandomTreeConfig() {
-        UserInput config = new UserInput();
+    public static RandomTree askRandomTreeConfig(UserInput config) {
 
         System.out.println("Maximum amount of children?");
         int maxChildren = Integer.parseInt(config.listenForResult());

@@ -28,11 +28,8 @@ public class InsertionManipulator extends Manipulator {
 
         Iterator<Triple> iterator = tripleSet.iterator();
         while (toBeInserted-- != 0) {
-            if (iterator.hasNext()) {
-                Triple nextTriple = iterator.next();
-                addSimilar(nextTriple, triplesToAdd, leaves);
-            } else
-                break;
+            Triple nextTriple = iterator.next();
+            addSimilar(nextTriple, triplesToAdd, leaves);
         }
 
         tripleSet.addAll(triplesToAdd);

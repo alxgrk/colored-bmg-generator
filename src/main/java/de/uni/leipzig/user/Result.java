@@ -1,8 +1,6 @@
 package de.uni.leipzig.user;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -13,10 +11,11 @@ public class Result<T> {
         return (Result<T>) new Result<>(null);
     }
 
-    T value;
+    private T value;
 
     public void fixValue(T value) {
-        this.value = value;
+        if (this.value == null)
+            this.value = value;
     }
 
 }

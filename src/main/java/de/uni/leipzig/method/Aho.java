@@ -2,19 +2,33 @@ package de.uni.leipzig.method;
 
 import java.util.Set;
 
-import de.uni.leipzig.manipulation.Manipulation;
-import de.uni.leipzig.model.AdjacencyList;
-import de.uni.leipzig.model.Node;
-import de.uni.leipzig.model.Tree;
-import de.uni.leipzig.model.Triple;
-import de.uni.leipzig.uncolored.AhoBuild;
-import de.uni.leipzig.uncolored.TripleFinder;
+import com.google.common.annotations.VisibleForTesting;
 
+import de.uni.leipzig.manipulation.Manipulation;
+import de.uni.leipzig.model.*;
+import de.uni.leipzig.uncolored.*;
+import de.uni.leipzig.user.UserInput;
+import lombok.*;
+
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@VisibleForTesting))
 class Aho implements TreeCreation {
+
+    private final AhoBuild ahoBuild;
+
+    private final UserInput input;
+
+    private final TripleFinder<Triple> tripleFinder;
+
+    Aho() {
+        this(new AhoBuild(), new UserInput());
+    }
+
+    protected Aho(AhoBuild ahoBuild, UserInput input) {
+        this(ahoBuild, input, new DefaultTripleFinder());
+    }
 
     @Override
     public void create(AdjacencyList adjList) {
-        TripleFinder tripleFinder = new TripleFinder();
         create(tripleFinder.findTriple(adjList), tripleFinder.getLeaves());
     }
 
@@ -22,9 +36,8 @@ class Aho implements TreeCreation {
     public void create(Set<Triple> triples, Set<Node> leaves) {
         System.out.println(triples.toString());
 
-        Manipulation.askForManipulation(triples, leaves);
+        new Manipulation(triples, leaves, input);
 
-        AhoBuild ahoBuild = new AhoBuild();
         Tree result = ahoBuild.build(triples, leaves);
 
         System.out.println(result.toNewickNotation());

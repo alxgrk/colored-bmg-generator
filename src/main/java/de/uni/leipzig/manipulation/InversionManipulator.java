@@ -21,11 +21,8 @@ public class InversionManipulator extends Manipulator {
 
         Iterator<Triple> iterator = tripleSet.iterator();
         while (toBeInverted-- != 0) {
-            if (iterator.hasNext()) {
-                Triple nextTriple = iterator.next();
-                nextTriple.invertEdge();
-            } else
-                break;
+            Triple nextTriple = iterator.next();
+            nextTriple.invertEdge();
         }
     }
 

@@ -1,19 +1,30 @@
 package de.uni.leipzig.uncolored;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+
+import static org.assertj.core.api.Assertions.*;
+
+import java.util.Set;
 
 import org.assertj.core.util.Lists;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.*;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.zalando.fauxpas.ThrowingRunnable;
 
 import com.google.common.collect.Sets;
 
-import de.uni.leipzig.model.DefaultTriple;
-import de.uni.leipzig.model.Node;
-import de.uni.leipzig.model.Tree;
-import de.uni.leipzig.model.Triple;
+import de.uni.leipzig.model.*;
 import de.uni.leipzig.model.edges.Edge;
+import de.uni.leipzig.user.UserInput;
 
+@RunWith(MockitoJUnitRunner.class)
 public class AhoBuildTest {
+
+    @Captor
+    ArgumentCaptor<ThrowingRunnable<Exception>> captor;
 
     @Test
     public void testAhoBuild() throws Exception {
@@ -49,4 +60,46 @@ public class AhoBuildTest {
                 .contains(three.toString())
                 .contains(four.toString());
     }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @Test
+    public void testAskForMinCut() throws Exception {
+        DiGraphFromTripleSet creator = mock(DiGraphFromTripleSet.class);
+        UserInput input = mock(UserInput.class);
+        Set triples = mock(Set.class);
+        Set leaves = mock(Set.class);
+
+        AhoBuild uut = new AhoBuild(creator, input);
+        uut.askForMinCut(triples, leaves);
+
+        assertThat(uut.isAlwaysMinCut()).isFalse();
+        verify(input).register(eq("exit"), captor.capture());
+        verify(input).register(eq("min cut"), captor.capture());
+        verify(input).register(eq("always min cut"), captor.capture());
+
+        assertThat(captor.getAllValues())
+                .anySatisfy(r -> {
+                    assertThatThrownBy(r::run)
+                            .isInstanceOf(RuntimeException.class)
+                            .hasMessage("no phylogenetic tree");
+                })
+                .anySatisfy(r -> {
+                    assertThatCode(r::run).doesNotThrowAnyException();
+
+                    r.run();
+                    verify(creator, atLeastOnce()).create(triples, leaves);
+                })
+                .anySatisfy(r -> {
+                    assertThatCode(r::run).doesNotThrowAnyException();
+
+                    r.run();
+                    assertThat(uut.isAlwaysMinCut()).isTrue();
+                    verify(creator, atLeastOnce()).create(triples, leaves);
+                });
+
+        // assert, that the creator was run once more, since 'alwaysMinCut' should be true now
+        uut.askForMinCut(triples, leaves);
+        verify(creator, atLeast(3)).create(triples, leaves);
+    }
+
 }

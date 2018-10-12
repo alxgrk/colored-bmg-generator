@@ -1,19 +1,13 @@
 package de.uni.leipzig.uncolored;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import de.uni.leipzig.model.AdjacencyList;
-import de.uni.leipzig.model.DefaultTriple;
-import de.uni.leipzig.model.Node;
-import de.uni.leipzig.model.Triple;
+import de.uni.leipzig.model.*;
 import de.uni.leipzig.model.edges.Edge;
 import lombok.Getter;
 
 @Getter
-public class TripleFinder {
+public class DefaultTripleFinder implements TripleFinder<Triple> {
 
     private Set<Node> leaves = new HashSet<>();
 

@@ -1,17 +1,23 @@
 package de.uni.leipzig.method;
 
-import de.uni.leipzig.model.AdjacencyList;
-import de.uni.leipzig.model.DiGraph;
-import de.uni.leipzig.model.Reachables;
-import de.uni.leipzig.model.Tree;
+import com.google.common.annotations.VisibleForTesting;
+
+import de.uni.leipzig.model.*;
 import de.uni.leipzig.twocolored.DiGraphExtractor;
 import de.uni.leipzig.twocolored.axiom.Axioms;
+import lombok.*;
 
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@VisibleForTesting))
 class ThinnessClass implements TreeCreation {
+
+    private final DiGraphExtractor extractor;
+
+    public ThinnessClass() {
+        this(new DiGraphExtractor());
+    }
 
     @Override
     public void create(AdjacencyList adjList) {
-        DiGraphExtractor extractor = new DiGraphExtractor();
         DiGraph graph = extractor.extract(adjList);
         create(graph);
     }
@@ -35,7 +41,7 @@ class ThinnessClass implements TreeCreation {
             throw new RuntimeException("Axioms not fulfilled!");
 
         Tree leastResolvedTree = graph.getHasseDiagram();
-        System.out.println(leastResolvedTree);
+        System.out.println(leastResolvedTree.toNewickNotation());
         System.out.println(leastResolvedTree.print());
     }
 

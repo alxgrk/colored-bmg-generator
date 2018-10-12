@@ -4,30 +4,38 @@ import static de.uni.leipzig.method.TreeCreation.Method.AHO;
 
 import java.util.Set;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import de.uni.leipzig.Util;
 import de.uni.leipzig.informative.InformativeTripleFinder;
 import de.uni.leipzig.informative.model.InformativeTriple;
-import de.uni.leipzig.model.AdjacencyList;
-import de.uni.leipzig.model.DiGraph;
-import de.uni.leipzig.model.Triple;
+import de.uni.leipzig.model.*;
+import lombok.*;
 
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@VisibleForTesting))
 class AhoInformative implements TreeCreation {
+
+    private final InformativeTripleFinder informativeTripleFinder;
+
+    private final TreeCreation aho;
+
+    public AhoInformative() {
+        this(new InformativeTripleFinder(), AHO.get());
+    }
 
     @Override
     public void create(AdjacencyList adjList) {
-        InformativeTripleFinder informativeTripleFinder = new InformativeTripleFinder();
         Set<InformativeTriple> informativeTriples = informativeTripleFinder
-                .findInformativeTriples(adjList);
+                .findTriple(adjList);
 
-        AHO.get().create(Util.uglyCast(informativeTriples), informativeTripleFinder.getLeaves());
+        aho.create(Util.uglyCast(informativeTriples), informativeTripleFinder.getLeaves());
     }
 
     @Override
     public void create(Set<Triple> triples, DiGraph diGraph) {
-        InformativeTripleFinder informativeTripleFinder = new InformativeTripleFinder();
         Set<InformativeTriple> informativeTriples = informativeTripleFinder
-                .findInformativeTriples(triples, diGraph);
+                .findTriple(triples, diGraph);
 
-        AHO.get().create(Util.uglyCast(informativeTriples), informativeTripleFinder.getLeaves());
+        aho.create(Util.uglyCast(informativeTriples), informativeTripleFinder.getLeaves());
     }
 }

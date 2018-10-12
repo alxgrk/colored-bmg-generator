@@ -1,24 +1,32 @@
 package de.uni.leipzig.uncolored;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.zalando.fauxpas.ThrowingRunnable;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 
-import de.uni.leipzig.model.Node;
-import de.uni.leipzig.model.Tree;
-import de.uni.leipzig.model.Triple;
+import de.uni.leipzig.model.*;
 import de.uni.leipzig.user.UserInput;
+import lombok.*;
 
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@VisibleForTesting))
 public class AhoBuild {
+
+    private final DiGraphFromTripleSet creator;
+
+    private final UserInput ui;
 
     private List<Tree> connectedComponents;
 
+    @Getter(value = AccessLevel.PROTECTED, onMethod = @__(@VisibleForTesting))
     private boolean alwaysMinCut = false;
+
+    public AhoBuild() {
+        this(new DiGraphFromTripleSet(), new UserInput());
+    }
 
     public Tree build(Set<Triple> tripleSetR, Set<Node> leaveSetL) {
 
@@ -30,33 +38,7 @@ public class AhoBuild {
 
         // exit if tree is no phylogenetic one
         if (connectedComponents.size() == 1) {
-
-            ThrowingRunnable<Exception> minCut = () -> {
-                DiGraphFromTripleSet creator = new DiGraphFromTripleSet();
-
-                connectedComponents = creator.create(tripleSetR, leaveSetL);
-            };
-
-            if (alwaysMinCut)
-                minCut.run();
-            else {
-
-                UserInput ui = new UserInput();
-
-                ui.register("exit", () -> {
-                    throw new RuntimeException("no phylogenetic tree");
-                });
-
-                ui.register("min cut", minCut);
-
-                ui.register("always min cut", () -> {
-                    alwaysMinCut = true;
-                    minCut.run();
-                });
-
-                ui.askWithOptions(
-                        "How do you want to handle that there is only one connected component?");
-            }
+            askForMinCut(tripleSetR, leaveSetL);
         }
 
         // create invisible root node
@@ -83,6 +65,32 @@ public class AhoBuild {
                     Tree newTree = i.addSubTree(t);
                     return newTree;
                 });
+    }
+
+    @VisibleForTesting
+    protected void askForMinCut(Set<Triple> tripleSetR, Set<Node> leaveSetL) {
+        ThrowingRunnable<Exception> minCut = () -> {
+            connectedComponents = creator.create(tripleSetR, leaveSetL);
+        };
+
+        if (alwaysMinCut)
+            minCut.run();
+        else {
+
+            ui.register("exit", () -> {
+                throw new RuntimeException("no phylogenetic tree");
+            });
+
+            ui.register("min cut", minCut);
+
+            ui.register("always min cut", () -> {
+                alwaysMinCut = true;
+                minCut.run();
+            });
+
+            ui.askWithOptions(
+                    "How do you want to handle that there is only one connected component?");
+        }
     }
 
     /**

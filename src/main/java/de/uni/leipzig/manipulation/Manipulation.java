@@ -4,53 +4,63 @@ import java.util.Set;
 
 import org.zalando.fauxpas.ThrowingRunnable;
 
-import de.uni.leipzig.model.Node;
-import de.uni.leipzig.model.Tree;
-import de.uni.leipzig.model.Triple;
+import com.google.common.annotations.VisibleForTesting;
+
+import de.uni.leipzig.model.*;
 import de.uni.leipzig.uncolored.AhoBuild;
 import de.uni.leipzig.user.UserInput;
-import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
 public class Manipulation {
 
     private final Set<Triple> triples;
 
     private final Set<Node> leaves;
 
-    public static void askForManipulation(Set<Triple> triples, Set<Node> leaves) {
-        UserInput manipulate = new UserInput();
+    private final UserInput manipulate;
 
-        manipulate.register("no", () -> {
+    private final AhoBuild ahoBuild;
+
+    public Manipulation(Set<Triple> triples, Set<Node> leaves) {
+        this(triples, leaves, new UserInput());
+    }
+
+    public Manipulation(Set<Triple> triples, Set<Node> leaves,
+            UserInput manipulate) {
+        this(triples, leaves, manipulate, new AhoBuild());
+    }
+
+    @VisibleForTesting
+    protected Manipulation(Set<Triple> triples, Set<Node> leaves,
+            UserInput manipulate, AhoBuild ahoBuild) {
+        this.triples = triples;
+        this.leaves = leaves;
+        this.manipulate = manipulate;
+        this.ahoBuild = ahoBuild;
+
+        this.manipulate.register("no", () -> {
         });
 
-        manipulate.register("yes", () -> {
-            Manipulation manipulation = new Manipulation(triples, leaves);
-            manipulation.apply();
-        });
+        this.manipulate.register("yes", this::apply);
 
-        manipulate.askWithOptions("Do you want to manipulate the triple set?");
+        this.manipulate.askWithOptions("Do you want to manipulate the triple set?");
     }
 
     public void apply() {
-        UserInput manipulationKind = new UserInput();
+        manipulate.clear();
 
-        manipulationKind.register("deletion", kind(DeletionManipulator.class));
-        manipulationKind.register("insertion", kind(InsertionManipulator.class));
-        manipulationKind.register("invert triples", kind(InversionManipulator.class));
+        manipulate.register("deletion", kind(DeletionManipulator.class));
+        manipulate.register("insertion", kind(InsertionManipulator.class));
+        manipulate.register("invert triples", kind(InversionManipulator.class));
 
-        manipulationKind.askWithOptions("What kind of manipulation do you want to apply?");
+        manipulate.askWithOptions("What kind of manipulation do you want to apply?");
     }
 
     private ThrowingRunnable<Exception> kind(Class<? extends Manipulator> manipulatorClass) {
         return () -> {
-            UserInput percentageInput = new UserInput();
-
             System.out.println("How many percent of the triple set should be manipulated?");
-            Integer percentage = Integer.parseInt(percentageInput.listenForResult());
+            Integer percentage = Integer.parseInt(manipulate.listenForResult());
 
             System.out.println("How the tree looked before:");
-            AhoBuild ahoBuild = new AhoBuild();
             Tree result = ahoBuild.build(triples, leaves);
 
             System.out.println(result.toNewickNotation());

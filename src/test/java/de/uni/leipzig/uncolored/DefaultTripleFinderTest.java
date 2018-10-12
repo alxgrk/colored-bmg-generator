@@ -14,7 +14,7 @@ import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.Triple;
 import de.uni.leipzig.model.edges.Edge;
 
-public class TripleFinderTest {
+public class DefaultTripleFinderTest {
 
     // @formatter:off
     // *
@@ -50,7 +50,7 @@ public class TripleFinderTest {
     @Test
     public void testFind() throws Exception {
 
-        TripleFinder uut = new TripleFinder();
+        DefaultTripleFinder uut = new DefaultTripleFinder();
         Set<Triple> actual = uut.findTriple(adjList);
 
         assertThat(actual).containsExactlyInAnyOrder(

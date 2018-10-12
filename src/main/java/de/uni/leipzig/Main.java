@@ -1,18 +1,13 @@
 package de.uni.leipzig;
 
-import static de.uni.leipzig.method.TreeCreation.Method.AHO;
-import static de.uni.leipzig.method.TreeCreation.Method.AHO_INFORMATIVE;
-import static de.uni.leipzig.method.TreeCreation.Method.THINNESS_CLASS;
+import static de.uni.leipzig.method.TreeCreation.Method.*;
 
 import java.io.File;
 import java.util.Set;
 
 import org.jgrapht.alg.util.Pair;
 
-import de.uni.leipzig.model.AdjacencyList;
-import de.uni.leipzig.model.DiGraph;
-import de.uni.leipzig.model.Node;
-import de.uni.leipzig.model.Triple;
+import de.uni.leipzig.model.*;
 import de.uni.leipzig.parser.BlastGraphParser;
 import de.uni.leipzig.user.UserInput;
 
@@ -35,7 +30,9 @@ public class Main {
     public static void main(String[] args) throws Exception {
         while (true) {
             UserInput repeat = new UserInput();
-            new Main();
+
+            UserInput main = new UserInput();
+            new Main(main);
 
             repeat.register("quit", () -> {
                 System.exit(0);
@@ -45,12 +42,11 @@ public class Main {
         }
     }
 
-    public Main() throws Exception {
-        UserInput main = new UserInput();
+    public Main(UserInput main) throws Exception {
 
         main.register("parse a file", () -> {
             BlastGraphParser blastGraphParser = new BlastGraphParser();
-            File file = blastGraphParser.getBlastGraphFile();
+            File file = blastGraphParser.getBlastGraphFile().getValue();
 
             // FIXME if >2 colors then ...
             // something like NColored.pass(this::thinnessClassBased, ...)
@@ -81,7 +77,8 @@ public class Main {
 
         main.register("create a random tree", () -> {
 
-            RandomTree randomTree = RandomTree.askRandomTreeConfig();
+            UserInput config = new UserInput();
+            RandomTree randomTree = RandomTree.askRandomTreeConfig(config);
 
             // FIXME if >2 colors then ...
             // something like NColored.pass(this::thinnessClassBased, ...)

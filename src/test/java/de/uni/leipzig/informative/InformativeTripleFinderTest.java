@@ -50,7 +50,7 @@ public class InformativeTripleFinderTest {
     public void testFind() throws Exception {
 
         InformativeTripleFinder uut = new InformativeTripleFinder();
-        Set<InformativeTriple> actual = uut.findInformativeTriples(adjList);
+        Set<InformativeTriple> actual = uut.findTriple(adjList);
 
         assertThat(actual).allMatch(t -> t instanceof InformativeTriple);
         assertThat(actual).containsExactlyInAnyOrder(

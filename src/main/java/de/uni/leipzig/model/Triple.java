@@ -2,7 +2,7 @@ package de.uni.leipzig.model;
 
 import de.uni.leipzig.model.edges.Edge;
 
-public interface Triple {
+public interface Triple extends Comparable<Triple> {
 
     Edge getEdge();
 

@@ -1,23 +1,17 @@
 package de.uni.leipzig.informative;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 
-import de.uni.leipzig.informative.model.InformativeTriple;
-import de.uni.leipzig.informative.model.ThreeNodeGraph;
-import de.uni.leipzig.model.AdjacencyList;
-import de.uni.leipzig.model.DiGraph;
-import de.uni.leipzig.model.Node;
-import de.uni.leipzig.model.Triple;
+import de.uni.leipzig.informative.model.*;
+import de.uni.leipzig.model.*;
 import de.uni.leipzig.twocolored.DiGraphExtractor;
-import de.uni.leipzig.uncolored.TripleFinder;
+import de.uni.leipzig.uncolored.DefaultTripleFinder;
 import lombok.Getter;
 
-public class InformativeTripleFinder {
+public class InformativeTripleFinder implements TripleFinder<InformativeTriple> {
 
     /**
      * The allowed frequencies for an {@link ThreeNodeGraph} to be isomorphic to the subgraphs X1,
@@ -30,21 +24,21 @@ public class InformativeTripleFinder {
             "211", "121", "112" // X4
     );
 
-    private TripleFinder tripleFinder = new TripleFinder();
+    private DefaultTripleFinder defaultTripleFinder = new DefaultTripleFinder();
 
     private DiGraphExtractor graphExtractor = new DiGraphExtractor();
 
     @Getter
     private Set<Node> leaves = new HashSet<>();
 
-    public Set<InformativeTriple> findInformativeTriples(AdjacencyList adjList) {
-        Set<Triple> triples = tripleFinder.findTriple(adjList);
+    public Set<InformativeTriple> findTriple(AdjacencyList adjList) {
+        Set<Triple> triples = defaultTripleFinder.findTriple(adjList);
         DiGraph graph = graphExtractor.extract(adjList);
 
-        return findInformativeTriples(triples, graph);
+        return findTriple(triples, graph);
     }
 
-    public Set<InformativeTriple> findInformativeTriples(Set<Triple> triples, DiGraph graph) {
+    public Set<InformativeTriple> findTriple(Set<Triple> triples, DiGraph graph) {
 
         List<ThreeNodeGraph> subgraphs = Lists.newArrayList();
 

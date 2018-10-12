@@ -61,4 +61,21 @@ public class TripleTest {
                 .contains(node2, node1);
     }
 
+    @Test
+    public void testCompareTo() throws Exception {
+        Node node1 = Node.of(0, Lists.newArrayList(1));
+        Node node2 = Node.of(1, Lists.newArrayList(2));
+        Node node3 = Node.of(0, Lists.newArrayList(3));
+
+        Triple t1 = new DefaultTriple(new Edge(node1, node2), node3);
+        Triple t2 = new DefaultTriple(new Edge(node2, node1), node3);
+        Triple t3 = new DefaultTriple(new Edge(node2, node3), node1);
+        Triple t4 = new DefaultTriple(new Edge(node3, node2), node1);
+        Triple t5 = new DefaultTriple(new Edge(node3, node2), node2);
+
+        assertThat(t1).isLessThan(t2);
+        assertThat(t2).isLessThan(t3);
+        assertThat(t3).isLessThan(t4);
+        assertThat(t4).isLessThan(t5);
+    }
 }
