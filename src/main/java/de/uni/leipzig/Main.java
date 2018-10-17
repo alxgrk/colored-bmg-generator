@@ -79,7 +79,7 @@ public class Main {
                 if (twoColored) {
                     tc.create(diGraph);
                 } else {
-                    nColored.by(tc, diGraph);
+                    nColored.by(g -> tc.create(g), diGraph);
                 }
             });
 

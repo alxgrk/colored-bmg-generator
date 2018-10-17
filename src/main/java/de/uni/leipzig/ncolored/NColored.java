@@ -2,9 +2,11 @@ package de.uni.leipzig.ncolored;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+
+import com.google.common.collect.Sets;
 
 import de.uni.leipzig.Util;
-import de.uni.leipzig.method.TreeCreation;
 import de.uni.leipzig.model.*;
 import de.uni.leipzig.uncolored.ConnectedComponentsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +20,7 @@ public class NColored {
         this(new ConnectedComponentsConstructor());
     }
 
-    public void by(TreeCreation tc, DiGraph diGraph) {
+    public void by(Function<DiGraph, Tree> creation, DiGraph diGraph) {
         // check for edges with same color
         checkColorOfEdges(diGraph);
 
@@ -44,15 +46,26 @@ public class NColored {
                     DiGraph stSubGraph = cc.subGraphForLabels(s, t);
 
                     // determine connected components
+                    List<DiGraph> stComponents = componentsConstructor.construct(stSubGraph);
 
                     // iterate over all connected components
-                    {
-                        // apply tc
+                    Tree stTree = stComponents.stream()
+                            .map(stCC -> {
+                                // apply tc
+                                Tree result = creation.apply(stCC);
 
-                        // exit if result is null
-                    }
+                                // exit if result is null
+                                checkOnlyHelpNodeTree(result);
+
+                                return result;
+                            })
+                            // concatenate all components under the root tree
+                            .reduce(new Tree(Sets.newHashSet(Node.helpNode())),
+                                    (i, subT) -> i.addSubTree(subT));
 
                     // append every subtree per connected component to new root r(s,t)
+                    // FIXME
+                    System.out.println(stTree.print());
                 }
             }
 
@@ -88,6 +101,12 @@ public class NColored {
                     }
                     return c2;
                 });
+    }
+
+    private void checkOnlyHelpNodeTree(Tree result) {
+        if (result.getNodes().size() == 1
+                && result.getNodes().get(0).equals(Node.helpNode()))
+            throw new RuntimeException("not a BMG");
     }
 
 }

@@ -28,12 +28,12 @@ class Aho implements TreeCreation {
     }
 
     @Override
-    public void create(AdjacencyList adjList) {
-        create(tripleFinder.findTriple(adjList), tripleFinder.getLeaves());
+    public Tree create(AdjacencyList adjList) {
+        return create(tripleFinder.findTriple(adjList), tripleFinder.getLeaves());
     }
 
     @Override
-    public void create(Set<Triple> triples, Set<Node> leaves) {
+    public Tree create(Set<Triple> triples, Set<Node> leaves) {
         System.out.println(triples.toString());
 
         new Manipulation(triples, leaves, input);
@@ -42,5 +42,7 @@ class Aho implements TreeCreation {
 
         System.out.println(result.toNewickNotation());
         System.out.println(result.print());
+
+        return result;
     }
 }

@@ -2,6 +2,8 @@ package de.uni.leipzig.method;
 
 import java.util.Set;
 
+import com.google.common.collect.Sets;
+
 import de.uni.leipzig.model.*;
 import lombok.RequiredArgsConstructor;
 
@@ -11,15 +13,18 @@ import lombok.RequiredArgsConstructor;
  */
 public interface TreeCreation {
 
-    void create(AdjacencyList adjList);
+    Tree create(AdjacencyList adjList);
 
-    default void create(Set<Triple> triples, DiGraph diGraph) {
+    default Tree create(Set<Triple> triples, DiGraph diGraph) {
+        return new Tree(Sets.newHashSet(Node.helpNode()));
     }
 
-    default void create(Set<Triple> triples, Set<Node> leaves) {
+    default Tree create(Set<Triple> triples, Set<Node> leaves) {
+        return new Tree(Sets.newHashSet(Node.helpNode()));
     }
 
-    default void create(DiGraph graph) {
+    default Tree create(DiGraph graph) {
+        return new Tree(Sets.newHashSet(Node.helpNode()));
     }
 
     @RequiredArgsConstructor

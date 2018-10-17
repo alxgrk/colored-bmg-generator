@@ -5,13 +5,13 @@ import static org.mockito.Mockito.*;
 import org.junit.Test;
 
 import de.uni.leipzig.model.*;
-import de.uni.leipzig.twocolored.DiGraphExtractor;
+import de.uni.leipzig.twocolored.DiGraphExtractor2;
 
 public class ThinnessClassTest {
 
     @Test
     public void testCreate_AdjacencyList() throws Exception {
-        DiGraphExtractor extractor = mock(DiGraphExtractor.class);
+        DiGraphExtractor2 extractor = mock(DiGraphExtractor2.class);
         AdjacencyList adjList = mock(AdjacencyList.class);
         DiGraph diGraph = mock(DiGraph.class);
         Tree tree = mock(Tree.class);

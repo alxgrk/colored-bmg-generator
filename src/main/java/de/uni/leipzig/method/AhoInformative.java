@@ -24,18 +24,18 @@ class AhoInformative implements TreeCreation {
     }
 
     @Override
-    public void create(AdjacencyList adjList) {
+    public Tree create(AdjacencyList adjList) {
         Set<InformativeTriple> informativeTriples = informativeTripleFinder
                 .findTriple(adjList);
 
-        aho.create(Util.uglyCast(informativeTriples), informativeTripleFinder.getLeaves());
+        return aho.create(Util.uglyCast(informativeTriples), informativeTripleFinder.getLeaves());
     }
 
     @Override
-    public void create(Set<Triple> triples, DiGraph diGraph) {
+    public Tree create(Set<Triple> triples, DiGraph diGraph) {
         Set<InformativeTriple> informativeTriples = informativeTripleFinder
                 .findTriple(triples, diGraph);
 
-        aho.create(Util.uglyCast(informativeTriples), informativeTripleFinder.getLeaves());
+        return aho.create(Util.uglyCast(informativeTriples), informativeTripleFinder.getLeaves());
     }
 }
