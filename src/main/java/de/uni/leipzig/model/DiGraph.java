@@ -19,7 +19,7 @@ public class DiGraph {
 
     final Set<DiEdge> edges;
 
-    final Set<String> labels;
+    final Set<Color> colors;
 
     Set<ThinnessClass> thinnessClasses;
 
@@ -31,8 +31,8 @@ public class DiGraph {
         this.nodes = ImmutableSet.copyOf(nodes);
         this.edges = ImmutableSet.copyOf(edges);
 
-        this.labels = this.nodes.stream()
-                .map(Node::getLabel)
+        this.colors = this.nodes.stream()
+                .map(Node::getColor)
                 .collect(Collectors.toSet());
     }
 
@@ -87,16 +87,16 @@ public class DiGraph {
         return hierarchy.toHasseTree();
     }
 
-    public DiGraph subGraphForLabels(String s, String t) {
+    public DiGraph subGraphForLabels(Color s, Color t) {
         Set<Node> stNodes = nodes.stream()
-                .filter(n -> n.getLabel().equals(s) || n.getLabel().equals(t))
+                .filter(n -> n.getColor().equals(s) || n.getColor().equals(t))
                 .collect(Collectors.toSet());
 
         Set<DiEdge> stEdges = edges.stream()
-                .filter(e -> (e.getFirst().getLabel().equals(s)
-                        || e.getFirst().getLabel().equals(t))
-                        && (e.getSecond().getLabel().equals(s)
-                                || e.getSecond().getLabel().equals(t)))
+                .filter(e -> (e.getFirst().getColor().equals(s)
+                        || e.getFirst().getColor().equals(t))
+                        && (e.getSecond().getColor().equals(s)
+                                || e.getSecond().getColor().equals(t)))
                 .collect(Collectors.toSet());
 
         return new DiGraph(stNodes, stEdges);

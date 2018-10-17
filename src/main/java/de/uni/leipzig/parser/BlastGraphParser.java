@@ -62,13 +62,13 @@ public class BlastGraphParser {
             return reader.lines()
                     .filter(commentedLines)
                     .map(BlastGraphLine::new)
-                    .reduce(new HashMap<String, AtomicInteger>(),
+                    .reduce(new HashMap<Color, AtomicInteger>(),
                             (m, l) -> {
-                                String l1 = l.getGene1().asNode().getLabel();
-                                String l2 = l.getGene2().asNode().getLabel();
+                                Color s = l.getGene1().asNode().getColor();
+                                Color t = l.getGene2().asNode().getColor();
 
-                                increment(m, l1);
-                                increment(m, l2);
+                                increment(m, s);
+                                increment(m, t);
 
                                 return m;
                             }, (m1, m2) -> {
@@ -79,10 +79,10 @@ public class BlastGraphParser {
         }
     }
 
-    private void increment(Map<String, AtomicInteger> m, String l) {
-        AtomicInteger v = m.get(l);
+    private void increment(Map<Color, AtomicInteger> m, Color c) {
+        AtomicInteger v = m.get(c);
         if (v == null) {
-            m.put(l, new AtomicInteger(0));
+            m.put(c, new AtomicInteger(0));
         } else {
             v.incrementAndGet();
         }
@@ -137,7 +137,7 @@ public class BlastGraphParser {
                         nodes.forEach(n -> {
 
                             if (!n.equals(node1) && !n.equals(node2)
-                                    && oneWithEqualLabel(n, node1, node2)) {
+                                    && oneWithEqualColor(n, node1, node2)) {
 
                                 Triple t1 = new DefaultTriple(new Edge(node1, node2), n);
                                 Triple t2 = new DefaultTriple(new Edge(node2, node1), n);
@@ -161,11 +161,11 @@ public class BlastGraphParser {
         }
     }
 
-    private boolean oneWithEqualLabel(Node ofInterest, Node n1, Node n2) {
-        return (ofInterest.getLabel().equals(n1.getLabel())
-                && !ofInterest.getLabel().equals(n2.getLabel()))
-                || (ofInterest.getLabel().equals(n2.getLabel())
-                        && !ofInterest.getLabel().equals(n1.getLabel()));
+    private boolean oneWithEqualColor(Node ofInterest, Node n1, Node n2) {
+        return (ofInterest.getColor().equals(n1.getColor())
+                && !ofInterest.getColor().equals(n2.getColor()))
+                || (ofInterest.getColor().equals(n2.getColor())
+                        && !ofInterest.getColor().equals(n1.getColor()));
     }
 
 }

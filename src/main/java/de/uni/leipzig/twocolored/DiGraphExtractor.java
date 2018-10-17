@@ -1,13 +1,8 @@
 package de.uni.leipzig.twocolored;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import de.uni.leipzig.model.AdjacencyList;
-import de.uni.leipzig.model.DiGraph;
-import de.uni.leipzig.model.Node;
+import de.uni.leipzig.model.*;
 import de.uni.leipzig.model.edges.DiEdge;
 
 public class DiGraphExtractor {
@@ -47,10 +42,9 @@ public class DiGraphExtractor {
 
                         Node thirdNode = thirdList.get(0);
 
-                        if (!firstNode.getLabel().equals(secondNode.getLabel()) &&
-                                (firstNode.getLabel().equals(thirdNode.getLabel()) || secondNode
-                                        .getLabel()
-                                        .equals(thirdNode.getLabel()))) {
+                        if (!firstNode.getColor().equals(secondNode.getColor()) &&
+                                (firstNode.getColor().equals(thirdNode.getColor())
+                                        || secondNode.getColor().equals(thirdNode.getColor()))) {
 
                             List<Integer> x = firstNode.getIds();
                             List<Integer> y = secondNode.getIds();
@@ -64,7 +58,7 @@ public class DiGraphExtractor {
 
                                 DiEdge edge;
 
-                                if (firstNode.getLabel().equals(thirdNode.getLabel())) {
+                                if (firstNode.getColor().equals(thirdNode.getColor())) {
                                     edge = new DiEdge(secondNode, firstNode);
                                 } else {
                                     edge = new DiEdge(firstNode, secondNode);

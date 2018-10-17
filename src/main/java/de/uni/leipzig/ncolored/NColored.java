@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import de.uni.leipzig.Util;
 import de.uni.leipzig.method.TreeCreation;
-import de.uni.leipzig.model.DiGraph;
+import de.uni.leipzig.model.*;
 import de.uni.leipzig.uncolored.ConnectedComponentsConstructor;
 import lombok.RequiredArgsConstructor;
 
@@ -33,8 +33,8 @@ public class NColored {
         for (DiGraph cc : components) {
 
             // for every two colors s,t
-            for (String s : cc.getLabels()) {
-                for (String t : cc.getLabels()) {
+            for (Color s : cc.getColors()) {
+                for (Color t : cc.getColors()) {
 
                     // s and t the same?
                     if (s.equals(t))
@@ -69,7 +69,7 @@ public class NColored {
     private void checkColorOfEdges(DiGraph diGraph) {
         diGraph.getEdges()
                 .stream()
-                .filter(e -> e.getFirst().getLabel().equals(e.getSecond().getLabel()))
+                .filter(e -> e.getFirst().getColor().equals(e.getSecond().getColor()))
                 .findAny()
                 .ifPresent(e -> {
                     throw new RuntimeException("not a BMG");
@@ -81,7 +81,7 @@ public class NColored {
         final int limit = components.size() / 2;
         components.stream()
                 .reduce((c1, c2) -> {
-                    if (!Util.equalSets(c1.getLabels(), c2.getLabels())) {
+                    if (!Util.equalSets(c1.getColors(), c2.getColors())) {
                         if (componentsWithDistinctColorSets.incrementAndGet() > limit) {
                             throw new RuntimeException("not a BMG");
                         }

@@ -1,10 +1,9 @@
 package de.uni.leipzig;
 
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.util.List;
 
@@ -13,8 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import de.uni.leipzig.model.AdjacencyList;
-import de.uni.leipzig.model.Node;
+import de.uni.leipzig.model.*;
 import de.uni.leipzig.user.UserInput;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -59,7 +57,8 @@ public class RandomTreeTest {
         assertThat(adjList).allMatch(n -> n.size() <= 3);
 
         assertThat(adjList).allSatisfy(n -> {
-            assertThat(n).allMatch(c -> c.getLabel().equals("0") || c.getLabel().equals("1"));
+            assertThat(n).allMatch(c -> c.getColor().toString().equals("0")
+                    || c.getColor().toString().equals("1"));
         });
     }
 }
