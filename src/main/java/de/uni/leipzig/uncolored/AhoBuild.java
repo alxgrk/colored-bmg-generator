@@ -19,13 +19,15 @@ public class AhoBuild {
 
     private final UserInput ui;
 
+    private final ConnectedComponentsConstructor components;
+
     private List<Tree> connectedComponents;
 
     @Getter(value = AccessLevel.PROTECTED, onMethod = @__(@VisibleForTesting))
     private boolean alwaysMinCut = false;
 
     public AhoBuild() {
-        this(new DiGraphFromTripleSet(), new UserInput());
+        this(new DiGraphFromTripleSet(), new UserInput(), new ConnectedComponentsConstructor());
     }
 
     public Tree build(Set<Triple> tripleSetR, Set<Node> leaveSetL) {
@@ -34,7 +36,7 @@ public class AhoBuild {
         if (leaveSetL.size() == 1)
             return new Tree(leaveSetL);
 
-        connectedComponents = ConnectedComponents.construct(tripleSetR, leaveSetL);
+        connectedComponents = components.construct(tripleSetR, leaveSetL);
 
         // exit if tree is no phylogenetic one
         if (connectedComponents.size() == 1) {

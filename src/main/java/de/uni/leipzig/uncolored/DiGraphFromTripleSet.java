@@ -1,19 +1,17 @@
 package de.uni.leipzig.uncolored;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.jgrapht.Graph;
 import org.jgrapht.alg.flow.GusfieldGomoryHuCutTree;
 import org.jgrapht.graph.SimpleGraph;
 
-import de.uni.leipzig.model.Node;
-import de.uni.leipzig.model.Tree;
-import de.uni.leipzig.model.Triple;
+import de.uni.leipzig.model.*;
 import de.uni.leipzig.model.edges.Edge;
 
 public class DiGraphFromTripleSet {
+
+    private final ConnectedComponentsConstructor components = new ConnectedComponentsConstructor();
 
     private Graph<Node, Edge> g = new SimpleGraph<>(Edge.class);
 
@@ -40,7 +38,7 @@ public class DiGraphFromTripleSet {
             }
         }
 
-        return ConnectedComponents.construct(cutTripleSet, leaveSetL);
+        return components.construct(cutTripleSet, leaveSetL);
     }
 
     private Graph<Node, Edge> diGraphFromTripleSet(Set<Triple> tripleSetR) {

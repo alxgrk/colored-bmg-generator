@@ -66,10 +66,11 @@ public class AhoBuildTest {
     public void testAskForMinCut() throws Exception {
         DiGraphFromTripleSet creator = mock(DiGraphFromTripleSet.class);
         UserInput input = mock(UserInput.class);
+        ConnectedComponentsConstructor components = mock(ConnectedComponentsConstructor.class);
         Set triples = mock(Set.class);
         Set leaves = mock(Set.class);
 
-        AhoBuild uut = new AhoBuild(creator, input);
+        AhoBuild uut = new AhoBuild(creator, input, components);
         uut.askForMinCut(triples, leaves);
 
         assertThat(uut.isAlwaysMinCut()).isFalse();

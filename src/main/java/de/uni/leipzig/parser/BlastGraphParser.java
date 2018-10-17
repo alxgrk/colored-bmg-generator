@@ -3,6 +3,8 @@ package de.uni.leipzig.parser;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.jgrapht.alg.util.Pair;
@@ -15,6 +17,8 @@ import de.uni.leipzig.model.edges.*;
 import de.uni.leipzig.user.*;
 
 public class BlastGraphParser {
+
+    private final Predicate<? super String> commentedLines = f -> !f.startsWith("#");
 
     public Result<File> getBlastGraphFile() throws Exception {
         return getBlastGraphFile(
@@ -49,11 +53,44 @@ public class BlastGraphParser {
         return blastFile;
     }
 
+    public Integer colorsIn(File input) throws IOException {
+
+        fileCheck(input);
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(input));) {
+
+            return reader.lines()
+                    .filter(commentedLines)
+                    .map(BlastGraphLine::new)
+                    .reduce(new HashMap<String, AtomicInteger>(),
+                            (m, l) -> {
+                                String l1 = l.getGene1().asNode().getLabel();
+                                String l2 = l.getGene2().asNode().getLabel();
+
+                                increment(m, l1);
+                                increment(m, l2);
+
+                                return m;
+                            }, (m1, m2) -> {
+                                m1.putAll(m2);
+                                return m1;
+                            })
+                    .size();
+        }
+    }
+
+    private void increment(Map<String, AtomicInteger> m, String l) {
+        AtomicInteger v = m.get(l);
+        if (v == null) {
+            m.put(l, new AtomicInteger(0));
+        } else {
+            v.incrementAndGet();
+        }
+    }
+
     public DiGraph parseDiGraph(File input) throws IOException {
 
-        if (!input.exists() || !input.canRead()) {
-            throw new IllegalArgumentException("File not readable!!");
-        }
+        fileCheck(input);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(input));) {
 
@@ -61,8 +98,8 @@ public class BlastGraphParser {
             Set<DiEdge> edges = Sets.newHashSet();
 
             reader.lines()
-                    .filter(f -> !f.startsWith("#"))
-                    .map(l -> new BlastGraphLine(l))
+                    .filter(commentedLines)
+                    .map(BlastGraphLine::new)
                     .forEach(l -> {
                         Node node1 = l.getGene1().asNode();
                         Node node2 = l.getGene2().asNode();
@@ -79,9 +116,7 @@ public class BlastGraphParser {
 
     public Pair<Set<Triple>, Set<Node>> parseTriple(File input) throws IOException {
 
-        if (!input.exists() || !input.canRead()) {
-            throw new IllegalArgumentException("File not readable!!");
-        }
+        fileCheck(input);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(input));) {
 
@@ -117,6 +152,12 @@ public class BlastGraphParser {
                     });
 
             return new Pair<>(triples, nodes);
+        }
+    }
+
+    private void fileCheck(File input) {
+        if (!input.exists() || !input.canRead()) {
+            throw new IllegalArgumentException("File not readable!!");
         }
     }
 

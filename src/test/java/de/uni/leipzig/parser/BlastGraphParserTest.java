@@ -56,6 +56,42 @@ public class BlastGraphParserTest {
     }
 
     @Test
+    public void testColorsIn_TwoColored() throws Exception {
+
+        File input = new File(BlastGraphParserTest.class.getResource("two-colored.blast-graph")
+                .toURI());
+
+        BlastGraphParser uut = new BlastGraphParser();
+        Integer count = uut.colorsIn(input);
+
+        assertThat(count).isEqualTo(2);
+    }
+
+    @Test
+    public void testColorsIn_ThreeColored() throws Exception {
+
+        File input = new File(BlastGraphParserTest.class.getResource("three-colored.blast-graph")
+                .toURI());
+
+        BlastGraphParser uut = new BlastGraphParser();
+        Integer count = uut.colorsIn(input);
+
+        assertThat(count).isEqualTo(3);
+    }
+
+    @Test
+    public void testColorsIn_FourColored() throws Exception {
+
+        File input = new File(BlastGraphParserTest.class.getResource("complete.blast-graph")
+                .toURI());
+
+        BlastGraphParser uut = new BlastGraphParser();
+        Integer count = uut.colorsIn(input);
+
+        assertThat(count).isEqualTo(4);
+    }
+
+    @Test
     public void testParseTriple() throws Exception {
 
         File input = new File(BlastGraphParserTest.class.getResource("two-colored.blast-graph")

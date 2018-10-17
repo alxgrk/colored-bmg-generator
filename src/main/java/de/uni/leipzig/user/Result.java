@@ -13,9 +13,10 @@ public class Result<T> {
 
     private T value;
 
-    public void fixValue(T value) {
+    public Result<T> fixValue(T value) {
         if (this.value == null)
             this.value = value;
+        return this;
     }
 
 }
