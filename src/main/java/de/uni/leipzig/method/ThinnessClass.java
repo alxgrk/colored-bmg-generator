@@ -2,18 +2,22 @@ package de.uni.leipzig.method;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import de.uni.leipzig.model.*;
-import de.uni.leipzig.twocolored.DiGraphExtractor;
+import de.uni.leipzig.model.AdjacencyList;
+import de.uni.leipzig.model.DiGraph;
+import de.uni.leipzig.model.Reachables;
+import de.uni.leipzig.model.Tree;
+import de.uni.leipzig.twocolored.DiGraphExtractor2;
 import de.uni.leipzig.twocolored.axiom.Axioms;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@VisibleForTesting))
 class ThinnessClass implements TreeCreation {
 
-    private final DiGraphExtractor extractor;
+    private final DiGraphExtractor2 extractor;
 
     public ThinnessClass() {
-        this(new DiGraphExtractor());
+        this(new DiGraphExtractor2());
     }
 
     @Override
