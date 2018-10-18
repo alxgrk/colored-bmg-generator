@@ -8,7 +8,7 @@ import lombok.experimental.NonFinal;
 @Value
 @NonFinal
 @EqualsAndHashCode(callSuper = true)
-public class Edge extends AbstractEdge<Node> {
+public class Edge extends AbstractPair<Node> {
 
     public Edge(Node first, Node second) {
         super(first, second);

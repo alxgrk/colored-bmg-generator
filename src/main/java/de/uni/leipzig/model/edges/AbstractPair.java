@@ -1,14 +1,12 @@
 package de.uni.leipzig.model.edges;
 
-import lombok.AllArgsConstructor;
-import lombok.NonNull;
-import lombok.Value;
+import lombok.*;
 import lombok.experimental.NonFinal;
 
 @Value
 @AllArgsConstructor
 @NonFinal
-public abstract class AbstractEdge<T> {
+public abstract class AbstractPair<T> {
 
     @NonNull
     T first;
@@ -16,6 +14,7 @@ public abstract class AbstractEdge<T> {
     @NonNull
     T second;
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -25,7 +24,7 @@ public abstract class AbstractEdge<T> {
         if (getClass() != obj.getClass())
             return false;
 
-        AbstractEdge<T> other = (AbstractEdge<T>) obj;
+        AbstractPair<T> other = (AbstractPair<T>) obj;
 
         if (first.equals(other.second) && second.equals(other.first))
             return true;
@@ -39,11 +38,9 @@ public abstract class AbstractEdge<T> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + first.hashCode();
-        result = prime * result + second.hashCode();
-        return result;
+        int hash1 = first.hashCode();
+        int hash2 = second.hashCode();
+        return hash1 > hash2 ? hash1 * 31 + hash2 : hash2 * 31 + hash1;
     }
 
 }

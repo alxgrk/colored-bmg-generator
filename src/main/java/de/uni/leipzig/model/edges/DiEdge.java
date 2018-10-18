@@ -2,7 +2,7 @@ package de.uni.leipzig.model.edges;
 
 import de.uni.leipzig.model.Node;
 
-public class DiEdge extends AbstractEdge<Node> {
+public class DiEdge extends AbstractPair<Node> {
 
     public DiEdge(Node from, Node to) {
         super(from, to);

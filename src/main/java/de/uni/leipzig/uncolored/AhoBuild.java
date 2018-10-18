@@ -102,8 +102,8 @@ public class AhoBuild {
     private Set<Triple> filter(Set<Node> subLeaveSet, Set<Triple> tripleSetR) {
         return tripleSetR.stream()
                 .filter(t -> subLeaveSet.contains(t.getEdge().getFirst())
-                        && subLeaveSet.contains(t.getEdge().getSecond()) && subLeaveSet.contains(t
-                                .getNode()))
+                        && subLeaveSet.contains(t.getEdge().getSecond())
+                        && subLeaveSet.contains(t.getNode()))
                 .collect(Collectors.toSet());
     }
 

@@ -79,6 +79,7 @@ public class ConnectedComponentsConstructor {
 
         Map<Integer, List<Entry<Node, Integer>>> entriesByCount = marker.stream()
                 .collect(Collectors.groupingBy(Entry::getValue));
+        marker.clear();
 
         return entriesByCount.values()
                 .stream()

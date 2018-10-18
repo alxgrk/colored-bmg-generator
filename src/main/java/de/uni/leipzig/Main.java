@@ -79,7 +79,10 @@ public class Main {
                 if (twoColored) {
                     tc.create(diGraph);
                 } else {
-                    nColored.by(g -> tc.create(g), diGraph);
+                    Tree result = nColored.by(g -> tc.create(g), diGraph);
+
+                    System.out.println(result.toNewickNotation());
+                    System.out.println(result.print());
                 }
             });
 
