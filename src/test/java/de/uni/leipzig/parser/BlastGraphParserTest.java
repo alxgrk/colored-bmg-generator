@@ -30,8 +30,7 @@ public class BlastGraphParserTest {
         File cwd = new File(getClass().getProtectionDomain()
                 .getCodeSource()
                 .getLocation()
-                .toURI()
-                .getPath());
+                .getFile());
 
         BlastGraphParser uut = new BlastGraphParser();
         Result<File> file = uut.getBlastGraphFile(cwd, mockInput);

@@ -90,7 +90,8 @@ public class AhoBuildTest {
                     r.run();
                     verify(creator, atLeastOnce()).create(triples, leaves);
                 })
-                .anySatisfy(r -> {
+                .anySatisfy(o -> {
+                    Runnable r = (Runnable) o;
                     assertThatCode(r::run).doesNotThrowAnyException();
 
                     r.run();
