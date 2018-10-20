@@ -2,14 +2,10 @@ package de.uni.leipzig.method;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import de.uni.leipzig.model.AdjacencyList;
-import de.uni.leipzig.model.DiGraph;
-import de.uni.leipzig.model.Reachables;
-import de.uni.leipzig.model.Tree;
+import de.uni.leipzig.model.*;
 import de.uni.leipzig.twocolored.DiGraphExtractor2;
 import de.uni.leipzig.twocolored.axiom.Axioms;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@VisibleForTesting))
 class ThinnessClass implements TreeCreation {
@@ -21,13 +17,13 @@ class ThinnessClass implements TreeCreation {
     }
 
     @Override
-    public void create(AdjacencyList adjList) {
+    public Tree create(AdjacencyList adjList) {
         DiGraph graph = extractor.extract(adjList);
-        create(graph);
+        return create(graph);
     }
 
     @Override
-    public void create(DiGraph graph) {
+    public Tree create(DiGraph graph) {
 
         System.out.println("Nodes: " + graph.getNodes());
         System.out.println("Edges: " + graph.getEdges());
@@ -47,6 +43,8 @@ class ThinnessClass implements TreeCreation {
         Tree leastResolvedTree = graph.getHasseDiagram();
         System.out.println(leastResolvedTree.toNewickNotation());
         System.out.println(leastResolvedTree.print());
+
+        return leastResolvedTree;
     }
 
 }

@@ -1,21 +1,27 @@
 package de.uni.leipzig.uncolored;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import de.uni.leipzig.model.Node;
-import de.uni.leipzig.model.Tree;
-import de.uni.leipzig.model.Triple;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Sets;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ConnectedComponents {
+import de.uni.leipzig.model.*;
+import de.uni.leipzig.model.edges.DiEdge;
+import de.uni.leipzig.uncolored.DepthFirstSearch.Marker;
+import lombok.*;
 
-    public static List<Tree> construct(Set<Triple> tripleSetR, Set<Node> leftOvers) {
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@VisibleForTesting))
+public class ConnectedComponentsConstructor {
+
+    private final DepthFirstSearch depthFirstSearch;
+
+    public ConnectedComponentsConstructor() {
+        this(new DepthFirstSearch());
+    }
+
+    public List<Tree> construct(Set<Triple> tripleSetR, Set<Node> leftOvers) {
         List<Tree> subTrees = new ArrayList<>();
 
         // iterate over remaining nodes as long, as there are some left
@@ -66,6 +72,34 @@ public class ConnectedComponents {
         }
 
         return subTrees;
+    }
+
+    public List<DiGraph> construct(DiGraph diGraph) {
+        Marker marker = depthFirstSearch.runOn(diGraph);
+
+        Map<Integer, List<Entry<Node, Integer>>> entriesByCount = marker.stream()
+                .collect(Collectors.groupingBy(Entry::getValue));
+        marker.clear();
+
+        return entriesByCount.values()
+                .stream()
+                .map(el -> {
+                    Set<Node> nodes = Sets.newHashSet();
+                    Set<DiEdge> edges = Sets.newHashSet();
+
+                    el.forEach(e -> {
+                        Node node = e.getKey();
+                        nodes.add(node);
+                        diGraph.getEdges().forEach(de -> {
+                            if (de.getFirst().equals(node)
+                                    || de.getSecond().equals(node))
+                                edges.add(de);
+                        });
+                    });
+
+                    return new DiGraph(nodes, edges);
+                })
+                .collect(Collectors.toList());
     }
 
 }

@@ -1,17 +1,14 @@
 package de.uni.leipzig.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
+import lombok.*;
 
 @Data
 @Setter(AccessLevel.NONE)
 public class Node implements Comparable<Node> {
 
-    private String label;
+    private Color color;
 
     private List<Integer> ids;
 
@@ -21,19 +18,19 @@ public class Node implements Comparable<Node> {
         return new Node("*", new ArrayList<>());
     }
 
-    public static Node of(Integer label, List<Integer> id) {
-        return of(label.toString(), id);
+    public static Node of(Integer color, List<Integer> id) {
+        return of(color.toString(), id);
     }
 
-    public static Node of(String label, List<Integer> id) {
-        if (label.isEmpty())
-            throw new IllegalArgumentException("Could not create a node with negative label.");
+    public static Node of(String color, List<Integer> id) {
+        if (color.isEmpty())
+            throw new IllegalArgumentException("Could not create a node with negative color.");
 
-        return new Node(label, id);
+        return new Node(color, id);
     }
 
-    private Node(String label, List<Integer> id) {
-        this.label = label;
+    private Node(String color, List<Integer> id) {
+        this.color = new Color(color);
         this.ids = id;
         for (Integer i : id) {
             this.path += i;
@@ -41,15 +38,15 @@ public class Node implements Comparable<Node> {
     }
 
     public boolean isHelpNode() {
-        return label.equals("*");
+        return color.toString().equals("*");
     }
 
     @Override
     public String toString() {
         if (isHelpNode())
-            return label;
+            return color.toString();
 
-        return label + "-" + path;
+        return color + "-" + path;
     }
 
     @Override

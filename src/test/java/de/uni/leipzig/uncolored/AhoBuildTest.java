@@ -66,10 +66,11 @@ public class AhoBuildTest {
     public void testAskForMinCut() throws Exception {
         MinCut creator = mock(MinCut.class);
         UserInput input = mock(UserInput.class);
+        ConnectedComponentsConstructor components = mock(ConnectedComponentsConstructor.class);
         Set triples = mock(Set.class);
         Set leaves = mock(Set.class);
 
-        AhoBuild uut = new AhoBuild(creator, input);
+        AhoBuild uut = new AhoBuild(creator, input, components);
         uut.askForMinCut(triples, leaves);
 
         assertThat(uut.isAlwaysMinCut()).isFalse();
@@ -89,7 +90,8 @@ public class AhoBuildTest {
                     r.run();
                     verify(creator, atLeastOnce()).create(triples, leaves);
                 })
-                .anySatisfy(r -> {
+                .anySatisfy(o -> {
+                    Runnable r = (Runnable) o;
                     assertThatCode(r::run).doesNotThrowAnyException();
 
                     r.run();

@@ -7,10 +7,15 @@ import java.util.Set;
 
 import org.jgrapht.alg.util.Pair;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import de.uni.leipzig.model.*;
+import de.uni.leipzig.ncolored.NColored;
 import de.uni.leipzig.parser.BlastGraphParser;
 import de.uni.leipzig.user.UserInput;
+import lombok.*;
 
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@VisibleForTesting))
 public class Main {
 
     /**
@@ -28,11 +33,12 @@ public class Main {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
+
         while (true) {
             UserInput repeat = new UserInput();
 
-            UserInput main = new UserInput();
-            new Main(main);
+            Main main = new Main();
+            main.run();
 
             repeat.register("quit", () -> {
                 System.exit(0);
@@ -42,60 +48,73 @@ public class Main {
         }
     }
 
-    public Main(UserInput main) throws Exception {
+    private final UserInput ui;
 
-        main.register("parse a file", () -> {
-            BlastGraphParser blastGraphParser = new BlastGraphParser();
+    private final BlastGraphParser blastGraphParser;
+
+    private final NColored nColored;
+
+    public Main() {
+        this(new UserInput(), new BlastGraphParser(), new NColored());
+    }
+
+    public void run() throws Exception {
+
+        ui.register("parse a file", () -> {
             File file = blastGraphParser.getBlastGraphFile().getValue();
 
-            // FIXME if >2 colors then ...
-            // something like NColored.pass(this::thinnessClassBased, ...)
+            boolean twoColored = blastGraphParser.colorsIn(file) <= 2;
 
-            UserInput parsed = new UserInput();
+            ui.clear();
 
-            parsed.register(AHO, aho -> {
+            ui.register(AHO, aho -> {
                 Pair<Set<Triple>, Set<Node>> nodesAndTriples = blastGraphParser.parseTriple(file);
 
                 aho.create(nodesAndTriples.getFirst(), nodesAndTriples.getSecond());
             });
 
-            parsed.register(THINNESS_CLASS, tc -> {
+            ui.register(THINNESS_CLASS, tc -> {
                 DiGraph diGraph = blastGraphParser.parseDiGraph(file);
 
-                tc.create(diGraph);
+                if (twoColored) {
+                    tc.create(diGraph);
+                } else {
+                    Tree result = nColored.by(g -> tc.create(g), diGraph);
+
+                    System.out.println(result.toNewickNotation());
+                    System.out.println(result.print());
+                }
             });
 
-            parsed.register(AHO_INFORMATIVE, inf -> {
+            ui.register(AHO_INFORMATIVE, inf -> {
                 Pair<Set<Triple>, Set<Node>> nodesAndTriples = blastGraphParser.parseTriple(file);
                 DiGraph diGraph = blastGraphParser.parseDiGraph(file);
 
                 inf.create(nodesAndTriples.getFirst(), diGraph);
             });
 
-            parsed.askWithOptions("How do you want to create the LRT?");
+            ui.askWithOptions("How do you want to create the LRT?");
         });
 
-        main.register("create a random tree", () -> {
+        ui.register("create a random tree", () -> {
 
-            UserInput config = new UserInput();
-            RandomTree randomTree = RandomTree.askRandomTreeConfig(config);
+            ui.clear();
+            RandomTree randomTree = RandomTree.askRandomTreeConfig(ui);
 
             // FIXME if >2 colors then ...
             // something like NColored.pass(this::thinnessClassBased, ...)
 
             AdjacencyList adjList = randomTree.create();
 
-            UserInput random = new UserInput();
-            random.register(AHO, adjList);
+            ui.clear();
+            ui.register(AHO, adjList);
+            ui.register(THINNESS_CLASS, adjList);
+            ui.register(AHO_INFORMATIVE, adjList);
 
-            random.register(THINNESS_CLASS, adjList);
-
-            random.register(AHO_INFORMATIVE, adjList);
-
-            random.askWithOptions("How do you want to create the LRT?");
+            ui.askWithOptions("How do you want to create the LRT?");
         });
 
-        main.askWithOptions("Do you want to...");
+        ui.askWithOptions("Do you want to...");
     }
 
 }

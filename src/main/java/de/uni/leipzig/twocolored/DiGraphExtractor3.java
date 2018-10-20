@@ -98,7 +98,7 @@ public class DiGraphExtractor3 {
 				Node x = leaves.get(j);
 				for (int k = 0; k < leaves.size(); k++) {
 					Node y = leaves.get(k);
-					if (k == i || k == j || x.getLabel().equals(y.getLabel()))
+					if (k == i || k == j || x.getColor().equals(y.getColor()))
 						continue;
 					checkAndExtract(refNode, x, y);
 					leaves.remove(refNode);
@@ -109,7 +109,7 @@ public class DiGraphExtractor3 {
 	}
 
 	private void checkAndExtract(Node reference, Node x, Node y) {
-		if (x.getLabel().equals(reference)) {
+		if (x.getColor().equals(reference)) {
 			dgEdges.add(new DiEdge(y, x));
 		} else {
 			dgEdges.add(new DiEdge(x, y));

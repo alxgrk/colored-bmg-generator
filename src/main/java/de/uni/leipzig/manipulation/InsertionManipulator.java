@@ -1,15 +1,10 @@
 package de.uni.leipzig.manipulation;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 
-import de.uni.leipzig.model.DefaultTriple;
-import de.uni.leipzig.model.Node;
-import de.uni.leipzig.model.Triple;
+import de.uni.leipzig.model.*;
 import de.uni.leipzig.model.edges.Edge;
 
 public class InsertionManipulator extends Manipulator {
@@ -42,18 +37,20 @@ public class InsertionManipulator extends Manipulator {
         Node z = nextTriple.getNode();
 
         // manipulate label of node x
-        String newLabel = x.getLabel()
-                .replace(x.getLabel().charAt(0), (char) (x.getLabel().charAt(0) + 1));
+        String newLabel = x.getColor()
+                .toString()
+                .replace(x.getColor().toString().charAt(0),
+                        (char) (x.getColor().toString().charAt(0) + 1));
         Node newX = Node.of(newLabel, x.getIds());
 
         // add another Integer (either the last value of the ids or 1) of node y
         List<Integer> yIds = y.getIds();
         List<Integer> newYIds = Lists.newArrayList(yIds);
         newYIds.add(!yIds.isEmpty() ? yIds.get(yIds.size() - 1) : 1);
-        Node newY = Node.of(y.getLabel(), newYIds);
+        Node newY = Node.of(y.getColor().toString(), newYIds);
 
         // leave node z as is
-        Node newZ = Node.of(z.getLabel(), z.getIds());
+        Node newZ = Node.of(z.getColor().toString(), z.getIds());
 
         triplesToAdd.add(new DefaultTriple(new Edge(newX, newY), newZ));
         leaves.add(newX);

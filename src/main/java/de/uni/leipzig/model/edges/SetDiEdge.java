@@ -4,7 +4,7 @@ import java.util.Set;
 
 import de.uni.leipzig.model.Node;
 
-public class SetDiEdge extends AbstractEdge<Set<Node>> {
+public class SetDiEdge extends AbstractPair<Set<Node>> {
 
     public SetDiEdge(Set<Node> from, Set<Node> to) {
         super(from, to);

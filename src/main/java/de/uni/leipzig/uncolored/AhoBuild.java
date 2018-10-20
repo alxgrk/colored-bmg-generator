@@ -1,6 +1,8 @@
 package de.uni.leipzig.uncolored;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.zalando.fauxpas.ThrowingRunnable;
@@ -8,9 +10,13 @@ import org.zalando.fauxpas.ThrowingRunnable;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 
-import de.uni.leipzig.model.*;
+import de.uni.leipzig.model.Node;
+import de.uni.leipzig.model.Tree;
+import de.uni.leipzig.model.Triple;
 import de.uni.leipzig.user.UserInput;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@VisibleForTesting))
 public class AhoBuild {
@@ -19,13 +25,15 @@ public class AhoBuild {
 
     private final UserInput ui;
 
+    private final ConnectedComponentsConstructor components;
+
     private List<Tree> connectedComponents;
 
     @Getter(value = AccessLevel.PROTECTED, onMethod = @__(@VisibleForTesting))
     private boolean alwaysMinCut = false;
 
     public AhoBuild() {
-        this(new MinCut(), new UserInput());
+        this(new MinCut(), new UserInput(), new ConnectedComponentsConstructor());
     }
 
     public Tree build(Set<Triple> tripleSetR, Set<Node> leaveSetL) {
@@ -34,7 +42,7 @@ public class AhoBuild {
         if (leaveSetL.size() == 1)
             return new Tree(leaveSetL);
 
-        connectedComponents = ConnectedComponents.construct(tripleSetR, leaveSetL);
+        connectedComponents = components.construct(tripleSetR, leaveSetL);
 
         // exit if tree is no phylogenetic one
         if (connectedComponents.size() == 1) {
@@ -100,8 +108,8 @@ public class AhoBuild {
     private Set<Triple> filter(Set<Node> subLeaveSet, Set<Triple> tripleSetR) {
         return tripleSetR.stream()
                 .filter(t -> subLeaveSet.contains(t.getEdge().getFirst())
-                        && subLeaveSet.contains(t.getEdge().getSecond()) && subLeaveSet.contains(t
-                                .getNode()))
+                        && subLeaveSet.contains(t.getEdge().getSecond())
+                        && subLeaveSet.contains(t.getNode()))
                 .collect(Collectors.toSet());
     }
 

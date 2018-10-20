@@ -5,11 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 
-import de.uni.leipzig.model.DefaultTriple;
-import de.uni.leipzig.model.Node;
-import de.uni.leipzig.model.Triple;
-import de.uni.leipzig.model.edges.DiEdge;
-import de.uni.leipzig.model.edges.Edge;
+import de.uni.leipzig.model.*;
+import de.uni.leipzig.model.edges.*;
 
 public class ThreeNodeGraphTest {
 
@@ -58,7 +55,7 @@ public class ThreeNodeGraphTest {
         assertThat(notAddedSucessfully1).isFalse();
         assertThat(notAddedSucessfully2).isFalse();
         assertThat(notAddedSucessfully3).isFalse();
-        assertThat(uut.getEdges()).containsExactly(allowedEdge1, allowedEdge2);
+        assertThat(uut.getEdges()).containsExactlyInAnyOrder(allowedEdge1, allowedEdge2);
         assertThat(uut.getNodeFrequency())
                 .containsEntry(node1, 2)
                 .containsEntry(node2, 1)

@@ -30,8 +30,7 @@ public class BlastGraphParserTest {
         File cwd = new File(getClass().getProtectionDomain()
                 .getCodeSource()
                 .getLocation()
-                .toURI()
-                .getPath());
+                .getFile());
 
         BlastGraphParser uut = new BlastGraphParser();
         Result<File> file = uut.getBlastGraphFile(cwd, mockInput);
@@ -53,6 +52,42 @@ public class BlastGraphParserTest {
         DiGraph graph = uut.parseDiGraph(input);
 
         assertThat(graph).isNotNull();
+    }
+
+    @Test
+    public void testColorsIn_TwoColored() throws Exception {
+
+        File input = new File(BlastGraphParserTest.class.getResource("two-colored.blast-graph")
+                .toURI());
+
+        BlastGraphParser uut = new BlastGraphParser();
+        Integer count = uut.colorsIn(input);
+
+        assertThat(count).isEqualTo(2);
+    }
+
+    @Test
+    public void testColorsIn_ThreeColored() throws Exception {
+
+        File input = new File(BlastGraphParserTest.class.getResource("three-colored.blast-graph")
+                .toURI());
+
+        BlastGraphParser uut = new BlastGraphParser();
+        Integer count = uut.colorsIn(input);
+
+        assertThat(count).isEqualTo(3);
+    }
+
+    @Test
+    public void testColorsIn_FourColored() throws Exception {
+
+        File input = new File(BlastGraphParserTest.class.getResource("complete.blast-graph")
+                .toURI());
+
+        BlastGraphParser uut = new BlastGraphParser();
+        Integer count = uut.colorsIn(input);
+
+        assertThat(count).isEqualTo(4);
     }
 
     @Test

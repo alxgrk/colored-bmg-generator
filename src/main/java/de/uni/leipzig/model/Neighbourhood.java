@@ -1,13 +1,9 @@
 package de.uni.leipzig.model;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import de.uni.leipzig.model.edges.DiEdge;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Getter
@@ -36,9 +32,7 @@ public class Neighbourhood {
     private Set<Node> neighboursCalc(Set<Node> tc, Set<DiEdge> edges) {
         Set<Node> neighbours = new HashSet<>();
 
-        Optional<Node> any = tc.stream().findAny();
-        any.ifPresent(n -> {
-
+        tc.forEach(n -> {
             for (DiEdge diEdge : edges) {
 
                 if (diEdge.getFirst() == n)
@@ -52,8 +46,7 @@ public class Neighbourhood {
     private Set<Node> inNeighboursOf(ThinnessClass tc, Set<DiEdge> edges) {
         Set<Node> neighbours = new HashSet<>();
 
-        Optional<Node> any = tc.getNodes().stream().findAny();
-        any.ifPresent(n -> {
+        tc.getNodes().forEach(n -> {
 
             for (DiEdge diEdge : edges) {
 

@@ -1,16 +1,14 @@
 package de.uni.leipzig.model;
 
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
+import com.google.common.collect.*;
 
 import de.uni.leipzig.model.edges.DiEdge;
 import de.uni.leipzig.twocolored.ThinnessClassFinder;
-import lombok.AccessLevel;
-import lombok.Getter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Getter
@@ -21,6 +19,8 @@ public class DiGraph {
 
     final Set<DiEdge> edges;
 
+    final Set<Color> colors;
+
     Set<ThinnessClass> thinnessClasses;
 
     Map<ThinnessClass, Neighbourhood> neighboursByTc;
@@ -30,6 +30,10 @@ public class DiGraph {
     public DiGraph(Set<Node> nodes, Set<DiEdge> edges) {
         this.nodes = ImmutableSet.copyOf(nodes);
         this.edges = ImmutableSet.copyOf(edges);
+
+        this.colors = this.nodes.stream()
+                .map(Node::getColor)
+                .collect(Collectors.toSet());
     }
 
     public Set<ThinnessClass> getThinnessClasses() {
@@ -81,5 +85,20 @@ public class DiGraph {
         Hierarchy hierarchy = new Hierarchy(getReachablesByTc());
         System.out.println("Hierarchy sets: " + hierarchy.getSets());
         return hierarchy.toHasseTree();
+    }
+
+    public DiGraph subGraphForLabels(Color s, Color t) {
+        Set<Node> stNodes = nodes.stream()
+                .filter(n -> n.getColor().equals(s) || n.getColor().equals(t))
+                .collect(Collectors.toSet());
+
+        Set<DiEdge> stEdges = edges.stream()
+                .filter(e -> (e.getFirst().getColor().equals(s)
+                        || e.getFirst().getColor().equals(t))
+                        && (e.getSecond().getColor().equals(s)
+                                || e.getSecond().getColor().equals(t)))
+                .collect(Collectors.toSet());
+
+        return new DiGraph(stNodes, stEdges);
     }
 }

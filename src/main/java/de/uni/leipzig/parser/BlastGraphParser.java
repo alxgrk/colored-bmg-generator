@@ -3,6 +3,8 @@ package de.uni.leipzig.parser;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.jgrapht.alg.util.Pair;
@@ -15,6 +17,8 @@ import de.uni.leipzig.model.edges.*;
 import de.uni.leipzig.user.*;
 
 public class BlastGraphParser {
+
+    private final Predicate<? super String> commentedLines = f -> !f.startsWith("#");
 
     public Result<File> getBlastGraphFile() throws Exception {
         return getBlastGraphFile(
@@ -49,11 +53,44 @@ public class BlastGraphParser {
         return blastFile;
     }
 
+    public Integer colorsIn(File input) throws IOException {
+
+        fileCheck(input);
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(input));) {
+
+            return reader.lines()
+                    .filter(commentedLines)
+                    .map(BlastGraphLine::new)
+                    .reduce(new HashMap<Color, AtomicInteger>(),
+                            (m, l) -> {
+                                Color s = l.getGene1().asNode().getColor();
+                                Color t = l.getGene2().asNode().getColor();
+
+                                increment(m, s);
+                                increment(m, t);
+
+                                return m;
+                            }, (m1, m2) -> {
+                                m1.putAll(m2);
+                                return m1;
+                            })
+                    .size();
+        }
+    }
+
+    private void increment(Map<Color, AtomicInteger> m, Color c) {
+        AtomicInteger v = m.get(c);
+        if (v == null) {
+            m.put(c, new AtomicInteger(0));
+        } else {
+            v.incrementAndGet();
+        }
+    }
+
     public DiGraph parseDiGraph(File input) throws IOException {
 
-        if (!input.exists() || !input.canRead()) {
-            throw new IllegalArgumentException("File not readable!!");
-        }
+        fileCheck(input);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(input));) {
 
@@ -61,8 +98,8 @@ public class BlastGraphParser {
             Set<DiEdge> edges = Sets.newHashSet();
 
             reader.lines()
-                    .filter(f -> !f.startsWith("#"))
-                    .map(l -> new BlastGraphLine(l))
+                    .filter(commentedLines)
+                    .map(BlastGraphLine::new)
                     .forEach(l -> {
                         Node node1 = l.getGene1().asNode();
                         Node node2 = l.getGene2().asNode();
@@ -79,9 +116,7 @@ public class BlastGraphParser {
 
     public Pair<Set<Triple>, Set<Node>> parseTriple(File input) throws IOException {
 
-        if (!input.exists() || !input.canRead()) {
-            throw new IllegalArgumentException("File not readable!!");
-        }
+        fileCheck(input);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(input));) {
 
@@ -102,7 +137,7 @@ public class BlastGraphParser {
                         nodes.forEach(n -> {
 
                             if (!n.equals(node1) && !n.equals(node2)
-                                    && oneWithEqualLabel(n, node1, node2)) {
+                                    && oneWithEqualColor(n, node1, node2)) {
 
                                 Triple t1 = new DefaultTriple(new Edge(node1, node2), n);
                                 Triple t2 = new DefaultTriple(new Edge(node2, node1), n);
@@ -120,11 +155,17 @@ public class BlastGraphParser {
         }
     }
 
-    private boolean oneWithEqualLabel(Node ofInterest, Node n1, Node n2) {
-        return (ofInterest.getLabel().equals(n1.getLabel())
-                && !ofInterest.getLabel().equals(n2.getLabel()))
-                || (ofInterest.getLabel().equals(n2.getLabel())
-                        && !ofInterest.getLabel().equals(n1.getLabel()));
+    private void fileCheck(File input) {
+        if (!input.exists() || !input.canRead()) {
+            throw new IllegalArgumentException("File not readable!!");
+        }
+    }
+
+    private boolean oneWithEqualColor(Node ofInterest, Node n1, Node n2) {
+        return (ofInterest.getColor().equals(n1.getColor())
+                && !ofInterest.getColor().equals(n2.getColor()))
+                || (ofInterest.getColor().equals(n2.getColor())
+                        && !ofInterest.getColor().equals(n1.getColor()));
     }
 
 }
