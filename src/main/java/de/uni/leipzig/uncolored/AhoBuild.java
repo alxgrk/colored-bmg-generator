@@ -15,7 +15,7 @@ import lombok.*;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@VisibleForTesting))
 public class AhoBuild {
 
-    private final DiGraphFromTripleSet creator;
+    private final MinCut minCutCreator;
 
     private final UserInput ui;
 
@@ -25,7 +25,7 @@ public class AhoBuild {
     private boolean alwaysMinCut = false;
 
     public AhoBuild() {
-        this(new DiGraphFromTripleSet(), new UserInput());
+        this(new MinCut(), new UserInput());
     }
 
     public Tree build(Set<Triple> tripleSetR, Set<Node> leaveSetL) {
@@ -70,7 +70,7 @@ public class AhoBuild {
     @VisibleForTesting
     protected void askForMinCut(Set<Triple> tripleSetR, Set<Node> leaveSetL) {
         ThrowingRunnable<Exception> minCut = () -> {
-            connectedComponents = creator.create(tripleSetR, leaveSetL);
+            connectedComponents = minCutCreator.create(tripleSetR, leaveSetL);
         };
 
         if (alwaysMinCut)

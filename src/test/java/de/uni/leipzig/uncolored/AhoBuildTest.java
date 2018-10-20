@@ -64,7 +64,7 @@ public class AhoBuildTest {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Test
     public void testAskForMinCut() throws Exception {
-        DiGraphFromTripleSet creator = mock(DiGraphFromTripleSet.class);
+        MinCut creator = mock(MinCut.class);
         UserInput input = mock(UserInput.class);
         Set triples = mock(Set.class);
         Set leaves = mock(Set.class);
