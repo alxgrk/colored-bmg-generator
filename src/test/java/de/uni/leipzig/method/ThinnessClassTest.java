@@ -1,17 +1,21 @@
 package de.uni.leipzig.method;
 
-import static org.mockito.Mockito.*;
-
 import org.junit.Test;
 
-import de.uni.leipzig.model.*;
-import de.uni.leipzig.twocolored.DiGraphExtractor;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import de.uni.leipzig.model.AdjacencyList;
+import de.uni.leipzig.model.DiGraph;
+import de.uni.leipzig.model.Tree;
+import de.uni.leipzig.twocolored.DiGraphExtractor2;
 
 public class ThinnessClassTest {
 
     @Test
     public void testCreate_AdjacencyList() throws Exception {
-        DiGraphExtractor extractor = mock(DiGraphExtractor.class);
+        DiGraphExtractor2 extractor = mock(DiGraphExtractor2.class);
         AdjacencyList adjList = mock(AdjacencyList.class);
         DiGraph diGraph = mock(DiGraph.class);
         Tree tree = mock(Tree.class);
