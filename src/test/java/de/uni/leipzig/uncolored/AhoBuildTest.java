@@ -1,6 +1,6 @@
 package de.uni.leipzig.uncolored;
 
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -88,7 +88,8 @@ public class AhoBuildTest {
                     assertThatCode(r::run).doesNotThrowAnyException();
 
                     r.run();
-                    verify(creator, atLeastOnce()).create(triples, leaves);
+                    verify(creator, atLeastOnce()).create(triples);
+                    verify(components, atLeastOnce()).construct(any(), eq(leaves));
                 })
                 .anySatisfy(o -> {
                     Runnable r = (Runnable) o;
@@ -96,12 +97,13 @@ public class AhoBuildTest {
 
                     r.run();
                     assertThat(uut.isAlwaysMinCut()).isTrue();
-                    verify(creator, atLeastOnce()).create(triples, leaves);
+                    verify(creator, atLeastOnce()).create(triples);
+                    verify(components, atLeastOnce()).construct(any(), eq(leaves));
                 });
 
         // assert, that the creator was run once more, since 'alwaysMinCut' should be true now
         uut.askForMinCut(triples, leaves);
-        verify(creator, atLeast(3)).create(triples, leaves);
+        verify(creator, atLeast(3)).create(triples);
     }
 
 }

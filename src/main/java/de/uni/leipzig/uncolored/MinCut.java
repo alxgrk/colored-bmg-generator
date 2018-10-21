@@ -1,61 +1,51 @@
 package de.uni.leipzig.uncolored;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.jgrapht.Graph;
 import org.jgrapht.alg.flow.GusfieldGomoryHuCutTree;
-import org.jgrapht.graph.SimpleGraph;
 
-import de.uni.leipzig.model.Node;
-import de.uni.leipzig.model.Tree;
-import de.uni.leipzig.model.Triple;
+import com.google.common.annotations.VisibleForTesting;
+
+import de.uni.leipzig.conversion.GraphFromTripleSet;
+import de.uni.leipzig.model.*;
 import de.uni.leipzig.model.edges.Edge;
+import lombok.*;
 
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@VisibleForTesting))
 public class MinCut {
 
-    private final ConnectedComponentsConstructor components = new ConnectedComponentsConstructor();
-    
-    private Graph<Node, Edge> g = new SimpleGraph<>(Edge.class);
+    private final GraphFromTripleSet graphFromTripleSet;
 
-    public List<Tree> create(Set<Triple> tripleSetR, Set<Node> leaveSetL) {
+    public MinCut() {
+        this(new GraphFromTripleSet());
+    }
+
+    public Set<Triple> create(Set<Triple> tripleSetR) {
 
         // note that the GusfieldGomoryHuCutTree requires the graph to be undirected
-        Graph<Node, Edge> graph = graphFromTripleSet(tripleSetR);
+        Graph<Node, Edge> graph = graphFromTripleSet.toJGraph(tripleSetR);
+
         GusfieldGomoryHuCutTree<Node, Edge> minCutGraph = new GusfieldGomoryHuCutTree<>(graph);
         minCutGraph.calculateMinCut();
+
         Set<Node> sink = minCutGraph.getSinkPartition();
         Set<Node> source = minCutGraph.getSourcePartition();
 
         Set<Triple> cutTripleSet = new HashSet<>();
 
         for (Triple triple : tripleSetR) {
-            if (sink.contains(triple.getEdge().getFirst()) && source.contains(triple.getEdge()
-                    .getSecond())
-                    || source.contains(triple.getEdge().getFirst()) && sink.contains(triple
-                            .getEdge()
-                            .getSecond())) {
+            if ((sink.contains(triple.getEdge().getFirst())
+                    && source.contains(triple.getEdge().getSecond()))
+                    || (source.contains(triple.getEdge().getFirst())
+                            && sink.contains(triple.getEdge().getSecond()))) {
                 continue;
-            } else {
-                cutTripleSet.add(triple);
             }
+
+            cutTripleSet.add(triple);
         }
 
-        return components.construct(cutTripleSet, leaveSetL);
+        return cutTripleSet;
     }
 
-    private Graph<Node, Edge> graphFromTripleSet(Set<Triple> tripleSetR) {
-
-        for (Triple triple : tripleSetR) {
-            g.addVertex(triple.getNode());
-            g.addVertex(triple.getEdge().getFirst());
-            g.addVertex(triple.getEdge().getSecond());
-
-            g.addEdge(triple.getEdge().getFirst(), triple.getEdge().getSecond(),
-                    triple.getEdge());
-        }
-
-        return g;
-    }
 }

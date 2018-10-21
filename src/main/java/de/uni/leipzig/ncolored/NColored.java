@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import com.google.common.collect.Sets;
 
 import de.uni.leipzig.Util;
+import de.uni.leipzig.conversion.TripleFromTree;
 import de.uni.leipzig.model.*;
 import de.uni.leipzig.ncolored.dengfernandezbaca.BuildST;
 import de.uni.leipzig.ncolored.dengfernandezbaca.BuildST.IncompatibleProfileException;
@@ -85,7 +86,7 @@ public class NColored {
                         }
                     }
 
-                    return askForTreeCombinationMethod(stTrees);
+                    return askForSuperTreeMethod(stTrees);
 
                 })
                 // append every subtree per connected component to new root r
@@ -94,7 +95,7 @@ public class NColored {
 
     }
 
-    private Tree askForTreeCombinationMethod(Map<Pair<Color>, Tree> stTrees) {
+    private Tree askForSuperTreeMethod(Map<Pair<Color>, Tree> stTrees) {
 
         Result<Tree> result = Result.empty();
 

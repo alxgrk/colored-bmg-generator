@@ -1,8 +1,6 @@
 package de.uni.leipzig.uncolored;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.zalando.fauxpas.ThrowingRunnable;
@@ -10,13 +8,9 @@ import org.zalando.fauxpas.ThrowingRunnable;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 
-import de.uni.leipzig.model.Node;
-import de.uni.leipzig.model.Tree;
-import de.uni.leipzig.model.Triple;
+import de.uni.leipzig.model.*;
 import de.uni.leipzig.user.UserInput;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@VisibleForTesting))
 public class AhoBuild {
@@ -78,7 +72,8 @@ public class AhoBuild {
     @VisibleForTesting
     protected void askForMinCut(Set<Triple> tripleSetR, Set<Node> leaveSetL) {
         ThrowingRunnable<Exception> minCut = () -> {
-            connectedComponents = minCutCreator.create(tripleSetR, leaveSetL);
+            Set<Triple> cutTripleSet = minCutCreator.create(tripleSetR);
+            connectedComponents = components.construct(cutTripleSet, leaveSetL);
         };
 
         if (alwaysMinCut)
