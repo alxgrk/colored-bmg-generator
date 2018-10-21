@@ -24,6 +24,7 @@ public class AhoBuild {
     private List<Tree> connectedComponents;
 
     @Getter(value = AccessLevel.PROTECTED, onMethod = @__(@VisibleForTesting))
+    @Setter
     private boolean alwaysMinCut = false;
 
     public AhoBuild() {

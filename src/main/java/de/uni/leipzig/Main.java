@@ -9,6 +9,7 @@ import org.jgrapht.alg.util.Pair;
 
 import com.google.common.annotations.VisibleForTesting;
 
+import de.uni.leipzig.method.TreeCreation;
 import de.uni.leipzig.model.*;
 import de.uni.leipzig.ncolored.NColored;
 import de.uni.leipzig.parser.BlastGraphParser;
@@ -91,6 +92,8 @@ public class Main {
                 });
             } else {
                 ui.register(THINNESS_CLASS, tc -> {
+                    TreeCreation.askForInteractiveMode(tc, ui);
+
                     DiGraph diGraph = blastGraphParser.parseDiGraph(file);
 
                     Tree result = nColored.by(g -> tc.create(g), diGraph);
@@ -100,6 +103,8 @@ public class Main {
                 });
 
                 ui.register(AHO_INFORMATIVE, inf -> {
+                    TreeCreation.askForInteractiveMode(inf, ui);
+
                     Pair<Set<Triple>, Set<Node>> nodesAndTriples = blastGraphParser.parseTriple(
                             file);
                     DiGraph diGraph = blastGraphParser.parseDiGraph(file);
@@ -131,6 +136,8 @@ public class Main {
                 ui.register(AHO_INFORMATIVE, adjList);
             } else {
                 ui.register(THINNESS_CLASS, tc -> {
+                    TreeCreation.askForInteractiveMode(tc, ui);
+
                     DiGraphExtractor diGraphExtractor = new DiGraphExtractor();
                     Tree result = nColored.by(g -> tc.create(adjList),
                             diGraphExtractor.extract(adjList));
@@ -140,6 +147,8 @@ public class Main {
                 });
 
                 ui.register(AHO_INFORMATIVE, inf -> {
+                    TreeCreation.askForInteractiveMode(inf, ui);
+
                     DiGraphExtractor diGraphExtractor = new DiGraphExtractor();
                     Tree result = nColored.by(g -> inf.create(adjList),
                             diGraphExtractor.extract(adjList));

@@ -101,4 +101,9 @@ public class DiGraph {
 
         return new DiGraph(stNodes, stEdges);
     }
+
+    @Override
+    public String toString() {
+        return nodes + " === " + edges;
+    }
 }

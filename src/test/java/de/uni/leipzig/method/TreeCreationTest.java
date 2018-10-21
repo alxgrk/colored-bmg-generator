@@ -44,6 +44,11 @@ public class TreeCreationTest {
             return new Tree(Node.helpNode());
         }
 
+        @Override
+        public TreeCreation inNonInteractiveMode(boolean mode) {
+            return this;
+        }
+
     }
 
 }

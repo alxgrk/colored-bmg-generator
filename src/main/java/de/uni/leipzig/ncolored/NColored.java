@@ -5,21 +5,25 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.zalando.fauxpas.ThrowingRunnable;
+
+import com.google.common.annotations.VisibleForTesting;
+
 import de.uni.leipzig.Util;
 import de.uni.leipzig.conversion.TripleFromTree;
 import de.uni.leipzig.model.*;
-import de.uni.leipzig.ncolored.dengfernandezbaca.BuildST;
-import de.uni.leipzig.ncolored.dengfernandezbaca.BuildST.IncompatibleProfileException;
+import de.uni.leipzig.ncolored.dengfernandezbaca.DFBBuildST;
+import de.uni.leipzig.ncolored.dengfernandezbaca.DFBBuildST.IncompatibleProfileException;
 import de.uni.leipzig.uncolored.*;
 import de.uni.leipzig.user.*;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@VisibleForTesting))
 public class NColored {
 
     private final ConnectedComponentsConstructor componentsConstructor;
 
-    private final BuildST buildST;
+    private final DFBBuildST dfbBuildST;
 
     private final AhoBuild aho;
 
@@ -28,7 +32,7 @@ public class NColored {
     private final UserInput treeCombinationMethod;
 
     public NColored() {
-        this(new ConnectedComponentsConstructor(), new BuildST(), new AhoBuild(),
+        this(new ConnectedComponentsConstructor(), new DFBBuildST(), new AhoBuild(),
                 new TripleFromTree(), new UserInput());
     }
 
@@ -42,6 +46,9 @@ public class NColored {
         // are there some (what does 'some' mean? -> half of the connected component set size
         // assumed here) components with completely distinct color sets?
         checkForSomeComponentsWithDistinctColors(components);
+
+        // remember SuperTree method
+        Container<SuperTreeMethod> stMethod = Container.empty();
 
         // iterate over all connected components and return result
         return components.stream()
@@ -84,7 +91,7 @@ public class NColored {
                         }
                     }
 
-                    return askForSuperTreeMethod(stTrees);
+                    return askForSuperTreeMethod(stTrees, stMethod);
 
                 })
                 // append every subtree per connected component to new root r
@@ -93,35 +100,50 @@ public class NColored {
 
     }
 
-    private Tree askForSuperTreeMethod(Map<Pair<Color>, Tree> stTrees) {
+    private Tree askForSuperTreeMethod(Map<Pair<Color>, Tree> stTrees,
+            Container<SuperTreeMethod> stMethod) {
 
         Result<Tree> result = Result.empty();
 
-        treeCombinationMethod.register("extract triples and run aho", () -> {
+        ThrowingRunnable<Exception> ahoAction = () -> {
+
+            stMethod.setValue(SuperTreeMethod.AHO);
 
             Set<Triple> triples = tripleFromTree.extractOf(stTrees);
             Set<Node> leaves = stTrees.values()
                     .stream()
-                    .flatMap(t -> t.getAllNodes().stream())
+                    .flatMap(t -> t.getLeafs().stream())
                     .collect(Collectors.toSet());
 
             Tree resultingTree = aho.build(triples, leaves);
             result.fixValue(resultingTree);
-        });
+        };
 
-        treeCombinationMethod.register("run deng & fernandez-baca", () -> {
+        ThrowingRunnable<Exception> dfbAction = () -> {
+
+            stMethod.setValue(SuperTreeMethod.DENG_FERNANDEZ_BACA);
 
             // run Deng - Fernandez-Baca
             try {
-                result.fixValue(buildST.build(stTrees));
+                result.fixValue(dfbBuildST.build(stTrees));
             } catch (IncompatibleProfileException e) {
                 // tree was incompatible
                 throw new RuntimeException("not a BMG");
             }
 
-        });
+        };
 
-        treeCombinationMethod.askWithOptions("What tree combination method should be run?");
+        if (!stMethod.isEmpty()) {
+            if (stMethod.getValue().equals(SuperTreeMethod.AHO))
+                ahoAction.run();
+            if (stMethod.getValue().equals(SuperTreeMethod.DENG_FERNANDEZ_BACA))
+                dfbAction.run();
+        } else {
+            treeCombinationMethod.clear();
+            treeCombinationMethod.register("extract triples and run aho", ahoAction);
+            treeCombinationMethod.register("run deng & fernandez-baca", dfbAction);
+            treeCombinationMethod.askWithOptions("What tree combination method should be run?");
+        }
 
         return result.getValue();
     }
@@ -154,6 +176,11 @@ public class NColored {
         if (result.getAllNodes().size() == 1
                 && result.getAllNodes().get(0).equals(Node.helpNode()))
             throw new RuntimeException("not a BMG");
+    }
+
+    private enum SuperTreeMethod {
+        AHO,
+        DENG_FERNANDEZ_BACA;
     }
 
 }

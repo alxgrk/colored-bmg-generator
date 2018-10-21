@@ -36,7 +36,7 @@ public class Util {
                 .map(Tree::new)
                 .collect(Collectors.toList());
 
-        return new Tree(subtrees);
+        return subtrees.size() == 1 ? subtrees.get(0) : new Tree(subtrees);
     }
 
     @SuppressWarnings("unchecked")

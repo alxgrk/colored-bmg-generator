@@ -19,12 +19,21 @@ class Aho implements TreeCreation {
 
     private final TripleFinder<Triple> tripleFinder;
 
+    private boolean interactiveMode = true;
+
     Aho() {
         this(new AhoBuild(), new UserInput());
     }
 
     protected Aho(AhoBuild ahoBuild, UserInput input) {
         this(ahoBuild, input, new DefaultTripleFinder());
+    }
+
+    @Override
+    public TreeCreation inNonInteractiveMode(boolean mode) {
+        ahoBuild.setAlwaysMinCut(mode);
+        interactiveMode = !mode;
+        return this;
     }
 
     @Override
@@ -36,7 +45,8 @@ class Aho implements TreeCreation {
     public Tree create(Set<Triple> triples, Set<Node> leaves) {
         System.out.println(triples.toString());
 
-        new Manipulation(triples, leaves, input);
+        if (interactiveMode)
+            new Manipulation(triples, leaves, input);
 
         Tree result = ahoBuild.build(triples, leaves);
 

@@ -80,7 +80,7 @@ public class DiGraphTest {
         DiGraph uut = new DiGraph(nodes, edges);
 
         assertThat(uut.getHasseDiagram().toNewickNotation())
-                .isEqualTo("(0-0211,0-0212,1-01,(1-0221,0-0222))");
+                .isEqualTo("(1-01,0-0211,0-0212,(1-0221,0-0222))");
     }
 
     @Test
@@ -107,6 +107,39 @@ public class DiGraphTest {
 
         assertThat(uut.getNodes()).containsExactlyInAnyOrder(node1, node2);
         assertThat(uut.getEdges()).containsExactlyInAnyOrder(edge1, edge2);
+    }
+
+    // FAILING HIERARCHY
+    @Test
+    public void testFailingHierarchy() throws Exception {
+        // INIT
+        Node one = Node.of("L", Lists.newArrayList(6, 2, 7));
+        Node two = Node.of("E", Lists.newArrayList(3, 6, 8));
+        Node three = Node.of("L", Lists.newArrayList(6, 3, 5));
+        Node four = Node.of("L", Lists.newArrayList(6, 3, 1));
+        Node five = Node.of("E", Lists.newArrayList(3, 1, 7));
+        Node six = Node.of("L", Lists.newArrayList(3, 2, 3));
+
+        DiEdge e1 = new DiEdge(two, one);
+        DiEdge e2 = new DiEdge(two, four);
+        DiEdge e3 = new DiEdge(one, two);
+        DiEdge e4 = new DiEdge(four, one);
+        DiEdge e5 = new DiEdge(five, three);
+        DiEdge e6 = new DiEdge(five, four);
+        DiEdge e7 = new DiEdge(two, six);
+        DiEdge e8 = new DiEdge(three, five);
+        DiEdge e9 = new DiEdge(four, five);
+        DiEdge e10 = new DiEdge(six, two);
+
+        // RUN
+        DiGraph uut = new DiGraph(Sets.newHashSet(one, two, three, four, five, six),
+                Sets.newHashSet(e1, e2, e3, e4, e5, e6, e7, e8, e9, e10));
+        Tree actual = uut.getHasseDiagram();
+
+        // ASSERT
+        assertThat(actual.toNewickNotation()).isEqualTo(
+                "((E-317,(L-323,E-368,L-627,L-631)),L-635)");
+
     }
 
 }

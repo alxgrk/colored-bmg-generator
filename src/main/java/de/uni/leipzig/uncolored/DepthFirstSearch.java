@@ -20,6 +20,7 @@ public class DepthFirstSearch {
 
     public Marker runOn(DiGraph diGraph) {
         int c = 0;
+        marker.clear();
 
         for (Node v : diGraph.getNodes()) {
 

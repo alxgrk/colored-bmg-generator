@@ -11,8 +11,6 @@ import de.uni.leipzig.model.edges.Edge;
 
 public class TripleFromTree {
 
-    private Multimap<Node, List<Node>> parentLeafSetsPerLeaf = LinkedListMultimap.create();
-
     public Set<Triple> extractOf(Map<Pair<Color>, Tree> stTrees) {
         return stTrees.values()
                 .stream()
@@ -22,9 +20,11 @@ public class TripleFromTree {
 
     public Set<Triple> treeToTriples(Tree tree) {
 
+        Multimap<Node, List<Node>> parentLeafSetsPerLeaf = LinkedListMultimap.create();
+
         List<Node> allLeafs = tree.getLeafs();
         allLeafs.forEach(n -> parentLeafSetsPerLeaf.put(n, allLeafs));
-        fillMultiMap(tree);
+        fillMultiMap(parentLeafSetsPerLeaf, tree);
 
         Set<Triple> triples = Sets.newHashSet();
 
@@ -66,7 +66,7 @@ public class TripleFromTree {
         return triples;
     }
 
-    private void fillMultiMap(Tree tree) {
+    private void fillMultiMap(Multimap<Node, List<Node>> parentLeafSetsPerLeaf, Tree tree) {
 
         for (Tree subTree : tree.getSubTrees()) {
             List<Node> leafs = subTree.getLeafs();
@@ -78,7 +78,7 @@ public class TripleFromTree {
                 }
             }
 
-            fillMultiMap(subTree);
+            fillMultiMap(parentLeafSetsPerLeaf, subTree);
         }
     }
 

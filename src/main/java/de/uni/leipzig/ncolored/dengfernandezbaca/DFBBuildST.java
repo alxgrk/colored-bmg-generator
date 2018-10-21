@@ -6,7 +6,7 @@ import com.google.common.collect.*;
 
 import de.uni.leipzig.model.*;
 
-public class BuildST {
+public class DFBBuildST {
 
     public Tree build(Map<Pair<Color>, Tree> inputU) throws IncompatibleProfileException {
         List<Color> colors = Lists.newArrayList();

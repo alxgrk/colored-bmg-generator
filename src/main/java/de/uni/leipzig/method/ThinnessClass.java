@@ -17,6 +17,11 @@ class ThinnessClass implements TreeCreation {
     }
 
     @Override
+    public TreeCreation inNonInteractiveMode(boolean mode) {
+        return this;
+    }
+
+    @Override
     public Tree create(AdjacencyList adjList) {
         DiGraph graph = extractor.extract(adjList);
         return create(graph);

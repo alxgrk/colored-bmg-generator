@@ -24,6 +24,12 @@ class AhoInformative implements TreeCreation {
     }
 
     @Override
+    public TreeCreation inNonInteractiveMode(boolean mode) {
+        aho.inNonInteractiveMode(mode);
+        return this;
+    }
+
+    @Override
     public Tree create(AdjacencyList adjList) {
         Set<InformativeTriple> informativeTriples = informativeTripleFinder
                 .findTriple(adjList);
@@ -38,4 +44,5 @@ class AhoInformative implements TreeCreation {
 
         return aho.create(Util.uglyCast(informativeTriples), informativeTripleFinder.getLeaves());
     }
+
 }

@@ -63,8 +63,18 @@ public class Hierarchy {
         System.out.println("Leafs as tree: " + leafsAsTree);
         System.out.println("-----------------------------------");
 
-        if (leafsAsTree.size() == 1)
-            return Lists.newArrayList(leafsAsTree).get(0);
+        // special case: see DiGraphTest.testFailingHierarchy
+        if (finalEdges.size() == 1 && leafsAsTree.size() > 1) {
+            return leafsAsTree.stream()
+                    .filter(l -> {
+                        Set<Node> rootNodes = finalEdges.iterator().next().getSecond();
+
+                        return Util.equalSets(l.getLeafs(), rootNodes);
+                    })
+                    .findFirst()
+                    .orElseThrow(() -> new IncorrectHierarchyException(
+                            "last edge pointed to non existing node set"));
+        }
 
         if (remainingSets.size() == 1) {
             Tree finalTree = Util.nodeSetToLeafTree(Lists.newArrayList(remainingSets).get(0));

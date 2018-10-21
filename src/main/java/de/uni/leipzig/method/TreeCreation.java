@@ -1,8 +1,10 @@
 package de.uni.leipzig.method;
 
 import java.util.Set;
+import java.util.function.Supplier;
 
 import de.uni.leipzig.model.*;
+import de.uni.leipzig.user.UserInput;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -25,17 +27,32 @@ public interface TreeCreation {
         return new Tree(Node.helpNode());
     }
 
+    TreeCreation inNonInteractiveMode(boolean mode);
+
     @RequiredArgsConstructor
     enum Method {
-        AHO(new Aho()),
-        AHO_INFORMATIVE(new AhoInformative()),
-        THINNESS_CLASS(new ThinnessClass());
+        AHO(Aho::new),
+        AHO_INFORMATIVE(AhoInformative::new),
+        THINNESS_CLASS(ThinnessClass::new);
 
-        private final TreeCreation method;
+        private final Supplier<TreeCreation> method;
 
         public TreeCreation get() {
-            return method;
+            return method.get().inNonInteractiveMode(false);
         }
+    }
+
+    public static void askForInteractiveMode(TreeCreation tc, UserInput ui) {
+        ui.clear();
+
+        ui.register("yes", () -> {
+            tc.inNonInteractiveMode(false);
+        });
+        ui.register("no", () -> {
+            tc.inNonInteractiveMode(true);
+        });
+
+        ui.askWithOptions("Do you want to run tree creation in interactive mode?");
     }
 
 }
