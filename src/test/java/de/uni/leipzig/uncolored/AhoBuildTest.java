@@ -51,9 +51,9 @@ public class AhoBuildTest {
         Tree result = ahoBuild.build(Sets.newHashSet(tripleOne, tripleTwo, tripleThree, tripleFour),
                 Sets.newHashSet(one, two, three, four));
 
-        assertThat(result.getNodes()).containsExactlyInAnyOrder(Node.helpNode(), one, two, three,
+        assertThat(result.getAllSubNodes()).containsExactlyInAnyOrder(Node.helpNode(), one, two, three,
                 four);
-        assertThat(result.getNodes()).hasSize(5);
+        assertThat(result.getAllSubNodes()).hasSize(5);
         String newickNotation = result.toNewickNotation();
         assertThat(newickNotation).contains(one.toString())
                 .contains(two.toString())

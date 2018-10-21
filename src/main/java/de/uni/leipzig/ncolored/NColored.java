@@ -104,7 +104,7 @@ public class NColored {
             Set<Triple> triples = tripleFromTree.extractOf(stTrees);
             Set<Node> leaves = stTrees.values()
                     .stream()
-                    .flatMap(t -> t.getNodes().stream())
+                    .flatMap(t -> t.getAllSubNodes().stream())
                     .collect(Collectors.toSet());
 
             Tree resultingTree = aho.build(triples, leaves);
@@ -153,8 +153,8 @@ public class NColored {
     }
 
     private void checkOnlyHelpNodeTree(Tree result) {
-        if (result.getNodes().size() == 1
-                && result.getNodes().get(0).equals(Node.helpNode()))
+        if (result.getAllSubNodes().size() == 1
+                && result.getAllSubNodes().get(0).equals(Node.helpNode()))
             throw new RuntimeException("not a BMG");
     }
 

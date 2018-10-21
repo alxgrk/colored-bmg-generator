@@ -27,7 +27,7 @@ public class DiGraphExtractor3 {
 
 	private void extractRemained(Tree tree) {
 		List<Tree> SubTreeList = tree.getSubTrees();
-		List<Node> nodeList = tree.getNodes();
+		List<Node> nodeList = tree.getAllSubNodes();
 
 		if (reference == null) {
 			if (!nodeList.isEmpty()) {
@@ -74,7 +74,7 @@ public class DiGraphExtractor3 {
 
 	private Tree extractAndReduce(Tree tree) {
 		List<Tree> SubTreeList = tree.getSubTrees();
-		List<Node> nodeList = tree.getNodes();
+		List<Node> nodeList = tree.getAllSubNodes();
 
 		List<Node> reducedNodeList = extractEdgesInSubTree(nodeList);
 

@@ -92,7 +92,7 @@ public class Hierarchy {
                                 .getSecond();
 
                         Optional<Tree> existingTmpTree = tmpTrees.stream()
-                                .filter(tmp -> Util.equalSets(tmp.getNodes(), newLeafSet))
+                                .filter(tmp -> Util.equalSets(tmp.getAllSubNodes(), newLeafSet))
                                 .findFirst();
 
                         Tree newLeaf;
@@ -132,7 +132,7 @@ public class Hierarchy {
     private Optional<SetDiEdge> edgeWithLeafAsFirst(Set<SetDiEdge> finalEdges, Tree t,
             boolean andRemove) {
         Predicate<? super SetDiEdge> treeEqualFirstOfEdge = e -> Util.equalSets(e
-                .getFirst(), t.getNodes());
+                .getFirst(), t.getAllSubNodes());
 
         Optional<SetDiEdge> first = finalEdges.stream()
                 .filter(treeEqualFirstOfEdge)

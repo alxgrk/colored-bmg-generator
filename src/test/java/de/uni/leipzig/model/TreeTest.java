@@ -33,7 +33,7 @@ public class TreeTest {
 
         assertThat(uut.getLeafs()).isEqualTo(leaves);
         assertThat(uut.getSubTrees()).isEmpty();
-        assertThat(uut.getNodes()).containsExactly(node1, node2);
+        assertThat(uut.getAllSubNodes()).containsExactly(node1, node2);
         assertThat(uut.toNewickNotation()).isEqualTo("(0-1,1-2)");
     }
 
@@ -46,7 +46,7 @@ public class TreeTest {
 
         assertThat(uut.getLeafs()).isEqualTo(leaves);
         assertThat(uut.getSubTrees()).isEmpty();
-        assertThat(uut.getNodes()).containsExactly(node1);
+        assertThat(uut.getAllSubNodes()).containsExactly(node1);
         assertThat(uut.toNewickNotation()).isEqualTo("0-1");
     }
 
@@ -73,7 +73,7 @@ public class TreeTest {
 
         assertThat(uut.getLeafs()).isEmpty();
         assertThat(uut.getSubTrees()).containsExactly(leave1Tree, leave2Tree);
-        assertThat(uut.getNodes()).containsExactly(node1, node2);
+        assertThat(uut.getAllSubNodes()).containsExactly(node1, node2);
         assertThat(uut.toNewickNotation()).isEqualTo("(0-1,1-2)");
     }
 

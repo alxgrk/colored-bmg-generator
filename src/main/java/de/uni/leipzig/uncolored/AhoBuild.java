@@ -51,7 +51,7 @@ public class AhoBuild {
                 .map(component -> {
 
                     // get all nodes of this component recursively
-                    Set<Node> subLeaveSet = Sets.newHashSet(component.getNodes());
+                    Set<Node> subLeaveSet = Sets.newHashSet(component.getAllSubNodes());
 
                     // filter all triples describing this component
                     Set<Triple> subTripleSet = filter(subLeaveSet, tripleSetR);

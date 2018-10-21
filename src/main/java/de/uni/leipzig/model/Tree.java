@@ -44,20 +44,20 @@ public class Tree implements Comparable<Tree> {
     	this.subTrees = treeList;
     }
 
-    public List<Node> getNodes() {
+    public List<Node> getAllSubNodes() {
         List<Node> nodes = new ArrayList<>();
 
         nodes.addAll(leafs);
 
         subTrees.forEach(t -> {
-            nodes.addAll(t.getNodes());
+            nodes.addAll(t.getAllSubNodes());
         });
 
         return nodes;
     }
 
     public Tree addSubTree(@NonNull Tree t) {
-        leafs.removeAll(t.getNodes());
+        leafs.removeAll(t.getAllSubNodes());
         Collections.sort(leafs);
         subTrees.add(t);
         Collections.sort(this.subTrees);
@@ -116,8 +116,8 @@ public class Tree implements Comparable<Tree> {
 
     @Override
     public int compareTo(Tree o) {
-        List<Node> thisNodes = this.getNodes();
-        List<Node> otherNodes = o.getNodes();
+        List<Node> thisNodes = this.getAllSubNodes();
+        List<Node> otherNodes = o.getAllSubNodes();
 
         if (thisNodes.isEmpty())
             return 1;

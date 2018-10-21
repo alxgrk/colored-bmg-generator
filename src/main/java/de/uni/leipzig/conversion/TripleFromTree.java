@@ -15,6 +15,7 @@ public class TripleFromTree {
     }
 
     public Set<Triple> treeToTriples(Tree tree) {
+
         return null;
     }
 
