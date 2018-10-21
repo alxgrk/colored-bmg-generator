@@ -1,12 +1,12 @@
 package de.uni.leipzig;
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 
-import de.uni.leipzig.model.Triple;
+import de.uni.leipzig.model.*;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
@@ -29,6 +29,14 @@ public class Util {
         }
 
         return false;
+    }
+
+    public Tree nodeSetToLeafTree(Set<Node> nodes) {
+        List<Tree> subtrees = nodes.stream()
+                .map(Tree::new)
+                .collect(Collectors.toList());
+
+        return new Tree(subtrees);
     }
 
     @SuppressWarnings("unchecked")

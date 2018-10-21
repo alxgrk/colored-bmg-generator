@@ -1,64 +1,79 @@
 package de.uni.leipzig.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 
-import lombok.NonNull;
-import lombok.Value;
+import lombok.*;
 import lombok.experimental.NonFinal;
 
 @Value
 @NonFinal
 public class Tree implements Comparable<Tree> {
 
+    Node root;
+
     List<Tree> subTrees;
 
-    List<Node> leafs;
-
-    public Tree(@NonNull Collection<Node> leafs) {
-        List<Node> leafsAsList = Lists.newArrayList(leafs);
-        Collections.sort(leafsAsList);
-
-        if (leafs.size() < 1)
-            throw new IllegalArgumentException("Unable to create tree without any node.");
-
-        this.leafs = leafsAsList;
-        this.subTrees = new ArrayList<>();
+    public Tree(@NonNull Node root) {
+        this(root, new ArrayList<>());
     }
 
     public Tree(@NonNull Tree... subtrees) {
-        if (subtrees.length < 1)
-            throw new IllegalArgumentException("Unable to create tree without any node.");
-
-        this.leafs = new ArrayList<>();
-        this.subTrees = Lists.newArrayList(subtrees);
-        Collections.sort(this.subTrees);
-    }
-    
-    public Tree(List<Tree> treeList, List<Node> leafList){
-    	this.leafs = leafList;
-    	this.subTrees = treeList;
+        this(Node.helpNode(), subtrees);
     }
 
-    public List<Node> getAllSubNodes() {
+    public Tree(@NonNull List<Tree> subtrees) {
+        this(Node.helpNode(), subtrees);
+    }
+
+    public Tree(@NonNull Node root, @NonNull Tree... subtrees) {
+        this(root, Lists.newArrayList(subtrees));
+    }
+
+    public Tree(@NonNull Node root, @NonNull List<Tree> treeList) {
+        this.root = root;
+        this.subTrees = treeList;
+        if (!subTrees.isEmpty())
+            Collections.sort(this.subTrees);
+    }
+
+    public List<Node> getDirectChildren() {
+        return subTrees.stream()
+                .map(Tree::getRoot)
+                .collect(Collectors.toList());
+    }
+
+    public List<Node> getLeafs() {
+        List<Node> leafs = new ArrayList<>();
+
+        leafs.add(root);
+        leafs.addAll(subTrees.stream()
+                .flatMap(t -> t.getLeafs().stream())
+                .collect(Collectors.toList()));
+
+        return leafs.stream()
+                .filter(n -> !n.isHelpNode())
+                .collect(Collectors.toList());
+    }
+
+    public List<Node> getAllNodes() {
         List<Node> nodes = new ArrayList<>();
 
-        nodes.addAll(leafs);
+        nodes.add(root);
 
         subTrees.forEach(t -> {
-            nodes.addAll(t.getAllSubNodes());
+            nodes.addAll(t.getAllNodes());
         });
 
         return nodes;
     }
 
     public Tree addSubTree(@NonNull Tree t) {
-        leafs.removeAll(t.getAllSubNodes());
-        Collections.sort(leafs);
+
+        subTrees.removeIf(st -> t.getLeafs().containsAll(st.getLeafs()));
+
         subTrees.add(t);
         Collections.sort(this.subTrees);
 
@@ -66,21 +81,23 @@ public class Tree implements Comparable<Tree> {
     }
 
     public String toNewickNotation() {
-        if (subTrees.isEmpty() && leafs.size() == 1)
-            return leafs.get(0).toString();
+        if (subTrees.isEmpty())
+            return root.toString();
 
-        String nodes = leafs.stream()
-                .filter(n -> !n.isHelpNode())
-                .map(Node::toString)
-                .reduce("(", (u, n) -> u + n + ",");
+        StringBuilder sb = new StringBuilder("(");
 
-        String result = subTrees.stream()
+        if (!root.isHelpNode())
+            sb.append(root.toString()).append(",");
+
+        sb = subTrees.stream()
                 .map(Tree::toNewickNotation)
-                .reduce(nodes, (i, s) -> i + s + ",");
+                .reduce(sb,
+                        (i, s) -> i.append(s).append(","),
+                        (sb1, sb2) -> sb1.append(sb2));
 
-        return result
-                .substring(0, result.length() - 1)
-                .concat(")");
+        return sb.deleteCharAt(sb.length() - 1)
+                .append(")")
+                .toString();
     }
 
     public String print() {
@@ -90,15 +107,11 @@ public class Tree implements Comparable<Tree> {
     }
 
     private void print(StringBuilder sb, String prefix, boolean isTail) {
-        String nodes = leafs.stream()
-                .filter(n -> !n.isHelpNode())
-                .map(Node::toString)
-                .reduce("", (u, n) -> u + n + ",");
-        nodes = !nodes.isEmpty() ? nodes.substring(0, nodes.length() - 1) : nodes;
+        String node = root.toString();
 
         sb.append(prefix)
                 .append(isTail ? "└── " : "├── ")
-                .append(nodes.isEmpty() ? "*" : nodes)
+                .append(node)
                 .append("\n");
         for (int i = 0; i < subTrees.size() - 1; i++) {
             subTrees.get(i).print(sb, prefix + (isTail ? "    " : "│   "), false);
@@ -116,8 +129,8 @@ public class Tree implements Comparable<Tree> {
 
     @Override
     public int compareTo(Tree o) {
-        List<Node> thisNodes = this.getAllSubNodes();
-        List<Node> otherNodes = o.getAllSubNodes();
+        List<Node> thisNodes = this.getLeafs();
+        List<Node> otherNodes = o.getLeafs();
 
         if (thisNodes.isEmpty())
             return 1;

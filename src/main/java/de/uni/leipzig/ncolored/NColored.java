@@ -5,8 +5,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Sets;
-
 import de.uni.leipzig.Util;
 import de.uni.leipzig.conversion.TripleFromTree;
 import de.uni.leipzig.model.*;
@@ -80,7 +78,7 @@ public class NColored {
                                     })
                                     // append every subtree per connected component to new root
                                     // r(s,t)
-                                    .reduce(new Tree(Sets.newHashSet(Node.helpNode())),
+                                    .reduce(new Tree(Node.helpNode()),
                                             (i, subT) -> i.addSubTree(subT));
                             stTrees.put(new Pair<>(s, t), stTree);
                         }
@@ -90,7 +88,7 @@ public class NColored {
 
                 })
                 // append every subtree per connected component to new root r
-                .reduce(new Tree(Sets.newHashSet(Node.helpNode())),
+                .reduce(new Tree(Node.helpNode()),
                         (i, subT) -> i.addSubTree(subT));
 
     }
@@ -104,7 +102,7 @@ public class NColored {
             Set<Triple> triples = tripleFromTree.extractOf(stTrees);
             Set<Node> leaves = stTrees.values()
                     .stream()
-                    .flatMap(t -> t.getAllSubNodes().stream())
+                    .flatMap(t -> t.getAllNodes().stream())
                     .collect(Collectors.toSet());
 
             Tree resultingTree = aho.build(triples, leaves);
@@ -153,8 +151,8 @@ public class NColored {
     }
 
     private void checkOnlyHelpNodeTree(Tree result) {
-        if (result.getAllSubNodes().size() == 1
-                && result.getAllSubNodes().get(0).equals(Node.helpNode()))
+        if (result.getAllNodes().size() == 1
+                && result.getAllNodes().get(0).equals(Node.helpNode()))
             throw new RuntimeException("not a BMG");
     }
 

@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import org.zalando.fauxpas.ThrowingRunnable;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 
 import de.uni.leipzig.model.*;
 import de.uni.leipzig.user.UserInput;
@@ -34,7 +34,7 @@ public class AhoBuild {
 
         // if there is only one leave, return a tree containing only this leave
         if (leaveSetL.size() == 1)
-            return new Tree(leaveSetL);
+            return new Tree(Lists.newArrayList(leaveSetL).get(0));
 
         connectedComponents = components.construct(tripleSetR, leaveSetL);
 
@@ -43,15 +43,11 @@ public class AhoBuild {
             askForMinCut(tripleSetR, leaveSetL);
         }
 
-        // create invisible root node
-        List<Node> root = new ArrayList<>();
-        root.add(Node.helpNode());
-
         return connectedComponents.stream()
                 .map(component -> {
 
                     // get all nodes of this component recursively
-                    Set<Node> subLeaveSet = Sets.newHashSet(component.getAllSubNodes());
+                    Set<Node> subLeaveSet = Sets.newHashSet(component.getLeafs());
 
                     // filter all triples describing this component
                     Set<Triple> subTripleSet = filter(subLeaveSet, tripleSetR);
@@ -63,9 +59,8 @@ public class AhoBuild {
                     return subTree;
                 })
                 // concatenate all components under the root tree
-                .reduce(new Tree(root), (i, t) -> {
-                    Tree newTree = i.addSubTree(t);
-                    return newTree;
+                .reduce(new Tree(Node.helpNode()), (i, t) -> {
+                    return i.addSubTree(t);
                 });
     }
 

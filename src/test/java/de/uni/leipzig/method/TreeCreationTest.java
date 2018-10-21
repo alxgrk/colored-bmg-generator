@@ -8,8 +8,6 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import com.google.common.collect.Sets;
-
 import de.uni.leipzig.method.TreeCreation.Method;
 import de.uni.leipzig.model.*;
 
@@ -43,7 +41,7 @@ public class TreeCreationTest {
 
         @Override
         public Tree create(AdjacencyList adjList) {
-            return new Tree(Sets.newHashSet(Node.helpNode()));
+            return new Tree(Node.helpNode());
         }
 
     }

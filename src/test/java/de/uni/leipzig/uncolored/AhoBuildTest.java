@@ -51,14 +51,11 @@ public class AhoBuildTest {
         Tree result = ahoBuild.build(Sets.newHashSet(tripleOne, tripleTwo, tripleThree, tripleFour),
                 Sets.newHashSet(one, two, three, four));
 
-        assertThat(result.getAllSubNodes()).containsExactlyInAnyOrder(Node.helpNode(), one, two, three,
-                four);
-        assertThat(result.getAllSubNodes()).hasSize(5);
+        assertThat(result.getAllNodes()).containsExactlyInAnyOrder(Node.helpNode(), Node.helpNode(),
+                Node.helpNode(), one, two, three, four);
+        assertThat(result.getAllNodes()).hasSize(7);
         String newickNotation = result.toNewickNotation();
-        assertThat(newickNotation).contains(one.toString())
-                .contains(two.toString())
-                .contains(three.toString())
-                .contains(four.toString());
+        assertThat(newickNotation).isEqualTo("(((1-0111,0-0112),1-012),0-02)");
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })

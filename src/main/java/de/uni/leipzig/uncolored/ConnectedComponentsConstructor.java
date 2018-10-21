@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 
+import de.uni.leipzig.Util;
 import de.uni.leipzig.model.*;
 import de.uni.leipzig.model.edges.DiEdge;
 import de.uni.leipzig.uncolored.DepthFirstSearch.Marker;
@@ -68,7 +69,7 @@ public class ConnectedComponentsConstructor {
                     })
                     .collect(Collectors.toSet());
 
-            subTrees.add(new Tree(subTree));
+            subTrees.add(Util.nodeSetToLeafTree(subTree));
         }
 
         return subTrees;

@@ -2,17 +2,15 @@ package de.uni.leipzig.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
+
+import de.uni.leipzig.Util;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HierarchyTest {
@@ -101,15 +99,15 @@ public class HierarchyTest {
     @Test
     public void testToHasseTree() throws Exception {
         // INIT
-        Tree tree12 = new Tree(rq12);
-        Tree tree56 = new Tree(rq56);
+        Tree tree12 = Util.nodeSetToLeafTree(rq12);
+        Tree tree56 = Util.nodeSetToLeafTree(rq56);
 
-        Tree tree1234 = new Tree(rq1234);
+        Tree tree1234 = Util.nodeSetToLeafTree(rq1234);
         tree1234.addSubTree(tree12);
-        Tree tree5678 = new Tree(rq5678);
+        Tree tree5678 = Util.nodeSetToLeafTree(rq5678);
         tree5678.addSubTree(tree56);
 
-        Tree root = new Tree(rq1_10);
+        Tree root = Util.nodeSetToLeafTree(rq1_10);
         root.addSubTree(tree1234);
         root.addSubTree(tree5678);
 
@@ -119,7 +117,7 @@ public class HierarchyTest {
 
         // ASSERT
         // expected:
-        // (0-03,0-04,(1-012,0-013,(1-0111,0-0112)),(1-022,1-023,(0-0211,0-0212)))
+        // (((1-0111,0-0112),1-012,0-013),((0-0211,0-0212),1-022,1-023),0-03,0-04)
         assertThat(actual.toNewickNotation()).isEqualTo(root.toNewickNotation());
 
     }

@@ -1,17 +1,10 @@
 package de.uni.leipzig.model;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 
 import de.uni.leipzig.Util;
 import de.uni.leipzig.model.edges.SetDiEdge;
@@ -74,11 +67,11 @@ public class Hierarchy {
             return Lists.newArrayList(leafsAsTree).get(0);
 
         if (remainingSets.size() == 1) {
-            Tree root = new Tree(Lists.newArrayList(remainingSets).get(0));
+            Tree finalTree = Util.nodeSetToLeafTree(Lists.newArrayList(remainingSets).get(0));
 
-            leafsAsTree.forEach(root::addSubTree);
+            leafsAsTree.forEach(finalTree::addSubTree);
 
-            return root;
+            return finalTree;
         }
 
         if (!leafsAsTree.isEmpty()) {
@@ -92,14 +85,14 @@ public class Hierarchy {
                                 .getSecond();
 
                         Optional<Tree> existingTmpTree = tmpTrees.stream()
-                                .filter(tmp -> Util.equalSets(tmp.getAllSubNodes(), newLeafSet))
+                                .filter(tmp -> Util.equalSets(tmp.getLeafs(), newLeafSet))
                                 .findFirst();
 
                         Tree newLeaf;
                         if (existingTmpTree.isPresent())
                             newLeaf = existingTmpTree.get();
                         else {
-                            newLeaf = new Tree(newLeafSet);
+                            newLeaf = Util.nodeSetToLeafTree(newLeafSet);
                             tmpTrees.add(newLeaf);
                             remainingSets.removeIf(s -> Util.equalSets(s, newLeafSet));
                         }
@@ -122,7 +115,7 @@ public class Hierarchy {
 
             leafsAsTree = leafs.stream()
                     .peek(remainingSets::remove)
-                    .map(Tree::new)
+                    .map(Util::nodeSetToLeafTree)
                     .collect(Collectors.toSet());
         }
 
@@ -132,7 +125,7 @@ public class Hierarchy {
     private Optional<SetDiEdge> edgeWithLeafAsFirst(Set<SetDiEdge> finalEdges, Tree t,
             boolean andRemove) {
         Predicate<? super SetDiEdge> treeEqualFirstOfEdge = e -> Util.equalSets(e
-                .getFirst(), t.getAllSubNodes());
+                .getFirst(), t.getLeafs());
 
         Optional<SetDiEdge> first = finalEdges.stream()
                 .filter(treeEqualFirstOfEdge)

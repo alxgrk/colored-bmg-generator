@@ -20,7 +20,7 @@ public class BuildST {
     public Tree build(List<Color> colors, DiGraph inputU) throws IncompatibleProfileException {
 
         Node rU = Node.helpNode();
-        Tree tU = new Tree(Sets.newHashSet(rU));
+        Tree tU = new Tree(rU);
 
         // determine distinct color number
         int colorNumber = 0; // FIXME calculate
