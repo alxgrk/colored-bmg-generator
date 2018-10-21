@@ -1,11 +1,15 @@
 package de.uni.leipzig.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
-import com.google.common.collect.*;
+import com.google.common.collect.Lists;
 
-import lombok.*;
-import lombok.experimental.*;
+import lombok.NonNull;
+import lombok.Value;
+import lombok.experimental.NonFinal;
 
 @Value
 @NonFinal
@@ -33,6 +37,11 @@ public class Tree implements Comparable<Tree> {
         this.leafs = new ArrayList<>();
         this.subTrees = Lists.newArrayList(subtrees);
         Collections.sort(this.subTrees);
+    }
+    
+    public Tree(List<Tree> treeList, List<Node> leafList){
+    	this.leafs = leafList;
+    	this.subTrees = treeList;
     }
 
     public List<Node> getNodes() {

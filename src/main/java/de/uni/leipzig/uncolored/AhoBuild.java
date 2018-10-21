@@ -1,6 +1,8 @@
 package de.uni.leipzig.uncolored;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.zalando.fauxpas.ThrowingRunnable;
@@ -8,14 +10,18 @@ import org.zalando.fauxpas.ThrowingRunnable;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 
-import de.uni.leipzig.model.*;
+import de.uni.leipzig.model.Node;
+import de.uni.leipzig.model.Tree;
+import de.uni.leipzig.model.Triple;
 import de.uni.leipzig.user.UserInput;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@VisibleForTesting))
 public class AhoBuild {
 
-    private final DiGraphFromTripleSet creator;
+    private final MinCut minCutCreator;
 
     private final UserInput ui;
 
@@ -27,7 +33,7 @@ public class AhoBuild {
     private boolean alwaysMinCut = false;
 
     public AhoBuild() {
-        this(new DiGraphFromTripleSet(), new UserInput(), new ConnectedComponentsConstructor());
+        this(new MinCut(), new UserInput(), new ConnectedComponentsConstructor());
     }
 
     public Tree build(Set<Triple> tripleSetR, Set<Node> leaveSetL) {
@@ -72,7 +78,7 @@ public class AhoBuild {
     @VisibleForTesting
     protected void askForMinCut(Set<Triple> tripleSetR, Set<Node> leaveSetL) {
         ThrowingRunnable<Exception> minCut = () -> {
-            connectedComponents = creator.create(tripleSetR, leaveSetL);
+            connectedComponents = minCutCreator.create(tripleSetR, leaveSetL);
         };
 
         if (alwaysMinCut)
