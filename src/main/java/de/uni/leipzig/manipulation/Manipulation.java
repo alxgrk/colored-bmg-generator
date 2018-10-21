@@ -37,6 +37,8 @@ public class Manipulation {
         this.manipulate = manipulate;
         this.ahoBuild = ahoBuild;
 
+        this.manipulate.clear();
+
         this.manipulate.register("no", () -> {
         });
 

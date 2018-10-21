@@ -12,6 +12,7 @@ import com.google.common.annotations.VisibleForTesting;
 import de.uni.leipzig.model.*;
 import de.uni.leipzig.ncolored.NColored;
 import de.uni.leipzig.parser.BlastGraphParser;
+import de.uni.leipzig.twocolored.DiGraphExtractor;
 import de.uni.leipzig.user.UserInput;
 import lombok.*;
 
@@ -67,31 +68,49 @@ public class Main {
 
             ui.clear();
 
-            ui.register(AHO, aho -> {
-                Pair<Set<Triple>, Set<Node>> nodesAndTriples = blastGraphParser.parseTriple(file);
+            if (twoColored) {
+                ui.register(AHO, aho -> {
+                    Pair<Set<Triple>, Set<Node>> nodesAndTriples = blastGraphParser.parseTriple(
+                            file);
 
-                aho.create(nodesAndTriples.getFirst(), nodesAndTriples.getSecond());
-            });
+                    aho.create(nodesAndTriples.getFirst(), nodesAndTriples.getSecond());
+                });
 
-            ui.register(THINNESS_CLASS, tc -> {
-                DiGraph diGraph = blastGraphParser.parseDiGraph(file);
+                ui.register(THINNESS_CLASS, tc -> {
+                    DiGraph diGraph = blastGraphParser.parseDiGraph(file);
 
-                if (twoColored) {
                     tc.create(diGraph);
-                } else {
+                });
+
+                ui.register(AHO_INFORMATIVE, inf -> {
+                    Pair<Set<Triple>, Set<Node>> nodesAndTriples = blastGraphParser.parseTriple(
+                            file);
+                    DiGraph diGraph = blastGraphParser.parseDiGraph(file);
+
+                    inf.create(nodesAndTriples.getFirst(), diGraph);
+                });
+            } else {
+                ui.register(THINNESS_CLASS, tc -> {
+                    DiGraph diGraph = blastGraphParser.parseDiGraph(file);
+
                     Tree result = nColored.by(g -> tc.create(g), diGraph);
 
                     System.out.println(result.toNewickNotation());
                     System.out.println(result.print());
-                }
-            });
+                });
 
-            ui.register(AHO_INFORMATIVE, inf -> {
-                Pair<Set<Triple>, Set<Node>> nodesAndTriples = blastGraphParser.parseTriple(file);
-                DiGraph diGraph = blastGraphParser.parseDiGraph(file);
+                ui.register(AHO_INFORMATIVE, inf -> {
+                    Pair<Set<Triple>, Set<Node>> nodesAndTriples = blastGraphParser.parseTriple(
+                            file);
+                    DiGraph diGraph = blastGraphParser.parseDiGraph(file);
 
-                inf.create(nodesAndTriples.getFirst(), diGraph);
-            });
+                    Tree result = nColored.by(g -> inf.create(nodesAndTriples.getFirst(), diGraph),
+                            diGraph);
+
+                    System.out.println(result.toNewickNotation());
+                    System.out.println(result.print());
+                });
+            }
 
             ui.askWithOptions("How do you want to create the LRT?");
         });
@@ -101,15 +120,34 @@ public class Main {
             ui.clear();
             RandomTree randomTree = RandomTree.askRandomTreeConfig(ui);
 
-            // FIXME if >2 colors then ...
-            // something like NColored.pass(this::thinnessClassBased, ...)
+            boolean twoColored = randomTree.maxLabel() <= 2;
 
             AdjacencyList adjList = randomTree.create();
-
             ui.clear();
-            ui.register(AHO, adjList);
-            ui.register(THINNESS_CLASS, adjList);
-            ui.register(AHO_INFORMATIVE, adjList);
+
+            if (twoColored) {
+                ui.register(AHO, adjList);
+                ui.register(THINNESS_CLASS, adjList);
+                ui.register(AHO_INFORMATIVE, adjList);
+            } else {
+                ui.register(THINNESS_CLASS, tc -> {
+                    DiGraphExtractor diGraphExtractor = new DiGraphExtractor();
+                    Tree result = nColored.by(g -> tc.create(adjList),
+                            diGraphExtractor.extract(adjList));
+
+                    System.out.println(result.toNewickNotation());
+                    System.out.println(result.print());
+                });
+
+                ui.register(AHO_INFORMATIVE, inf -> {
+                    DiGraphExtractor diGraphExtractor = new DiGraphExtractor();
+                    Tree result = nColored.by(g -> inf.create(adjList),
+                            diGraphExtractor.extract(adjList));
+
+                    System.out.println(result.toNewickNotation());
+                    System.out.println(result.print());
+                });
+            }
 
             ui.askWithOptions("How do you want to create the LRT?");
         });

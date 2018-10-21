@@ -1,4 +1,4 @@
-package de.uni.leipzig.dengfernandezbaca;
+package de.uni.leipzig.ncolored.dengfernandezbaca;
 
 import java.util.*;
 

@@ -3,13 +3,16 @@ package de.uni.leipzig.ncolored;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Sets;
 
 import de.uni.leipzig.Util;
-import de.uni.leipzig.dengfernandezbaca.BuildST;
 import de.uni.leipzig.model.*;
-import de.uni.leipzig.uncolored.ConnectedComponentsConstructor;
+import de.uni.leipzig.ncolored.dengfernandezbaca.BuildST;
+import de.uni.leipzig.ncolored.dengfernandezbaca.BuildST.IncompatibleProfileException;
+import de.uni.leipzig.uncolored.*;
+import de.uni.leipzig.user.*;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -19,8 +22,15 @@ public class NColored {
 
     private final BuildST buildST;
 
+    private final AhoBuild aho;
+
+    private final TripleFromTree tripleFromTree;
+
+    private final UserInput treeCombinationMethod;
+
     public NColored() {
-        this(new ConnectedComponentsConstructor(), new BuildST());
+        this(new ConnectedComponentsConstructor(), new BuildST(), new AhoBuild(),
+                new TripleFromTree(), new UserInput());
     }
 
     public Tree by(Function<DiGraph, Tree> creation, DiGraph diGraph) {
@@ -75,25 +85,46 @@ public class NColored {
                         }
                     }
 
-                    // TODO delete
-                    return stTrees.values()
-                            .stream()
-                            .reduce(new Tree(Sets.newHashSet(Node.helpNode())),
-                                    (i, subT) -> i.addSubTree(subT));
-
-                    // FIXME run Deng - Fernandez-Baca
-                    // try {
-                    // return buildST.build(stTrees);
-                    // } catch (IncompatibleProfileException e) {
-                    // // tree was incompatible
-                    // throw new RuntimeException("not a BMG");
-                    // }
+                    return askForTreeCombinationMethod(stTrees);
 
                 })
                 // append every subtree per connected component to new root r
                 .reduce(new Tree(Sets.newHashSet(Node.helpNode())),
                         (i, subT) -> i.addSubTree(subT));
 
+    }
+
+    private Tree askForTreeCombinationMethod(Map<Pair<Color>, Tree> stTrees) {
+
+        Result<Tree> result = Result.empty();
+
+        treeCombinationMethod.register("extract triples and run aho", () -> {
+
+            Set<Triple> triples = tripleFromTree.extractOf(stTrees);
+            Set<Node> leaves = stTrees.values()
+                    .stream()
+                    .flatMap(t -> t.getNodes().stream())
+                    .collect(Collectors.toSet());
+
+            Tree resultingTree = aho.build(triples, leaves);
+            result.fixValue(resultingTree);
+        });
+
+        treeCombinationMethod.register("run deng & fernandez-baca", () -> {
+
+            // run Deng - Fernandez-Baca
+            try {
+                result.fixValue(buildST.build(stTrees));
+            } catch (IncompatibleProfileException e) {
+                // tree was incompatible
+                throw new RuntimeException("not a BMG");
+            }
+
+        });
+
+        treeCombinationMethod.askWithOptions("What tree combination method should be run?");
+
+        return result.getValue();
     }
 
     private void checkColorOfEdges(DiGraph diGraph) {
