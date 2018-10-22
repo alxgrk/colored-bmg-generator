@@ -1,8 +1,15 @@
 package de.uni.leipzig.parser;
 
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -12,9 +19,15 @@ import org.jgrapht.alg.util.Pair;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 
-import de.uni.leipzig.model.*;
-import de.uni.leipzig.model.edges.*;
-import de.uni.leipzig.user.*;
+import de.uni.leipzig.model.Color;
+import de.uni.leipzig.model.DefaultTriple;
+import de.uni.leipzig.model.DiGraph;
+import de.uni.leipzig.model.Node;
+import de.uni.leipzig.model.Triple;
+import de.uni.leipzig.model.edges.DiEdge;
+import de.uni.leipzig.model.edges.Edge;
+import de.uni.leipzig.user.Result;
+import de.uni.leipzig.user.UserInput;
 
 public class BlastGraphParser {
 
@@ -29,7 +42,7 @@ public class BlastGraphParser {
     @VisibleForTesting
     protected Result<File> getBlastGraphFile(File cwd, UserInput whichFile) throws Exception {
         List<File> blastFiles = Files.find(cwd.toPath(), 10,
-                (f, a) -> f.toFile().getName().endsWith(".blast-graph"))
+                (f, a) -> f.toFile().getName().endsWith(".blast-graph") || f.toFile().getName().endsWith(".ffadj-graph"))
                 .map(Path::toFile)
                 .collect(Collectors.toList());
 

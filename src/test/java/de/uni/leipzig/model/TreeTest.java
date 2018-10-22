@@ -1,12 +1,12 @@
 package de.uni.leipzig.model;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.List;
 
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TreeTest {
 
@@ -35,7 +35,7 @@ public class TreeTest {
 
         assertThat(uut.getLeafs()).containsExactly(node1, node2);
         assertThat(uut.getSubTrees()).containsExactly(t1, t2);
-        assertThat(uut.getAllNodes()).containsExactly(Node.helpNode(), node1, node2);
+        assertThat(uut.getAllNodes()).contains(node1, node2);
         assertThat(uut.toNewickNotation()).isEqualTo("(0-1,1-2)");
     }
 
@@ -64,7 +64,7 @@ public class TreeTest {
 
         assertThat(uut.getLeafs()).containsExactly(node1, node2);
         assertThat(uut.getSubTrees()).containsExactly(leave1Tree, leave2Tree);
-        assertThat(uut.getAllNodes()).containsExactly(Node.helpNode(), node1, node2);
+        assertThat(uut.getAllNodes()).contains(node1, node2);
         assertThat(uut.toNewickNotation()).isEqualTo("(0-1,1-2)");
     }
 

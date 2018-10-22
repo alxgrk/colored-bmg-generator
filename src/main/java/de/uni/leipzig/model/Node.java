@@ -54,4 +54,48 @@ public class Node implements Comparable<Node> {
         return this.getPath().compareTo(o.getPath());
     }
 
+	@Override
+	public boolean equals(Object obj) {
+		
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof Node))
+			return false;
+		
+		Node other = (Node) obj;
+		
+		if (this.isHelpNode())
+			return super.equals(other);
+		
+		if (color == null) {
+			if (other.color != null)
+				return false;
+		} else if (!color.equals(other.color))
+			return false;
+		if (ids == null) {
+			if (other.ids != null)
+				return false;
+		} else if (!ids.equals(other.ids))
+			return false;
+		if (path == null) {
+			if (other.path != null)
+				return false;
+		} else if (!path.equals(other.path))
+			return false;
+		
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((color == null) ? 0 : color.hashCode());
+		result = prime * result + ((ids == null) ? 0 : ids.hashCode());
+		result = prime * result + ((path == null) ? 0 : path.hashCode());
+		return result;
+	}
+
 }

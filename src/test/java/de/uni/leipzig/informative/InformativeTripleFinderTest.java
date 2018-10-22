@@ -1,15 +1,16 @@
 package de.uni.leipzig.informative;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.Set;
 
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import de.uni.leipzig.informative.model.InformativeTriple;
-import de.uni.leipzig.model.*;
+import de.uni.leipzig.model.AdjacencyList;
+import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.edges.Edge;
 
 public class InformativeTripleFinderTest {
@@ -53,7 +54,6 @@ public class InformativeTripleFinderTest {
 
         assertThat(actual).allMatch(t -> t instanceof InformativeTriple);
         assertThat(actual).containsExactlyInAnyOrder(
-                new InformativeTriple(new Edge(n0111, n0112), n012),
                 new InformativeTriple(new Edge(n0111, n0112), n02),
                 new InformativeTriple(new Edge(n0112, n012), n02));
     }

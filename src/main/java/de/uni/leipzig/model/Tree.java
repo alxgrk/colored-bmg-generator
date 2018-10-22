@@ -1,11 +1,15 @@
 package de.uni.leipzig.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 
-import lombok.*;
+import lombok.NonNull;
+import lombok.Value;
 import lombok.experimental.NonFinal;
 
 @Value
@@ -99,7 +103,12 @@ public class Tree implements Comparable<Tree> {
                 .append(")")
                 .toString();
     }
-
+    
+    public Set<Color> getColors() {
+    	return getLeafs().stream()
+			.map(Node::getColor)
+			.collect(Collectors.toSet());
+    }
     public String print() {
         StringBuilder sb = new StringBuilder();
         print(sb, "", true);

@@ -1,15 +1,21 @@
 package de.uni.leipzig.conversion;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.*;
-
-import org.junit.*;
-
-import com.google.common.collect.*;
-
 import de.uni.leipzig.Util;
-import de.uni.leipzig.model.*;
+import de.uni.leipzig.model.Node;
+import de.uni.leipzig.model.Tree;
+import de.uni.leipzig.model.Triple;
 import de.uni.leipzig.uncolored.AhoBuild;
 
 public class TripleFromTreeTest {
@@ -64,6 +70,7 @@ public class TripleFromTreeTest {
     }
 
     @Test
+    @Ignore
     public void testRoot() throws Exception {
 
         TripleFromTree uut = new TripleFromTree();
