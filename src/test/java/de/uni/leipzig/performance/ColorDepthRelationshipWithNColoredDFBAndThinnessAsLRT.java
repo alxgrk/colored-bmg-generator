@@ -28,12 +28,7 @@ public class ColorDepthRelationshipWithNColoredDFBAndThinnessAsLRT {
 
     TreeCreation lrtMethod = Method.THINNESS_CLASS.get().inNonInteractiveMode(true);
 
-    private Runner runner;
-
-    @Before
-    public void setUp() throws Exception {
-        runner = new Runner(MAX_CHILDREN, MIN_DEPTH, SuperTreeMethod.DENG_FERNANDEZ_BACA);
-    }
+    private Runner runner = new Runner(getClass(), MAX_CHILDREN, MIN_DEPTH, SuperTreeMethod.AHO);
 
     // TWO COLORED
 

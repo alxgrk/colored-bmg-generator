@@ -28,12 +28,7 @@ public class ColorDepthRelationshipWithNColoredAhoAndInformativeAsLRT {
 
     TreeCreation lrtMethod = Method.AHO_INFORMATIVE.get().inNonInteractiveMode(true);
 
-    private Runner runner;
-
-    @Before
-    public void setUp() throws Exception {
-        runner = new Runner(MAX_CHILDREN, MIN_DEPTH, SuperTreeMethod.AHO);
-    }
+    private Runner runner = new Runner(getClass(), MAX_CHILDREN, MIN_DEPTH, SuperTreeMethod.AHO);
 
     // TWO COLORED
 

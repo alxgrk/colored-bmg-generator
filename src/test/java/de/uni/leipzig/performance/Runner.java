@@ -1,5 +1,7 @@
 package de.uni.leipzig.performance;
 
+import java.io.*;
+import java.nio.file.*;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Stopwatch;
@@ -10,29 +12,41 @@ import de.uni.leipzig.model.*;
 import de.uni.leipzig.ncolored.NColored;
 import de.uni.leipzig.ncolored.NColored.SuperTreeMethod;
 import de.uni.leipzig.twocolored.DiGraphExtractor;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 public class Runner {
 
     final int maxChildren;
 
     final int minDepth;
 
-    final SuperTreeMethod stMethod;
-
     final NColored nColored;
+
+    final File testReport;
 
     DiGraphExtractor diGraphExtractor = new DiGraphExtractor();
 
-    public Runner(int maxChildren, int minDepth, SuperTreeMethod stMethod) {
-        this(maxChildren, minDepth, stMethod,
-                new NColored()
-                        .stMethod(new Container<>(stMethod))
-                        .alwaysMinCut(true));
+    public Runner(Class<?> testClass, int maxChildren, int minDepth, SuperTreeMethod stMethod) {
+        try {
+            this.maxChildren = maxChildren;
+            this.minDepth = minDepth;
+            this.nColored = new NColored()
+                    .stMethod(new Container<>(stMethod))
+                    .alwaysMinCut(true);
+            this.testReport = new File(Runner.class.getProtectionDomain()
+                    .getCodeSource()
+                    .getLocation()
+                    .getPath()
+                    + "/" + testClass.getSimpleName() + ".report");
+
+            if (!testReport.exists()) {
+                testReport.createNewFile();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void run(TreeCreation lrtMethod, int color, int depth) {
+    public void run(TreeCreation lrtMethod, int color, int depth) throws IOException {
         Stopwatch sw = Stopwatch.createStarted();
 
         RandomTree randomTree = new RandomTree(maxChildren, depth, color).minDepth(minDepth);
@@ -48,13 +62,17 @@ public class Runner {
                 nColored.by(g -> lrtMethod.create(g), graph);
             }
         } catch (Exception e) {
-            System.out.println(runInformation);
-            System.err.println(e);
+            write(runInformation);
+            write(e.getMessage());
             return;
         }
 
         Long elapsedMilliSeconds = sw.stop().elapsed(TimeUnit.MILLISECONDS);
-        System.out.println(runInformation);
-        System.out.println("took " + (elapsedMilliSeconds.doubleValue() / 1000));
+        write(runInformation);
+        write("took " + (elapsedMilliSeconds.doubleValue() / 1000));
+    }
+
+    private void write(String line) throws IOException {
+        Files.write(testReport.toPath(), line.concat("\n").getBytes(), StandardOpenOption.APPEND);
     }
 }
