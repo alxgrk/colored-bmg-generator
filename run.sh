@@ -1,6 +1,6 @@
 #!/bin/bash
 
-./mvnw clean package
+./mvnw clean package -DskipTests
 
 JAVA=$(which java)
 [ -z $JAVA ] \
