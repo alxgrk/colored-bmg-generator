@@ -87,7 +87,7 @@ public class BlastGraphParserTest {
         BlastGraphParser uut = new BlastGraphParser();
         Integer count = uut.colorsIn(input);
 
-        assertThat(count).isEqualTo(4);
+        assertThat(count).isEqualTo(5);
     }
 
     @Test

@@ -4,6 +4,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.Set;
 
+import org.jgrapht.alg.util.Pair;
 import org.junit.Test;
 
 import de.uni.leipzig.informative.InformativeTripleFinder;
@@ -19,14 +20,12 @@ public class AhoInformativeTest {
         AdjacencyList adjList = mock(AdjacencyList.class);
         Set triples = mock(Set.class);
         Set leaves = mock(Set.class);
-        when(informativeTripleFinder.findTriple(adjList)).thenReturn(triples);
-        when(informativeTripleFinder.getLeaves()).thenReturn(leaves);
+        when(informativeTripleFinder.findTriple(adjList)).thenReturn(Pair.of(triples, leaves));
 
         AhoInformative uut = new AhoInformative(informativeTripleFinder, aho);
         uut.create(adjList);
 
         verify(informativeTripleFinder).findTriple(adjList);
-        verify(informativeTripleFinder).getLeaves();
         verify(aho).create(triples, leaves);
     }
 
@@ -38,14 +37,13 @@ public class AhoInformativeTest {
         DiGraph diGraph = mock(DiGraph.class);
         Set triples = mock(Set.class);
         Set leaves = mock(Set.class);
-        when(informativeTripleFinder.findTriple(triples, diGraph)).thenReturn(triples);
-        when(informativeTripleFinder.getLeaves()).thenReturn(leaves);
+        when(informativeTripleFinder.findTriple(triples, diGraph)).thenReturn(Pair.of(triples,
+                leaves));
 
         AhoInformative uut = new AhoInformative(informativeTripleFinder, aho);
         uut.create(triples, diGraph);
 
         verify(informativeTripleFinder).findTriple(triples, diGraph);
-        verify(informativeTripleFinder).getLeaves();
         verify(aho).create(triples, leaves);
     }
 }

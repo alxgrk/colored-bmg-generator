@@ -80,7 +80,7 @@ public class DiGraphTest {
         DiGraph uut = new DiGraph(nodes, edges);
 
         assertThat(uut.getHasseDiagram().toNewickNotation())
-                .isEqualTo("(1-01,0-0211,0-0212,(1-0221,0-0222))");
+                .isEqualTo("(0-0211,0-0212,(0-0222,1-0221),1-01)");
     }
 
     @Test
@@ -138,7 +138,7 @@ public class DiGraphTest {
 
         // ASSERT
         assertThat(actual.toNewickNotation()).isEqualTo(
-                "((E-317,(L-323,E-368,L-627,L-631)),L-635)");
+                "((E-317,(E-368,L-323,L-627,L-631)),L-635)");
 
     }
 

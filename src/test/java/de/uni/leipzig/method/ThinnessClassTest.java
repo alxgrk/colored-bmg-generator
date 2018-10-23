@@ -1,14 +1,10 @@
 package de.uni.leipzig.method;
 
+import static org.mockito.Mockito.*;
+
 import org.junit.Test;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import de.uni.leipzig.model.AdjacencyList;
-import de.uni.leipzig.model.DiGraph;
-import de.uni.leipzig.model.Tree;
+import de.uni.leipzig.model.*;
 import de.uni.leipzig.twocolored.DiGraphExtractor2;
 
 public class ThinnessClassTest {
@@ -31,7 +27,6 @@ public class ThinnessClassTest {
         verify(diGraph).getNeighboursByTc();
         verify(diGraph).getReachablesByTc();
         verify(diGraph).getHasseDiagram();
-        verify(tree).toNewickNotation();
         verify(tree).print();
     }
 
@@ -49,7 +44,6 @@ public class ThinnessClassTest {
         verify(diGraph).getNeighboursByTc();
         verify(diGraph).getReachablesByTc();
         verify(diGraph).getHasseDiagram();
-        verify(tree).toNewickNotation();
         verify(tree).print();
     }
 

@@ -3,7 +3,7 @@ package de.uni.leipzig.model;
 import lombok.*;
 
 @Value
-public class Color {
+public class Color implements Comparable<Color> {
 
     @Getter(value = AccessLevel.NONE)
     String color;
@@ -11,6 +11,11 @@ public class Color {
     @Override
     public String toString() {
         return color;
+    }
+
+    @Override
+    public int compareTo(Color o) {
+        return this.toString().compareTo(o.toString());
     }
 
 }

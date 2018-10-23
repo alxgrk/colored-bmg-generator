@@ -10,7 +10,7 @@ public class BlastGraphLineTest {
     public void testCreation() throws Exception {
         String line = "E_10\tC_10\t1.21e-143\t425\t4.59e-136\t405";
 
-        BlastGraphLine uut = new BlastGraphLine(line);
+        BlastGraphLine uut = new BlastGraphLine(line, a -> a, a -> a);
 
         assertThat(uut.getGene1().getLabel()).isEqualTo("E");
         assertThat(uut.getGene1().getName()).isEqualTo("10");

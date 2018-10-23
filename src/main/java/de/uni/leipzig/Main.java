@@ -98,7 +98,6 @@ public class Main {
 
                     Tree result = nColored.by(g -> tc.create(g), diGraph);
 
-                    System.out.println(result.toNewickNotation());
                     System.out.println(result.print());
                 });
 
@@ -109,10 +108,9 @@ public class Main {
                             file);
                     DiGraph diGraph = blastGraphParser.parseDiGraph(file);
 
-                    Tree result = nColored.by(g -> inf.create(nodesAndTriples.getFirst(), diGraph),
+                    Tree result = nColored.by(g -> inf.create(nodesAndTriples.getFirst(), g),
                             diGraph);
 
-                    System.out.println(result.toNewickNotation());
                     System.out.println(result.print());
                 });
             }
@@ -135,6 +133,9 @@ public class Main {
                 ui.register(THINNESS_CLASS, adjList);
                 ui.register(AHO_INFORMATIVE, adjList);
             } else {
+
+                AHO.get().create(adjList);
+
                 ui.register(THINNESS_CLASS, tc -> {
                     TreeCreation.askForInteractiveMode(tc, ui);
 
@@ -142,7 +143,6 @@ public class Main {
                     Tree result = nColored.by(g -> tc.create(adjList),
                             diGraphExtractor.extract(adjList));
 
-                    System.out.println(result.toNewickNotation());
                     System.out.println(result.print());
                 });
 
@@ -153,7 +153,6 @@ public class Main {
                     Tree result = nColored.by(g -> inf.create(adjList),
                             diGraphExtractor.extract(adjList));
 
-                    System.out.println(result.toNewickNotation());
                     System.out.println(result.print());
                 });
             }

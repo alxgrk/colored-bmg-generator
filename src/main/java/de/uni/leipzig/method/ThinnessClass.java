@@ -30,15 +30,11 @@ class ThinnessClass implements TreeCreation {
     @Override
     public Tree create(DiGraph graph) {
 
-        System.out.println("Nodes: " + graph.getNodes());
-        System.out.println("Edges: " + graph.getEdges());
-
-        System.out.println("Neighbourhood: " + graph.getNeighboursByTc());
-        graph.getReachablesByTc()
-                .values()
-                .stream()
-                .map(Reachables::getRq)
-                .forEach(rq -> System.out.println("RQ: " + rq));
+        // initialization of all fields
+        graph.getNodes();
+        graph.getEdges();
+        graph.getNeighboursByTc();
+        graph.getReachablesByTc();
 
         boolean axiomsFulfilled = Axioms.checkAll(graph);
 
@@ -46,7 +42,7 @@ class ThinnessClass implements TreeCreation {
             throw new RuntimeException("Axioms not fulfilled!");
 
         Tree leastResolvedTree = graph.getHasseDiagram();
-        System.out.println(leastResolvedTree.toNewickNotation());
+
         System.out.println(leastResolvedTree.print());
 
         return leastResolvedTree;

@@ -1,6 +1,7 @@
 package de.uni.leipzig.parser;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.google.common.primitives.Chars;
@@ -25,11 +26,12 @@ public class BlastGraphLine {
 
     // E_10 C_10 1.21e-143 425 4.59e-136 405
 
-    public BlastGraphLine(String line) {
+    public BlastGraphLine(String line, Function<String, String> firstConversion,
+            Function<String, String> secondConversion) {
         String[] splitted = line.split("\t");
 
-        gene1 = new Gene(splitted[0]);
-        gene2 = new Gene(splitted[1]);
+        gene1 = new Gene(splitted[0], firstConversion);
+        gene2 = new Gene(splitted[1], secondConversion);
 
         evalueAB = Double.valueOf(splitted[2]);
         evalueBA = Double.valueOf(splitted[4]);
@@ -38,6 +40,7 @@ public class BlastGraphLine {
         bitscoreBA = Integer.parseInt(splitted[5]);
     }
 
+    @ToString
     class Gene {
 
         @Getter
@@ -48,9 +51,9 @@ public class BlastGraphLine {
 
         private Node node;
 
-        public Gene(String gene) {
+        public Gene(String gene, Function<String, String> labelConversion) {
             String[] split = gene.split("_");
-            label = split[0];
+            label = labelConversion.apply(split[0]);
             name = split[1];
 
             List<Integer> id = Chars.asList(name.toCharArray())

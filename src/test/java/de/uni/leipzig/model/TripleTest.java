@@ -73,9 +73,9 @@ public class TripleTest {
         Triple t4 = new DefaultTriple(new Edge(node3, node2), node1);
         Triple t5 = new DefaultTriple(new Edge(node3, node2), node2);
 
-        assertThat(t1).isLessThan(t2);
+        assertThat(t1.compareTo(t2)).isEqualTo(0);
         assertThat(t2).isLessThan(t3);
-        assertThat(t3).isLessThan(t4);
+        assertThat(t4.compareTo(t3)).isEqualTo(0);
         assertThat(t4).isLessThan(t5);
     }
 }

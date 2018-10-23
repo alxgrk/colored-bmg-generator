@@ -1,17 +1,10 @@
 package de.uni.leipzig.parser;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
+import java.util.function.*;
 import java.util.stream.Collectors;
 
 import org.jgrapht.alg.util.Pair;
@@ -19,15 +12,9 @@ import org.jgrapht.alg.util.Pair;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 
-import de.uni.leipzig.model.Color;
-import de.uni.leipzig.model.DefaultTriple;
-import de.uni.leipzig.model.DiGraph;
-import de.uni.leipzig.model.Node;
-import de.uni.leipzig.model.Triple;
-import de.uni.leipzig.model.edges.DiEdge;
-import de.uni.leipzig.model.edges.Edge;
-import de.uni.leipzig.user.Result;
-import de.uni.leipzig.user.UserInput;
+import de.uni.leipzig.model.*;
+import de.uni.leipzig.model.edges.*;
+import de.uni.leipzig.user.*;
 
 public class BlastGraphParser {
 
@@ -42,7 +29,8 @@ public class BlastGraphParser {
     @VisibleForTesting
     protected Result<File> getBlastGraphFile(File cwd, UserInput whichFile) throws Exception {
         List<File> blastFiles = Files.find(cwd.toPath(), 10,
-                (f, a) -> f.toFile().getName().endsWith(".blast-graph") || f.toFile().getName().endsWith(".ffadj-graph"))
+                (f, a) -> f.toFile().getName().endsWith(".blast-graph")
+                        || f.toFile().getName().endsWith(".ffadj-graph"))
                 .map(Path::toFile)
                 .collect(Collectors.toList());
 
@@ -72,33 +60,22 @@ public class BlastGraphParser {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(input));) {
 
-            return reader.lines()
-                    .filter(commentedLines)
-                    .map(BlastGraphLine::new)
-                    .reduce(new HashMap<Color, AtomicInteger>(),
-                            (m, l) -> {
-                                Color s = l.getGene1().asNode().getColor();
-                                Color t = l.getGene2().asNode().getColor();
+            Set<BlastGraphLine> bgLines = linesFrom(reader);
 
-                                increment(m, s);
-                                increment(m, t);
+            Map<Color, AtomicInteger> colorCount = new HashMap<>();
 
-                                return m;
-                            }, (m1, m2) -> {
-                                m1.putAll(m2);
-                                return m1;
-                            })
-                    .size();
+            for (BlastGraphLine l : bgLines) {
+
+                Color s = l.getGene1().asNode().getColor();
+                Color t = l.getGene2().asNode().getColor();
+
+                increment(colorCount, s);
+                increment(colorCount, t);
+            }
+
+            return colorCount.size();
         }
-    }
 
-    private void increment(Map<Color, AtomicInteger> m, Color c) {
-        AtomicInteger v = m.get(c);
-        if (v == null) {
-            m.put(c, new AtomicInteger(0));
-        } else {
-            v.incrementAndGet();
-        }
     }
 
     public DiGraph parseDiGraph(File input) throws IOException {
@@ -110,18 +87,17 @@ public class BlastGraphParser {
             Set<Node> nodes = Sets.newHashSet();
             Set<DiEdge> edges = Sets.newHashSet();
 
-            reader.lines()
-                    .filter(commentedLines)
-                    .map(BlastGraphLine::new)
-                    .forEach(l -> {
-                        Node node1 = l.getGene1().asNode();
-                        Node node2 = l.getGene2().asNode();
-                        nodes.add(node1);
-                        nodes.add(node2);
+            Set<BlastGraphLine> bgLines = linesFrom(reader);
 
-                        edges.add(new DiEdge(node1, node2));
-                        edges.add(new DiEdge(node2, node1));
-                    });
+            for (BlastGraphLine l : bgLines) {
+                Node node1 = l.getGene1().asNode();
+                Node node2 = l.getGene2().asNode();
+                nodes.add(node1);
+                nodes.add(node2);
+
+                edges.add(new DiEdge(node1, node2));
+                edges.add(new DiEdge(node2, node1));
+            }
 
             return new DiGraph(nodes, edges);
         }
@@ -136,35 +112,82 @@ public class BlastGraphParser {
             Set<Triple> triples = Sets.newHashSet();
             Set<Node> nodes = Sets.newHashSet();
 
-            reader.lines()
-                    .filter(f -> !f.startsWith("#"))
-                    .map(l -> new BlastGraphLine(l))
-                    .peek(l -> {
-                        nodes.add(l.getGene1().asNode());
-                        nodes.add(l.getGene2().asNode());
-                    })
-                    .forEach(l -> {
-                        Node node1 = l.getGene1().asNode();
-                        Node node2 = l.getGene2().asNode();
+            Set<BlastGraphLine> bgLines = linesFrom(reader);
 
-                        nodes.forEach(n -> {
+            bgLines.stream().forEach(l -> {
+                Node node1 = l.getGene1().asNode();
+                Node node2 = l.getGene2().asNode();
+                nodes.add(node1);
+                nodes.add(node2);
+            });
 
-                            if (!n.equals(node1) && !n.equals(node2)
-                                    && oneWithEqualColor(n, node1, node2)) {
+            for (BlastGraphLine l : bgLines) {
 
-                                Triple t1 = new DefaultTriple(new Edge(node1, node2), n);
-                                Triple t2 = new DefaultTriple(new Edge(node2, node1), n);
+                Node node1 = l.getGene1().asNode();
+                Node node2 = l.getGene2().asNode();
 
-                                // FIXME only use triples that make sense (for ab|c, c needs to be
-                                // selected carefully)
+                nodes.forEach(n -> {
 
-                                triples.add(t1);
-                                triples.add(t2);
-                            }
-                        });
-                    });
+                    if (!n.equals(node1) && !n.equals(node2)
+                            && oneWithEqualColor(n, node1, node2)) {
+
+                        Triple t1 = new DefaultTriple(new Edge(node1, node2), n);
+                        Triple t2 = new DefaultTriple(new Edge(node2, node1), n);
+
+                        // FIXME only use triples that make sense (for ab|c, c needs to be
+                        // selected carefully)
+
+                        triples.add(t1);
+                        triples.add(t2);
+                    }
+                });
+            }
 
             return new Pair<>(triples, nodes);
+        }
+    }
+
+    private Set<BlastGraphLine> linesFrom(BufferedReader reader) throws IOException {
+        Set<BlastGraphLine> bgLines = Sets.newHashSet();
+
+        String line = "";
+        Function<String, String> firstConversion = a -> a;
+        Function<String, String> secondConversion = a -> a;
+        while (true) {
+
+            line = reader.readLine();
+
+            if (line == null)
+                break;
+
+            if (!commentedLines.test(line)) {
+
+                String[] split = line.split("\\.faa");
+
+                if (split.length != 2)
+                    continue;
+
+                String newFirstLabel = split[0].replaceAll("#", "").trim();
+                firstConversion = a -> newFirstLabel;
+
+                String newSecondLabel = split[1].replaceAll("#", "").trim();
+                secondConversion = a -> newSecondLabel;
+
+                continue;
+            }
+
+            BlastGraphLine bgLine = new BlastGraphLine(line, firstConversion, secondConversion);
+            bgLines.add(bgLine);
+        }
+        return bgLines;
+    }
+
+    private void increment(Map<Color, AtomicInteger> m, Color c) {
+        AtomicInteger v = m.get(c);
+        if (v == null) {
+            m.put(c, new AtomicInteger(0));
+        } else {
+            v.incrementAndGet();
         }
     }
 

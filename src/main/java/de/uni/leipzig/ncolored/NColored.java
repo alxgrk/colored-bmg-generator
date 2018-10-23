@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.zalando.fauxpas.ThrowingRunnable;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Sets;
 
 import de.uni.leipzig.Util;
 import de.uni.leipzig.conversion.TripleFromTree;
@@ -55,7 +56,7 @@ public class NColored {
                 .map(cc -> {
 
                     // store all stTrees
-                    Map<Pair<Color>, Tree> stTrees = new HashMap<>();
+                    Map<Set<Color>, Tree> stTrees = new HashMap<>();
 
                     // for every two colors s,t
                     for (Color s : cc.getColors()) {
@@ -87,7 +88,7 @@ public class NColored {
                                     // r(s,t)
                                     .reduce(new Tree(Node.helpNode()),
                                             (i, subT) -> i.addSubTree(subT));
-                            stTrees.put(new Pair<>(s, t), stTree);
+                            stTrees.put(Sets.newHashSet(s, t), stTree);
                         }
                     }
 
@@ -100,7 +101,7 @@ public class NColored {
 
     }
 
-    private Tree askForSuperTreeMethod(Map<Pair<Color>, Tree> stTrees,
+    private Tree askForSuperTreeMethod(Map<Set<Color>, Tree> stTrees,
             Container<SuperTreeMethod> stMethod) {
 
         Result<Tree> result = Result.empty();
@@ -109,6 +110,7 @@ public class NColored {
 
             stMethod.setValue(SuperTreeMethod.AHO);
 
+            // TODO has problems with AHO INFORMATIVE as tc...
             Set<Triple> triples = tripleFromTree.extractOf(stTrees);
             Set<Node> leaves = stTrees.values()
                     .stream()
@@ -128,7 +130,7 @@ public class NColored {
                 result.fixValue(dfbBuildST.build(stTrees));
             } catch (IncompatibleProfileException e) {
                 // tree was incompatible
-                throw new RuntimeException("not a BMG");
+                throw new RuntimeException("not a BMG", e);
             }
 
         };

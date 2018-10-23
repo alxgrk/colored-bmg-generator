@@ -1,8 +1,7 @@
 package de.uni.leipzig.model;
 
 import de.uni.leipzig.model.edges.Edge;
-import lombok.NonNull;
-import lombok.Value;
+import lombok.*;
 import lombok.experimental.NonFinal;
 
 @Value
@@ -34,15 +33,11 @@ public class DefaultTriple implements Triple, Comparable<Triple> {
 
     @Override
     public int compareTo(Triple o) {
-        int firstNodeComp = getEdge().getFirst().compareTo(o.getEdge().getFirst());
-        if (firstNodeComp == 0) {
-            int secondNodeComp = getEdge().getSecond().compareTo(o.getEdge().getSecond());
-            if (secondNodeComp == 0) {
-                return getNode().compareTo(o.getNode());
-            } else
-                return secondNodeComp;
+        int edgeComp = getEdge().compareTo(o.getEdge());
+        if (edgeComp == 0) {
+            return getNode().compareTo(o.getNode());
         } else
-            return firstNodeComp;
+            return edgeComp;
     }
 
 }

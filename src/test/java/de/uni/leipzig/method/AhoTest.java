@@ -4,6 +4,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.Set;
 
+import org.jgrapht.alg.util.Pair;
 import org.junit.Test;
 
 import de.uni.leipzig.model.*;
@@ -22,17 +23,14 @@ public class AhoTest {
         Set triples = mock(Set.class);
         Set leaves = mock(Set.class);
         Tree tree = mock(Tree.class);
-        when(tripleFinder.findTriple(adjList)).thenReturn(triples);
-        when(tripleFinder.getLeaves()).thenReturn(leaves);
+        when(tripleFinder.findTriple(adjList)).thenReturn(Pair.of(triples, leaves));
         when(ahoBuild.build(triples, leaves)).thenReturn(tree);
 
         Aho uut = new Aho(ahoBuild, input, tripleFinder);
         uut.create(adjList);
 
         verify(tripleFinder).findTriple(adjList);
-        verify(tripleFinder).getLeaves();
         verify(ahoBuild).build(triples, leaves);
-        verify(tree).toNewickNotation();
         verify(tree).print();
     }
 
@@ -50,8 +48,6 @@ public class AhoTest {
         uut.create(triples, leaves);
 
         verify(ahoBuild).build(triples, leaves);
-        verify(tree).toNewickNotation();
-        verify(tree).print();
     }
 
 }

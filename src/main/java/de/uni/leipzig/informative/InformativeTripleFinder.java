@@ -3,14 +3,17 @@ package de.uni.leipzig.informative;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Lists;
+import org.jgrapht.alg.util.Pair;
+
+import com.google.common.collect.*;
 
 import de.uni.leipzig.informative.model.*;
 import de.uni.leipzig.model.*;
 import de.uni.leipzig.twocolored.DiGraphExtractor;
 import de.uni.leipzig.uncolored.DefaultTripleFinder;
-import lombok.Getter;
+import lombok.*;
 
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class InformativeTripleFinder implements TripleFinder<InformativeTriple> {
 
     /**
@@ -24,37 +27,53 @@ public class InformativeTripleFinder implements TripleFinder<InformativeTriple> 
             "211", "121", "112" // X4
     );
 
-    private DefaultTripleFinder defaultTripleFinder = new DefaultTripleFinder();
+    private final DefaultTripleFinder defaultTripleFinder;
 
-    private DiGraphExtractor graphExtractor = new DiGraphExtractor();
+    private final DiGraphExtractor graphExtractor;
 
-    @Getter
-    private Set<Node> leaves = new HashSet<>();
+    public InformativeTripleFinder() {
+        this(new DefaultTripleFinder(), new DiGraphExtractor());
+    }
 
-    public Set<InformativeTriple> findTriple(AdjacencyList adjList) {
-        Set<Triple> triples = defaultTripleFinder.findTriple(adjList);
+    public Pair<Set<InformativeTriple>, Set<Node>> findTriple(AdjacencyList adjList) {
+        Pair<Set<Triple>, Set<Node>> triplesAndLeaves = defaultTripleFinder.findTriple(adjList);
+        Set<Triple> triples = triplesAndLeaves.getFirst();
         DiGraph graph = graphExtractor.extract(adjList);
 
         return findTriple(triples, graph);
     }
 
-    public Set<InformativeTriple> findTriple(Set<Triple> triples, DiGraph graph) {
+    public Pair<Set<InformativeTriple>, Set<Node>> findTriple(Set<Triple> triples, DiGraph graph) {
 
+        // FIXME missing edges in graph
+
+        Set<Node> leaves = Sets.newHashSet();
         List<ThreeNodeGraph> subgraphs = Lists.newArrayList();
 
-        for (Triple triple : triples) {
+        triples.stream()
+                .filter(t -> {
+                    boolean contained = false;
+                    for (Node leave : graph.getNodes()) {
+                        if (t.contains(leave)) {
+                            contained = true;
+                            break;
+                        }
+                    }
+                    return contained;
+                })
+                .forEach(triple -> {
 
-            ThreeNodeGraph subgraph = new ThreeNodeGraph(triple);
+                    ThreeNodeGraph subgraph = new ThreeNodeGraph(triple);
 
-            // add every edge that belongs to the subgraph
-            graph.getEdges().forEach(subgraph::add);
+                    // add every edge that belongs to the subgraph
+                    graph.getEdges().forEach(subgraph::add);
 
-            // add subgraph when created by informative triple
-            if (isIsomorphicToOneX(subgraph))
-                subgraphs.add(subgraph);
-        }
+                    // add subgraph when created by informative triple
+                    if (isIsomorphicToOneX(subgraph))
+                        subgraphs.add(subgraph);
+                });
 
-        return subgraphs.stream()
+        Set<InformativeTriple> informativeTriples = subgraphs.stream()
                 .map(ThreeNodeGraph::getTriple)
                 .peek(t -> {
                     leaves.add(t.getEdge().getFirst());
@@ -63,6 +82,7 @@ public class InformativeTripleFinder implements TripleFinder<InformativeTriple> 
                 })
                 .map(t -> new InformativeTriple(t.getEdge(), t.getNode()))
                 .collect(Collectors.toSet());
+        return Pair.of(informativeTriples, leaves);
     }
 
     private boolean isIsomorphicToOneX(ThreeNodeGraph subgraph) {

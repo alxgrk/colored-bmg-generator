@@ -27,7 +27,7 @@ public class RandomTreeTest {
     @Test
     public void testAskRandomTreeConfig() throws Exception {
         UserInput mockInput = mock(UserInput.class);
-        when(mockInput.listenForResult()).thenReturn("2", "5", "2");
+        when(mockInput.listenForResult()).thenReturn("2", "5", "2", "4");
         when(mockInput.askForTrigger(anyString(), eq("y"))).thenReturn(true);
 
         RandomTree actual = RandomTree.askRandomTreeConfig(mockInput);
@@ -36,7 +36,7 @@ public class RandomTreeTest {
         assertThat(actual.maxDepth()).isEqualTo(5);
         assertThat(actual.maxLabel()).isEqualTo(2);
         assertThat(actual.maximalNodesWithChildren()).isEqualTo(true);
-        assertThat(actual.maximalDepth()).isEqualTo(true);
+        assertThat(actual.minDepth()).isEqualTo(4);
     }
 
     @Test

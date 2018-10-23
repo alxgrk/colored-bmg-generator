@@ -6,13 +6,39 @@ import lombok.experimental.NonFinal;
 @Value
 @AllArgsConstructor
 @NonFinal
-public abstract class AbstractPair<T> {
+public abstract class AbstractPair<T> implements Comparable<AbstractPair<T>> {
 
     @NonNull
     T first;
 
     @NonNull
     T second;
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    public int compareTo(AbstractPair<T> o) {
+        if ((first.equals(o.first) && second.equals(o.second))
+                || (first.equals(o.second) && second.equals(o.first)))
+            return 0;
+
+        if (first instanceof Comparable<?> && o.first instanceof Comparable<?>) {
+
+            Comparable thisFirst = (Comparable) first;
+            Comparable thatFirst = (Comparable) o.first;
+            Comparable thisSecond = (Comparable) second;
+            Comparable thatSecond = (Comparable) o.second;
+
+            int firstComp = thisFirst.compareTo(thatFirst);
+
+            if (firstComp == 0)
+                return thisSecond.compareTo(thatSecond);
+            else
+                return firstComp;
+
+        }
+
+        return 0;
+    }
 
     @SuppressWarnings("unchecked")
     @Override

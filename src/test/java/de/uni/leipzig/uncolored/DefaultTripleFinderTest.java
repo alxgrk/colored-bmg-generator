@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Set;
 
+import org.jgrapht.alg.util.Pair;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -48,9 +49,9 @@ public class DefaultTripleFinderTest {
     public void testFind() throws Exception {
 
         DefaultTripleFinder uut = new DefaultTripleFinder();
-        Set<Triple> actual = uut.findTriple(adjList);
+        Pair<Set<Triple>, Set<Node>> actual = uut.findTriple(adjList);
 
-        assertThat(actual).containsExactlyInAnyOrder(
+        assertThat(actual.getFirst()).containsExactlyInAnyOrder(
                 new DefaultTriple(new Edge(n0111, n0112), n012),
                 new DefaultTriple(new Edge(n0111, n0112), n02),
                 new DefaultTriple(new Edge(n0111, n012), n02),

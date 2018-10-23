@@ -4,6 +4,8 @@ import static de.uni.leipzig.method.TreeCreation.Method.AHO;
 
 import java.util.Set;
 
+import org.jgrapht.alg.util.Pair;
+
 import com.google.common.annotations.VisibleForTesting;
 
 import de.uni.leipzig.Util;
@@ -31,18 +33,20 @@ class AhoInformative implements TreeCreation {
 
     @Override
     public Tree create(AdjacencyList adjList) {
-        Set<InformativeTriple> informativeTriples = informativeTripleFinder
+        Pair<Set<InformativeTriple>, Set<Node>> triplesAndLeaves = informativeTripleFinder
                 .findTriple(adjList);
+        Set<InformativeTriple> informativeTriples = triplesAndLeaves.getFirst();
 
-        return aho.create(Util.uglyCast(informativeTriples), informativeTripleFinder.getLeaves());
+        return aho.create(Util.uglyCast(informativeTriples), triplesAndLeaves.getSecond());
     }
 
     @Override
     public Tree create(Set<Triple> triples, DiGraph diGraph) {
-        Set<InformativeTriple> informativeTriples = informativeTripleFinder
+        Pair<Set<InformativeTriple>, Set<Node>> triplesAndLeaves = informativeTripleFinder
                 .findTriple(triples, diGraph);
+        Set<InformativeTriple> informativeTriples = triplesAndLeaves.getFirst();
 
-        return aho.create(Util.uglyCast(informativeTriples), informativeTripleFinder.getLeaves());
+        return aho.create(Util.uglyCast(informativeTriples), triplesAndLeaves.getSecond());
     }
 
 }

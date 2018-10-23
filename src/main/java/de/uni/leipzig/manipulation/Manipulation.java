@@ -65,7 +65,6 @@ public class Manipulation {
             System.out.println("How the tree looked before:");
             Tree result = ahoBuild.build(triples, leaves);
 
-            System.out.println(result.toNewickNotation());
             System.out.println(result.print());
 
             Manipulator manipulator = manipulatorClass.getDeclaredConstructor(Integer.class)

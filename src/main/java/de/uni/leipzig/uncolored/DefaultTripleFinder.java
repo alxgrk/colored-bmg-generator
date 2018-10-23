@@ -2,14 +2,14 @@ package de.uni.leipzig.uncolored;
 
 import java.util.*;
 
+import org.jgrapht.alg.util.Pair;
+
 import de.uni.leipzig.model.*;
 import de.uni.leipzig.model.edges.Edge;
 import lombok.Getter;
 
 @Getter
 public class DefaultTripleFinder implements TripleFinder<Triple> {
-
-    private Set<Node> leaves = new HashSet<>();
 
     /**
      * Extracts all possible triples from the adjacent list.<br>
@@ -18,8 +18,9 @@ public class DefaultTripleFinder implements TripleFinder<Triple> {
      * @param list
      * @return
      */
-    public Set<Triple> findTriple(AdjacencyList list) {
+    public Pair<Set<Triple>, Set<Node>> findTriple(AdjacencyList list) {
 
+        Set<Node> leaves = new HashSet<>();
         Set<Triple> triples = new HashSet<>();
 
         for (int i = 0; i < list.size(); i++) {
@@ -70,14 +71,14 @@ public class DefaultTripleFinder implements TripleFinder<Triple> {
             }
         }
 
-        return triples;
+        return Pair.of(triples, leaves);
     }
 
     private boolean isTriple(List<Integer> lcaXY, List<Integer> lcaXYZ) {
         return lcaXY.size() > lcaXYZ.size();
     }
 
-    public List<Integer> findLCA(List<Integer> a, List<Integer> b) {
+    private List<Integer> findLCA(List<Integer> a, List<Integer> b) {
 
         List<Integer> ancester = new ArrayList<>();
 

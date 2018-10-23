@@ -57,12 +57,6 @@ public class Hierarchy {
     private Tree recursive(Set<SetDiEdge> finalEdges, Set<Set<Node>> remainingSets,
             Set<Tree> leafsAsTree) {
 
-        System.out.println("-----------------------------------");
-        System.out.println("Final edges: " + finalEdges);
-        System.out.println("Remaining sets: " + remainingSets);
-        System.out.println("Leafs as tree: " + leafsAsTree);
-        System.out.println("-----------------------------------");
-
         // special case: see DiGraphTest.testFailingHierarchy
         if (finalEdges.size() == 1 && leafsAsTree.size() > 1) {
             return leafsAsTree.stream()

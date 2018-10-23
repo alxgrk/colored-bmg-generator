@@ -1,15 +1,11 @@
 package de.uni.leipzig.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 
-import lombok.NonNull;
-import lombok.Value;
+import lombok.*;
 import lombok.experimental.NonFinal;
 
 @Value
@@ -88,6 +84,8 @@ public class Tree implements Comparable<Tree> {
         if (subTrees.isEmpty())
             return root.toString();
 
+        Collections.sort(subTrees);
+
         StringBuilder sb = new StringBuilder("(");
 
         if (!root.isHelpNode())
@@ -103,12 +101,13 @@ public class Tree implements Comparable<Tree> {
                 .append(")")
                 .toString();
     }
-    
+
     public Set<Color> getColors() {
-    	return getLeafs().stream()
-			.map(Node::getColor)
-			.collect(Collectors.toSet());
+        return getLeafs().stream()
+                .map(Node::getColor)
+                .collect(Collectors.toSet());
     }
+
     public String print() {
         StringBuilder sb = new StringBuilder();
         print(sb, "", true);
@@ -140,6 +139,9 @@ public class Tree implements Comparable<Tree> {
     public int compareTo(Tree o) {
         List<Node> thisNodes = this.getLeafs();
         List<Node> otherNodes = o.getLeafs();
+
+        Collections.sort(thisNodes);
+        Collections.sort(otherNodes);
 
         if (thisNodes.isEmpty())
             return 1;

@@ -11,7 +11,7 @@ import de.uni.leipzig.model.edges.Edge;
 
 public class TripleFromTree {
 
-    public Set<Triple> extractOf(Map<Pair<Color>, Tree> stTrees) {
+    public Set<Triple> extractOf(Map<Set<Color>, Tree> stTrees) {
         return stTrees.values()
                 .stream()
                 .flatMap(t -> treeToTriples(t).stream())

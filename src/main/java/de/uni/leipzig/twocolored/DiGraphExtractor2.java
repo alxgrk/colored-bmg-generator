@@ -13,10 +13,6 @@ public class DiGraphExtractor2 {
 
     private List<Set<Node>> LabelSets = new ArrayList<>();
 
-    private Set<Node> nodes = new HashSet<>();
-
-    private Set<DiEdge> edges = new HashSet<>();
-
     public DiGraph extract(AdjacencyList adjList) {
 
         // sort all Leaves to seperated lists
@@ -48,27 +44,16 @@ public class DiGraphExtractor2 {
             LabelSets.get(LabelSets.size() - 1).add(leave);
         }
 
-        // printer
-        for (Set<Node> set : LabelSets) {
-            System.out.println("EIN NEUES SET !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            for (Node n : set) {
-                System.out.println(n);
-            }
-        }
-
         // find for each leave the lca's of every other label with the lowest
         // ancesterorder
         for (Set<Node> setA : LabelSets) {
-            System.out.println("start neues Set");
             for (Node node1 : setA) {
-                System.out.println("node1: " + node1);
                 for (Set<Node> setB : LabelSets) {
 
                     if (setA == setB)
                         continue;
 
                     Set<Node> lowestLCAs = new HashSet<>(findLowestLCAs(node1, setB));
-                    System.out.println("list of lcas: " + lowestLCAs);
                     for (Node node2 : lowestLCAs) {
                         dgEdges.add(new DiEdge(node1, node2));
                         // System.out.println("all DiEdges: " + dgEdges);
@@ -76,7 +61,6 @@ public class DiGraphExtractor2 {
                 }
             }
         }
-        System.out.println(dgEdges);
         return new DiGraph(dgNodes, dgEdges);
     }
 

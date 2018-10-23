@@ -1,12 +1,12 @@
 package de.uni.leipzig.model;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.List;
 
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class TreeTest {
 
@@ -101,8 +101,8 @@ public class TreeTest {
                 "└── *\n" +
                         "    ├── 0-1\n" +
                         "    └── *\n" +
-                        "        ├── 1-2\n" +
-                        "        └── 0-3\n");
+                        "        ├── 0-3\n" +
+                        "        └── 1-2\n");
     }
 
 }

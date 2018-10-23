@@ -1,16 +1,10 @@
 package de.uni.leipzig;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
-import de.uni.leipzig.model.AdjacencyList;
-import de.uni.leipzig.model.Node;
+import de.uni.leipzig.model.*;
 import de.uni.leipzig.user.UserInput;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 @Getter
@@ -30,7 +24,7 @@ public class RandomTree {
     private boolean maximalNodesWithChildren = false;
 
     @Setter
-    private boolean maximalDepth = false;
+    private int minDepth = 0;
 
     public static RandomTree askRandomTreeConfig(UserInput config) {
 
@@ -43,12 +37,11 @@ public class RandomTree {
 
         RandomTree randomTree = new RandomTree(maxChildren, maxDepth, maxLabel);
 
-        boolean wasTriggered = config.askForTrigger(
-                "Do you want to have a tree with maximal depth? "
-                        + "(type 'y' or leave blank)", "y");
-        randomTree.maximalDepth(wasTriggered);
+        System.out.println("Minimal depth?");
+        int minDepth = Integer.parseInt(config.listenForResult());
+        randomTree.minDepth(minDepth);
 
-        wasTriggered = config.askForTrigger(
+        boolean wasTriggered = config.askForTrigger(
                 "Do you want to have every node having the maximal "
                         + "amount of children? (type 'y' or leave blank)", "y");
         randomTree.maximalNodesWithChildren(wasTriggered);
@@ -74,7 +67,8 @@ public class RandomTree {
         Node node = Node.of(randomLabel(), ids);
         childList.add(node);
 
-        if (shouldHaveChildren == true && ids.size() < maxDepth) {
+        int depth = ids.size();
+        if (shouldHaveChildren == true && depth < maxDepth) {
 
             // bestimme wie viele Abzweige
             int zahl = howManyChildren();
@@ -87,7 +81,7 @@ public class RandomTree {
                 copy.add(i);
 
                 // rekursive Funktion
-                create(copy, shouldHaveChildren());
+                create(copy, shouldHaveChildren(depth));
             }
         } else {
             return;
@@ -129,8 +123,8 @@ public class RandomTree {
                 : new Random().nextInt(maxChildren - 2 + 1) + 2;
     }
 
-    private Boolean shouldHaveChildren() {
-        return maximalDepth ? maximalDepth : new Random().nextBoolean();
+    private Boolean shouldHaveChildren(int depth) {
+        return depth < minDepth ? true : new Random().nextBoolean();
     }
 
     private int randomLabel() {

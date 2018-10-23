@@ -2,6 +2,8 @@ package de.uni.leipzig.method;
 
 import java.util.Set;
 
+import org.jgrapht.alg.util.Pair;
+
 import com.google.common.annotations.VisibleForTesting;
 
 import de.uni.leipzig.manipulation.Manipulation;
@@ -38,19 +40,18 @@ class Aho implements TreeCreation {
 
     @Override
     public Tree create(AdjacencyList adjList) {
-        return create(tripleFinder.findTriple(adjList), tripleFinder.getLeaves());
+        Pair<Set<Triple>, Set<Node>> triplesAndLeaves = tripleFinder.findTriple(adjList);
+        return create(triplesAndLeaves.getFirst(), triplesAndLeaves.getSecond());
     }
 
     @Override
     public Tree create(Set<Triple> triples, Set<Node> leaves) {
-        System.out.println(triples.toString());
 
         if (interactiveMode)
             new Manipulation(triples, leaves, input);
 
         Tree result = ahoBuild.build(triples, leaves);
 
-        System.out.println(result.toNewickNotation());
         System.out.println(result.print());
 
         return result;

@@ -11,7 +11,6 @@ public class DiGraphExtractor {
 
         Set<Node> nodes = new HashSet<>();
         Set<DiEdge> edges = new HashSet<>();
-        System.out.println("passiert");
         for (int i = 0; i < adjList.size(); i++) {
 
             List<Node> firstList = adjList.get(i);

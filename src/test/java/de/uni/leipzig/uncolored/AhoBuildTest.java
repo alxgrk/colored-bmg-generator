@@ -1,31 +1,22 @@
 package de.uni.leipzig.uncolored;
 
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+import static org.assertj.core.api.Assertions.*;
+
 import java.util.Set;
 
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
+import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.zalando.fauxpas.ThrowingRunnable;
 
 import com.google.common.collect.Sets;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
-import de.uni.leipzig.model.DefaultTriple;
-import de.uni.leipzig.model.Node;
-import de.uni.leipzig.model.Tree;
-import de.uni.leipzig.model.Triple;
+import de.uni.leipzig.model.*;
 import de.uni.leipzig.model.edges.Edge;
 import de.uni.leipzig.user.UserInput;
 
@@ -63,7 +54,7 @@ public class AhoBuildTest {
         assertThat(result.getAllNodes()).contains(one, two, three, four);
         assertThat(result.getAllNodes()).hasSize(7);
         String newickNotation = result.toNewickNotation();
-        assertThat(newickNotation).isEqualTo("(((1-0111,0-0112),1-012),0-02)");
+        assertThat(newickNotation).isEqualTo("(((0-0112,1-0111),1-012),0-02)");
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })

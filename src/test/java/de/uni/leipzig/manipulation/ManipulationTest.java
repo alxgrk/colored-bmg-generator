@@ -56,7 +56,6 @@ public class ManipulationTest {
         verify(mockInput, times(2)).askWithOptions(anyString());
 
         captor.getAllValues().forEach(r -> r.run());
-        verify(tree, times(3)).toNewickNotation();
         verify(tree, times(3)).print();
     }
 
