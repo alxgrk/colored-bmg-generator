@@ -19,10 +19,6 @@ public interface TreeCreation {
 
     Tree create(AdjacencyList adjList);
 
-    default Tree create(Set<Triple> triples, DiGraph diGraph) {
-        return new Tree(Node.helpNode());
-    }
-
     default Tree create(Set<Triple> triples, Set<Node> leaves) {
         return new Tree(Node.helpNode());
     }

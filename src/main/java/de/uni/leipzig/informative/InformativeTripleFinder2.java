@@ -12,18 +12,8 @@ import de.uni.leipzig.model.DiGraph;
 import de.uni.leipzig.model.Node;
 import de.uni.leipzig.model.edges.DiEdge;
 import de.uni.leipzig.model.edges.Edge;
-import de.uni.leipzig.twocolored.DiGraphExtractor;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class InformativeTripleFinder2 {
-
-    private final DiGraphExtractor graphExtractor;
-
-    public InformativeTripleFinder2() {
-        this(new DiGraphExtractor());
-    }
 
     public Pair<Set<InformativeTriple>, Set<Node>> findTriple(DiGraph graph) {
         
@@ -77,7 +67,7 @@ public class InformativeTripleFinder2 {
 			return true;
 		}
     	//X3
-		else if(ab && !ba && !ac && ca ){
+		else if(ab && !ba && !ac && !ca ){
 			return true;
 		}
     	//X4
