@@ -1,7 +1,5 @@
 package de.uni.leipzig;
 
-import static de.uni.leipzig.method.TreeCreation.Method.*;
-
 import java.io.File;
 import java.util.Set;
 
@@ -9,13 +7,22 @@ import org.jgrapht.alg.util.Pair;
 
 import com.google.common.annotations.VisibleForTesting;
 
+import static de.uni.leipzig.method.TreeCreation.Method.AHO;
+import static de.uni.leipzig.method.TreeCreation.Method.AHO_INFORMATIVE;
+import static de.uni.leipzig.method.TreeCreation.Method.THINNESS_CLASS;
+
 import de.uni.leipzig.method.TreeCreation;
-import de.uni.leipzig.model.*;
+import de.uni.leipzig.model.AdjacencyList;
+import de.uni.leipzig.model.DiGraph;
+import de.uni.leipzig.model.Node;
+import de.uni.leipzig.model.Tree;
+import de.uni.leipzig.model.Triple;
 import de.uni.leipzig.ncolored.NColored;
 import de.uni.leipzig.parser.BlastGraphParser;
 import de.uni.leipzig.twocolored.DiGraphExtractor;
 import de.uni.leipzig.user.UserInput;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@VisibleForTesting))
 public class Main {
@@ -89,11 +96,9 @@ public class Main {
                 });
 
                 ui.register(AHO_INFORMATIVE, inf -> {
-                    Pair<Set<Triple>, Set<Node>> nodesAndTriples = blastGraphParser.parseTriple(
-                            file);
                     DiGraph diGraph = blastGraphParser.parseDiGraph(file);
 
-                    inf.create(nodesAndTriples.getFirst(), diGraph);
+                    inf.create(diGraph);
                 });
             } else {
                 ui.register(THINNESS_CLASS, tc -> {
@@ -109,11 +114,9 @@ public class Main {
                 ui.register(AHO_INFORMATIVE, inf -> {
                     TreeCreation.askForInteractiveMode(inf, ui);
 
-                    Pair<Set<Triple>, Set<Node>> nodesAndTriples = blastGraphParser.parseTriple(
-                            file);
                     DiGraph diGraph = blastGraphParser.parseDiGraph(file);
 
-                    Tree result = nColored.by(g -> inf.create(nodesAndTriples.getFirst(), g),
+                    Tree result = nColored.by(g -> inf.create(g),
                             diGraph);
 
                     System.out.println(result.print());

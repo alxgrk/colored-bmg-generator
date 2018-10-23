@@ -1,15 +1,18 @@
 package de.uni.leipzig.method;
 
-import static org.mockito.Mockito.*;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.Set;
 
 import org.junit.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyZeroInteractions;
+
 import de.uni.leipzig.method.TreeCreation.Method;
-import de.uni.leipzig.model.*;
+import de.uni.leipzig.model.AdjacencyList;
+import de.uni.leipzig.model.DiGraph;
+import de.uni.leipzig.model.Node;
+import de.uni.leipzig.model.Tree;
 
 public class TreeCreationTest {
 
@@ -21,7 +24,6 @@ public class TreeCreationTest {
 
         TestCreation impl = new TestCreation();
         impl.create(graph);
-        impl.create(someSet, graph);
         impl.create(someSet, someSet);
 
         verifyZeroInteractions(someSet);

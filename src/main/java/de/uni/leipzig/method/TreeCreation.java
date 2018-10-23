@@ -3,7 +3,11 @@ package de.uni.leipzig.method;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import de.uni.leipzig.model.*;
+import de.uni.leipzig.model.AdjacencyList;
+import de.uni.leipzig.model.DiGraph;
+import de.uni.leipzig.model.Node;
+import de.uni.leipzig.model.Tree;
+import de.uni.leipzig.model.Triple;
 import de.uni.leipzig.user.UserInput;
 import lombok.RequiredArgsConstructor;
 
@@ -14,10 +18,6 @@ import lombok.RequiredArgsConstructor;
 public interface TreeCreation {
 
     Tree create(AdjacencyList adjList);
-
-    default Tree create(Set<Triple> triples, DiGraph diGraph) {
-        return new Tree(Node.helpNode());
-    }
 
     default Tree create(Set<Triple> triples, Set<Node> leaves) {
         return new Tree(Node.helpNode());

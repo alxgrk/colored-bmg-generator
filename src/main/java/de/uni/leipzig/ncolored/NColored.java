@@ -70,7 +70,7 @@ public class NColored {
                         for (Color t : cc.getColors()) {
 
                             // s and t the same?
-                            if (s.equals(t) || stTrees.containsKey(new Pair<>(s, t)))
+                            if (s.equals(t) || stTrees.containsKey(Sets.newHashSet(s, t)))
                                 continue;
 
                             // create induced subgraph for s,t
