@@ -39,8 +39,13 @@ public class Main {
         while (true) {
             UserInput repeat = new UserInput();
 
-            Main main = new Main();
-            main.run();
+            try {
+                Main main = new Main();
+                main.run();
+            } catch (Throwable e) {
+                System.err.println(e);
+                // just restart the programm
+            }
 
             repeat.register("quit", () -> {
                 System.exit(0);
