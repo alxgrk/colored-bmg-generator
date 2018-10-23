@@ -57,6 +57,10 @@ public class Hierarchy {
     private Tree recursive(Set<SetDiEdge> finalEdges, Set<Set<Node>> remainingSets,
             Set<Tree> leafsAsTree) {
 
+        // special case
+        if (finalEdges.size() == 0 && remainingSets.size() == 0)
+            return leafsAsTree.iterator().next();
+
         // special case: see DiGraphTest.testFailingHierarchy
         if (finalEdges.size() == 1 && leafsAsTree.size() > 1) {
             return leafsAsTree.stream()
