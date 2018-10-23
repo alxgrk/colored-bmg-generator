@@ -12,13 +12,9 @@ Make sure that Java itself is installed to your system and the path to the JDK i
 ./run.sh
 ```
 
-### ... on Windows
-
-// TODO
-
 ## Program workflow
 
-// TODO
+![program workflow](./programmablauf.png)
 
 ## Program structure
 
