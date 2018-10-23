@@ -1,12 +1,14 @@
 package de.uni.leipzig.model;
 
 import lombok.*;
+import lombok.experimental.Accessors;
 
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+@Accessors(chain = true)
 public class Container<T> {
 
     @SuppressWarnings("unchecked")

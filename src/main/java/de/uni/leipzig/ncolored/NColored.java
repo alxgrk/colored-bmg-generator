@@ -18,8 +18,10 @@ import de.uni.leipzig.ncolored.dengfernandezbaca.DFBBuildST.IncompatibleProfileE
 import de.uni.leipzig.uncolored.*;
 import de.uni.leipzig.user.*;
 import lombok.*;
+import lombok.experimental.Accessors;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@VisibleForTesting))
+@Accessors(fluent = true)
 public class NColored {
 
     private final ConnectedComponentsConstructor componentsConstructor;
@@ -31,6 +33,14 @@ public class NColored {
     private final TripleFromTree tripleFromTree;
 
     private final UserInput treeCombinationMethod;
+
+    // remember SuperTree method
+    @Setter
+    private Container<SuperTreeMethod> stMethod = Container.empty();
+
+    // always minCut when running any aho
+    @Setter
+    private boolean alwaysMinCut = false;
 
     public NColored() {
         this(new ConnectedComponentsConstructor(), new DFBBuildST(), new AhoBuild(),
@@ -47,9 +57,6 @@ public class NColored {
         // are there some (what does 'some' mean? -> half of the connected component set size
         // assumed here) components with completely distinct color sets?
         checkForSomeComponentsWithDistinctColors(components);
-
-        // remember SuperTree method
-        Container<SuperTreeMethod> stMethod = Container.empty();
 
         // iterate over all connected components and return result
         return components.stream()
@@ -117,6 +124,7 @@ public class NColored {
                     .flatMap(t -> t.getLeafs().stream())
                     .collect(Collectors.toSet());
 
+            aho.setAlwaysMinCut(alwaysMinCut);
             Tree resultingTree = aho.build(triples, leaves);
             result.fixValue(resultingTree);
         };
@@ -180,7 +188,7 @@ public class NColored {
             throw new RuntimeException("not a BMG");
     }
 
-    private enum SuperTreeMethod {
+    public enum SuperTreeMethod {
         AHO,
         DENG_FERNANDEZ_BACA;
     }

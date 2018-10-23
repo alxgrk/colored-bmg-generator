@@ -10,9 +10,10 @@ import com.google.common.collect.Lists;
 import de.uni.leipzig.method.TreeCreation;
 import de.uni.leipzig.method.TreeCreation.Method;
 import de.uni.leipzig.model.Pair;
+import de.uni.leipzig.ncolored.NColored.SuperTreeMethod;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ColorDepthRelationshipWithInformativeAsLRT {
+public class ColorDepthRelationshipWithNColoredDFBAndThinnessAsLRT {
 
     static int MAX_CHILDREN = 2;
 
@@ -25,13 +26,13 @@ public class ColorDepthRelationshipWithInformativeAsLRT {
             new Pair<>(MIN_DEPTH, 8),
             new Pair<>(MIN_DEPTH, 12));
 
-    TreeCreation lrtMethod = Method.AHO_INFORMATIVE.get().inNonInteractiveMode(true);
+    TreeCreation lrtMethod = Method.THINNESS_CLASS.get().inNonInteractiveMode(true);
 
     private Runner runner;
 
     @Before
     public void setUp() throws Exception {
-        runner = new Runner(MAX_CHILDREN, MIN_DEPTH);
+        runner = new Runner(MAX_CHILDREN, MIN_DEPTH, SuperTreeMethod.DENG_FERNANDEZ_BACA);
     }
 
     // TWO COLORED
@@ -41,7 +42,7 @@ public class ColorDepthRelationshipWithInformativeAsLRT {
         int color = 2;
         int depth = 4;
 
-        runner.run(adj -> lrtMethod.create(adj), color, depth);
+        runner.run(lrtMethod, color, depth);
     }
 
     @Test
@@ -49,7 +50,7 @@ public class ColorDepthRelationshipWithInformativeAsLRT {
         int color = 2;
         int depth = 8;
 
-        runner.run(adj -> lrtMethod.create(adj), color, depth);
+        runner.run(lrtMethod, color, depth);
     }
 
     @Test
@@ -57,7 +58,7 @@ public class ColorDepthRelationshipWithInformativeAsLRT {
         int color = 2;
         int depth = 12;
 
-        runner.run(adj -> lrtMethod.create(adj), color, depth);
+        runner.run(lrtMethod, color, depth);
 
     }
 
@@ -68,7 +69,7 @@ public class ColorDepthRelationshipWithInformativeAsLRT {
         int color = 3;
         int depth = 4;
 
-        runner.run(adj -> lrtMethod.create(adj), color, depth);
+        runner.run(lrtMethod, color, depth);
     }
 
     @Test
@@ -76,7 +77,7 @@ public class ColorDepthRelationshipWithInformativeAsLRT {
         int color = 3;
         int depth = 8;
 
-        runner.run(adj -> lrtMethod.create(adj), color, depth);
+        runner.run(lrtMethod, color, depth);
     }
 
     @Test
@@ -84,7 +85,7 @@ public class ColorDepthRelationshipWithInformativeAsLRT {
         int color = 3;
         int depth = 12;
 
-        runner.run(adj -> lrtMethod.create(adj), color, depth);
+        runner.run(lrtMethod, color, depth);
     }
 
     // TEN COLORED
@@ -94,7 +95,7 @@ public class ColorDepthRelationshipWithInformativeAsLRT {
         int color = 10;
         int depth = 4;
 
-        runner.run(adj -> lrtMethod.create(adj), color, depth);
+        runner.run(lrtMethod, color, depth);
     }
 
     @Test
@@ -102,7 +103,7 @@ public class ColorDepthRelationshipWithInformativeAsLRT {
         int color = 10;
         int depth = 8;
 
-        runner.run(adj -> lrtMethod.create(adj), color, depth);
+        runner.run(lrtMethod, color, depth);
     }
 
     @Test
@@ -110,7 +111,7 @@ public class ColorDepthRelationshipWithInformativeAsLRT {
         int color = 10;
         int depth = 12;
 
-        runner.run(adj -> lrtMethod.create(adj), color, depth);
+        runner.run(lrtMethod, color, depth);
     }
 
 }
