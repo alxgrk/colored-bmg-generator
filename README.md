@@ -1,15 +1,23 @@
 # Colored BMG Generator
 An implementation of several algorithms related to phylogenetic trees.
 
-## How to run the programm
+## How to...
 
-### ... on Linux
+### ... run the programm
 
 To run the resulting Java programm, simply execute the `./run.sh` script.
 Make sure that Java itself is installed to your system and the path to the JDK is added to the PATH system environment variable.
 
 ```
 ./run.sh
+```
+
+### ... generate the test reports
+
+To generate the test reports create by the test cases in `de.uni.leipzig.performance`, simply run:
+
+```
+./generate-test-reports.sh
 ```
 
 ## Program workflow
