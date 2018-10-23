@@ -3,7 +3,11 @@ package de.uni.leipzig.method;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import de.uni.leipzig.model.*;
+import de.uni.leipzig.model.AdjacencyList;
+import de.uni.leipzig.model.DiGraph;
+import de.uni.leipzig.model.Node;
+import de.uni.leipzig.model.Tree;
+import de.uni.leipzig.model.Triple;
 import de.uni.leipzig.user.UserInput;
 import lombok.RequiredArgsConstructor;
 

@@ -1,6 +1,9 @@
 package de.uni.leipzig.ncolored;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -12,12 +15,20 @@ import com.google.common.collect.Sets;
 
 import de.uni.leipzig.Util;
 import de.uni.leipzig.conversion.TripleFromTree;
-import de.uni.leipzig.model.*;
+import de.uni.leipzig.model.Color;
+import de.uni.leipzig.model.Container;
+import de.uni.leipzig.model.DiGraph;
+import de.uni.leipzig.model.Node;
+import de.uni.leipzig.model.Tree;
+import de.uni.leipzig.model.Triple;
 import de.uni.leipzig.ncolored.dengfernandezbaca.DFBBuildST;
 import de.uni.leipzig.ncolored.dengfernandezbaca.DFBBuildST.IncompatibleProfileException;
-import de.uni.leipzig.uncolored.*;
-import de.uni.leipzig.user.*;
-import lombok.*;
+import de.uni.leipzig.uncolored.AhoBuild;
+import de.uni.leipzig.uncolored.ConnectedComponentsConstructor;
+import de.uni.leipzig.user.Result;
+import de.uni.leipzig.user.UserInput;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@VisibleForTesting))
 public class NColored {
@@ -63,7 +74,7 @@ public class NColored {
                         for (Color t : cc.getColors()) {
 
                             // s and t the same?
-                            if (s.equals(t) || stTrees.containsKey(new Pair<>(s, t)))
+                            if (s.equals(t) || stTrees.containsKey(Sets.newHashSet(s, t)))
                                 continue;
 
                             // create induced subgraph for s,t
