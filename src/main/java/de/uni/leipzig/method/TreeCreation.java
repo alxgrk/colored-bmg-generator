@@ -3,11 +3,7 @@ package de.uni.leipzig.method;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import de.uni.leipzig.model.AdjacencyList;
-import de.uni.leipzig.model.DiGraph;
-import de.uni.leipzig.model.Node;
-import de.uni.leipzig.model.Tree;
-import de.uni.leipzig.model.Triple;
+import de.uni.leipzig.model.*;
 import de.uni.leipzig.user.UserInput;
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +25,8 @@ public interface TreeCreation {
 
     TreeCreation inNonInteractiveMode(boolean mode);
 
+    TreeCreation inPrintMode(boolean mode);
+
     @RequiredArgsConstructor
     enum Method {
         AHO(Aho::new),
@@ -38,7 +36,7 @@ public interface TreeCreation {
         private final Supplier<TreeCreation> method;
 
         public TreeCreation get() {
-            return method.get().inNonInteractiveMode(false);
+            return method.get().inNonInteractiveMode(false).inPrintMode(true);
         }
     }
 

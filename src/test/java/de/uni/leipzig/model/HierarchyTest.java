@@ -58,14 +58,14 @@ public class HierarchyTest {
     public void setUp() throws Exception {
 
         // TCs:
-        ThinnessClass a = new ThinnessClass(one);
-        ThinnessClass b = new ThinnessClass(two);
-        ThinnessClass c = new ThinnessClass(three);
-        ThinnessClass d = new ThinnessClass(four);
-        ThinnessClass e = new ThinnessClass(five);
-        ThinnessClass f = new ThinnessClass(six);
-        ThinnessClass g = new ThinnessClass(seven, eight);
-        ThinnessClass h = new ThinnessClass(nine, ten);
+        ThinnessClass a = new ThinnessClass(new HashSet<>(), new HashSet<>(), one);
+        ThinnessClass b = new ThinnessClass(new HashSet<>(), new HashSet<>(), two);
+        ThinnessClass c = new ThinnessClass(new HashSet<>(), new HashSet<>(), three);
+        ThinnessClass d = new ThinnessClass(new HashSet<>(), new HashSet<>(), four);
+        ThinnessClass e = new ThinnessClass(new HashSet<>(), new HashSet<>(), five);
+        ThinnessClass f = new ThinnessClass(new HashSet<>(), new HashSet<>(), six);
+        ThinnessClass g = new ThinnessClass(new HashSet<>(), new HashSet<>(), seven, eight);
+        ThinnessClass h = new ThinnessClass(new HashSet<>(), new HashSet<>(), nine, ten);
 
         Reachables r12 = new Reachables(null, null, rq12);
         Reachables r1234 = new Reachables(null, null, rq1234);

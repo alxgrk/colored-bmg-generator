@@ -91,11 +91,6 @@ public class Node implements Comparable<Node> {
                 return false;
         } else if (!color.equals(other.color))
             return false;
-        if (ids == null) {
-            if (other.ids != null)
-                return false;
-        } else if (!ids.equals(other.ids))
-            return false;
         if (path == null) {
             if (other.path != null)
                 return false;
@@ -110,7 +105,6 @@ public class Node implements Comparable<Node> {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((color == null) ? 0 : color.hashCode());
-        result = prime * result + ((ids == null) ? 0 : ids.hashCode());
         result = prime * result + ((path == null) ? 0 : path.hashCode());
         return result;
     }

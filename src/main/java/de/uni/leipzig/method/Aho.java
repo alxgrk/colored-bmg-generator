@@ -23,6 +23,8 @@ class Aho implements TreeCreation {
 
     private boolean interactiveMode = true;
 
+    private boolean inPrintMode = true;
+
     Aho() {
         this(new AhoBuild(), new UserInput());
     }
@@ -35,6 +37,12 @@ class Aho implements TreeCreation {
     public TreeCreation inNonInteractiveMode(boolean mode) {
         ahoBuild.setAlwaysMinCut(mode);
         interactiveMode = !mode;
+        return this;
+    }
+
+    @Override
+    public TreeCreation inPrintMode(boolean mode) {
+        inPrintMode = mode;
         return this;
     }
 
@@ -52,7 +60,8 @@ class Aho implements TreeCreation {
 
         Tree result = ahoBuild.build(triples, leaves);
 
-        System.out.println(result.print());
+        if (inPrintMode)
+            System.out.println(result.print());
 
         return result;
     }

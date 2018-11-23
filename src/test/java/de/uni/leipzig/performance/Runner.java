@@ -2,77 +2,94 @@ package de.uni.leipzig.performance;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Stopwatch;
 
 import de.uni.leipzig.RandomTree;
 import de.uni.leipzig.method.TreeCreation;
-import de.uni.leipzig.model.*;
-import de.uni.leipzig.ncolored.NColored;
-import de.uni.leipzig.ncolored.NColored.SuperTreeMethod;
-import de.uni.leipzig.twocolored.DiGraphExtractor;
+import de.uni.leipzig.model.AdjacencyList;
 
 public class Runner {
 
-    final int maxChildren;
+    final List<Integer> leafNumbers;
 
-    final int minDepth;
+    final Class<?> testClass;
 
-    final NColored nColored;
+    public Runner(Class<?> testClass, List<Integer> leafNumbers) {
+        this.testClass = testClass;
+        this.leafNumbers = leafNumbers;
+    }
 
-    final File testReport;
+    public void run(TreeCreation lrtMethod) throws IOException {
+        File report = createTestReport(lrtMethod);
 
-    DiGraphExtractor diGraphExtractor = new DiGraphExtractor();
+        String runInformation = leafNumbers.stream()
+                .map(i -> i.toString())
+                .reduce((i1, i2) -> i1 + "," + i2)
+                .get();
 
-    public Runner(Class<?> testClass, int maxChildren, int minDepth, SuperTreeMethod stMethod) {
-        try {
-            this.maxChildren = maxChildren;
-            this.minDepth = minDepth;
-            this.nColored = new NColored()
-                    .stMethod(new Container<>(stMethod))
-                    .alwaysMinCut(true);
-            this.testReport = new File(Runner.class.getProtectionDomain()
-                    .getCodeSource()
-                    .getLocation()
-                    .getPath()
-                    + "/" + testClass.getSimpleName() + ".report");
+        writeln(report, runInformation);
 
-            if (!testReport.exists()) {
-                testReport.createNewFile();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        for (Integer leafNumber : leafNumbers) {
+
+            boolean exceptionWasThrown;
+            do {
+                try {
+                    runFor(report, lrtMethod, leafNumber);
+                    exceptionWasThrown = false;
+                } catch (Exception e) {
+                    System.err.println(e.getMessage());
+                    exceptionWasThrown = true;
+                }
+            } while (exceptionWasThrown);
+
+            System.out.println("done with leaf number " + leafNumber);
         }
     }
 
-    public void run(TreeCreation lrtMethod, int color, int depth) throws IOException {
+    private void runFor(File report, TreeCreation lrtMethod, Integer leafNumber)
+            throws IOException {
         Stopwatch sw = Stopwatch.createStarted();
 
-        RandomTree randomTree = new RandomTree(maxChildren, depth, color).minDepth(minDepth);
+        RandomTree randomTree = new RandomTree(2, 2).numberOfLeaves(Optional.of(leafNumber));
         AdjacencyList adjList = randomTree.create();
 
-        String runInformation = "Color=" + color + " - Depth=" + minDepth + "-" + depth;
+        // TreeCreation.Method.AHO.get().inNonInteractiveMode(true).create(adjList);
 
-        try {
-            if (color <= 2) {
-                lrtMethod.create(adjList);
-            } else {
-                DiGraph graph = diGraphExtractor.extract(adjList);
-                nColored.by(g -> lrtMethod.create(g), graph);
-            }
-        } catch (Exception e) {
-            write(runInformation);
-            write(e.getMessage());
-            return;
-        }
+        lrtMethod.create(adjList);
 
         Long elapsedMilliSeconds = sw.stop().elapsed(TimeUnit.MILLISECONDS);
-        write(runInformation);
-        write("took " + (elapsedMilliSeconds.doubleValue() / 1000));
+        write(report, Double.toString(elapsedMilliSeconds.doubleValue() / 1000));
+
+        if (!(leafNumbers.indexOf(leafNumber) == leafNumbers.size() - 1))
+            write(report, ",");
+        else
+            writeln(report, "");
     }
 
-    private void write(String line) throws IOException {
-        Files.write(testReport.toPath(), line.concat("\n").getBytes(), StandardOpenOption.APPEND);
+    private void writeln(File dest, String line) throws IOException {
+        write(dest, line.concat("\r\n"));
+    }
+
+    private void write(File dest, String string) throws IOException {
+        Files.write(dest.toPath(), string.getBytes(), StandardOpenOption.APPEND);
+    }
+
+    private File createTestReport(TreeCreation lrtMethod) throws IOException {
+        File testReport = new File(Runner.class.getProtectionDomain()
+                .getCodeSource()
+                .getLocation()
+                .getPath()
+                + "/" + testClass.getSimpleName() + "-" + lrtMethod.getClass().getSimpleName()
+                + ".report");
+
+        if (testReport.exists())
+            testReport.delete();
+
+        testReport.createNewFile();
+
+        return testReport;
     }
 }

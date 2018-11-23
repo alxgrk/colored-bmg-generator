@@ -14,8 +14,6 @@ public class RandomTree {
 
     private final int maxChildren;
 
-    private final int maxDepth;
-
     private final int maxLabel;
 
     private AdjacencyList adjList = new AdjacencyList();
@@ -24,27 +22,35 @@ public class RandomTree {
     private boolean maximalNodesWithChildren = false;
 
     @Setter
-    private int minDepth = 0;
+    private Optional<Integer> numberOfLeaves = Optional.empty();
+
+    @Setter
+    private Optional<Integer> maxDepth = Optional.empty();
 
     public static RandomTree askRandomTreeConfig(UserInput config) {
 
         System.out.println("Maximum amount of children?");
         int maxChildren = Integer.parseInt(config.listenForResult());
-        System.out.println("Maximum depth?");
-        int maxDepth = Integer.parseInt(config.listenForResult());
         System.out.println("Maximum number of labels?");
         int maxLabel = Integer.parseInt(config.listenForResult());
 
-        RandomTree randomTree = new RandomTree(maxChildren, maxDepth, maxLabel);
-
-        System.out.println("Minimal depth?");
-        int minDepth = Integer.parseInt(config.listenForResult());
-        randomTree.minDepth(minDepth);
+        RandomTree randomTree = new RandomTree(maxChildren, maxLabel);
 
         boolean wasTriggered = config.askForTrigger(
                 "Do you want to have every node having the maximal "
                         + "amount of children? (type 'y' or leave blank)", "y");
         randomTree.maximalNodesWithChildren(wasTriggered);
+
+        System.out.println("Number of leaves? (enter something less than 0 to skip this)");
+        int numberOfLeaves = Integer.parseInt(config.listenForResult());
+        if (numberOfLeaves >= 0) {
+            randomTree.numberOfLeaves(Optional.of(numberOfLeaves));
+        } else {
+            System.out.println("Maximal depth?");
+            int maxDepth = Integer.parseInt(config.listenForResult());
+            randomTree.maxDepth(Optional.of(maxDepth));
+        }
+
         return randomTree;
     }
 
@@ -52,13 +58,14 @@ public class RandomTree {
         ArrayList<Integer> arrayList = new ArrayList<>();
         arrayList.add(0);
 
-        create(arrayList, true);
+        create(arrayList, true, new ArrayList<>(), true);
         link();
 
         return adjList;
     }
 
-    private void create(List<Integer> ids, Boolean shouldHaveChildren) {
+    private void create(List<Integer> ids, Boolean shouldHaveChildren,
+            List<Node> alreadyCreatedLeaves, Boolean checkForLeafCount) {
 
         // erzeuge neue linkedList in Arraylist und neuen Node
         List<Node> childList = new LinkedList<Node>();
@@ -66,26 +73,69 @@ public class RandomTree {
 
         Node node = Node.of(randomLabel(), ids);
         childList.add(node);
+        alreadyCreatedLeaves.add(node);
 
         int depth = ids.size();
-        if (shouldHaveChildren == true && depth < maxDepth) {
+        if (shouldHaveChildren == true) {
 
-            // bestimme wie viele Abzweige
-            int zahl = howManyChildren();
-            // System.out.println("erzeuge verzweigung mit " + zahl + "
-            // Kindern");
+            if (noRestrictionsApplied()
+                    ||
+                    maxDepthNotReached(depth)
+                    ||
+                    numberOfLeavesNotReached(alreadyCreatedLeaves)) {
 
-            for (int i = 1; i <= zahl; i++) {
-                // erzeugung des neuen Namen-Arrays
-                List<Integer> copy = new ArrayList<>(ids);
-                copy.add(i);
+                // bestimme wie viele Abzweige
+                int zahl = howManyChildren();
+                // System.out.println("erzeuge verzweigung mit " + zahl + "
+                // Kindern");
 
-                // rekursive Funktion
-                create(copy, shouldHaveChildren(depth));
+                // entferne 'node' wieder von 'leafList'
+                alreadyCreatedLeaves.remove(node);
+
+                List<Boolean> checkForLeafCountConditions = new ArrayList<>(zahl);
+                for (int i = 0; i <= zahl - 1; i++) {
+                    checkForLeafCountConditions.add(i, new Random().nextBoolean());
+                }
+                if (!checkForLeafCountConditions.contains(true))
+                    checkForLeafCountConditions.set(0, true);
+
+                for (int i = 1; i <= zahl; i++) {
+
+                    // überspringe child creation, sobald anzahl an leaves erreicht ist
+                    if (numberOfLeaves().isPresent() && !(alreadyCreatedLeaves
+                            .size() < numberOfLeaves().get()))
+                        continue;
+
+                    // erzeugung des neuen Namen-Arrays
+                    List<Integer> copy = new ArrayList<>(ids);
+                    copy.add(i);
+
+                    Boolean shouldHaveFurtherChildren = shouldHaveChildren(depth);
+
+                    if (checkForLeafCount && numberOfLeavesNotReached(alreadyCreatedLeaves))
+                        shouldHaveFurtherChildren = true;
+
+                    // rekursive Funktion
+                    create(copy, shouldHaveFurtherChildren, alreadyCreatedLeaves,
+                            checkForLeafCountConditions.get(i - 1));
+                }
             }
         } else {
             return;
         }
+    }
+
+    private boolean numberOfLeavesNotReached(List<Node> alreadyCreatedLeaves) {
+        return numberOfLeaves().isPresent() && alreadyCreatedLeaves.size() < numberOfLeaves()
+                .get();
+    }
+
+    private boolean maxDepthNotReached(int depth) {
+        return maxDepth().isPresent() && depth < maxDepth().get();
+    }
+
+    private boolean noRestrictionsApplied() {
+        return !maxDepth().isPresent() && !numberOfLeaves().isPresent();
     }
 
     private void link() {
@@ -124,7 +174,9 @@ public class RandomTree {
     }
 
     private Boolean shouldHaveChildren(int depth) {
-        return depth < minDepth ? true : new Random().nextBoolean();
+        return maxDepthNotReached(depth)
+                ? true
+                : new Random().nextBoolean();
     }
 
     private int randomLabel() {

@@ -1,55 +1,40 @@
 package de.uni.leipzig.twocolored;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import static java.util.stream.Collectors.*;
 
-import de.uni.leipzig.model.DiGraph;
-import de.uni.leipzig.model.Node;
-import de.uni.leipzig.model.ThinnessClass;
+import java.util.*;
+
+import de.uni.leipzig.model.*;
 import de.uni.leipzig.model.edges.DiEdge;
 
 public class ThinnessClassFinder {
 
-    private Set<ThinnessClass> thinnessClasses = new HashSet<ThinnessClass>();
-
-    private Map<Node, List<Node>> outerN = new HashMap<>();
-
-    private Map<Node, List<Node>> innerN = new HashMap<>();
-
     public Set<ThinnessClass> findFrom(DiGraph graph) {
+
+        Set<ThinnessClass> thinnessClasses = new HashSet<>();
 
         // erstelle listen-listen mit inneren und äußeren Nachbarn
 
-        for (Node n : graph.getNodes()) {
-
-            outerN.put(n, new ArrayList<>());
-            innerN.put(n, new ArrayList<>());
-
-            for (DiEdge e : graph.getEdges()) {
-
-                if (n.equals(e.getFirst())) {
-                    List<Node> nodeOuterN = outerN.get(n);
-                    nodeOuterN.add(e.getSecond());
-                } else if (n.equals(e.getSecond())) {
-                    List<Node> nodeInnerN = innerN.get(n);
-                    nodeInnerN.add(e.getFirst());
-                }
-            }
-
-        }
+        Map<Node, Set<Node>> outN = graph.getEdges()
+                .stream()
+                .collect(groupingBy(DiEdge::getFirst,
+                        mapping(DiEdge::getSecond, toSet())));
+        Map<Node, Set<Node>> inN = graph.getEdges()
+                .stream()
+                .collect(groupingBy(DiEdge::getSecond,
+                        mapping(DiEdge::getFirst, toSet())));
 
         // finde Äquivalenzklassen
 
         for (Node n : graph.getNodes()) {
 
-            if (nodeAlreadyInTc(n))
+            if (nodeAlreadyInTc(thinnessClasses, n))
                 continue;
 
-            ThinnessClass tc = new ThinnessClass();
+            Set<Node> nOut = outN.getOrDefault(n, new HashSet<>());
+            Set<Node> nIn = inN.getOrDefault(n, new HashSet<>());
+
+            ThinnessClass tc = new ThinnessClass(nOut, nIn);
             tc.add(n);
 
             for (Node nextNode : graph.getNodes()) {
@@ -57,10 +42,13 @@ public class ThinnessClassFinder {
                 if (n == nextNode)
                     continue;
 
-                if (outerN.get(n).containsAll(outerN.get(nextNode)) && outerN.get(nextNode)
-                        .containsAll(outerN.get(n))
-                        && innerN.get(n).containsAll(innerN.get(nextNode)) && innerN.get(nextNode)
-                                .containsAll(innerN.get(n))) {
+                Set<Node> nextOut = outN.getOrDefault(nextNode, new HashSet<>());
+                Set<Node> nextIn = inN.getOrDefault(nextNode, new HashSet<>());
+
+                if (nOut.containsAll(nextOut)
+                        && nextOut.containsAll(nOut)
+                        && nIn.containsAll(nextIn)
+                        && nextIn.containsAll(nIn)) {
                     tc.add(nextNode);
                 }
             }
@@ -71,7 +59,7 @@ public class ThinnessClassFinder {
         return thinnessClasses;
     }
 
-    private boolean nodeAlreadyInTc(Node n) {
+    private boolean nodeAlreadyInTc(Set<ThinnessClass> thinnessClasses, Node n) {
         boolean skip = false;
         for (ThinnessClass tc : thinnessClasses) {
             skip = tc.contains(n);

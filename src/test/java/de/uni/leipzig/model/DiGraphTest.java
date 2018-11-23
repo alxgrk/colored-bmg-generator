@@ -33,10 +33,10 @@ public class DiGraphTest {
     // EC(nodes=[1-01])=N(n1=[], n2=[], n3=[], nIn=[]),
     // EC(nodes=[0-0212, 0-0211])=N(n1=[1-0221], n2=[0-0222],n3=[1-0221], nIn=[]),
     // EC(nodes=[0-0222])=N(n1=[1-0221], n2=[0-0222], n3=[1-0221],nIn=[1-0221])
-    ThinnessClass alpha = new ThinnessClass(n0221);
-    ThinnessClass beta = new ThinnessClass(n01);
-    ThinnessClass gamma = new ThinnessClass(n0212, n0211);
-    ThinnessClass delta = new ThinnessClass(n0222);
+    ThinnessClass alpha = new ThinnessClass(Sets.newHashSet(n0222), Sets.newHashSet(n0211, n0222, n0212), n0221);
+    ThinnessClass beta = new ThinnessClass(Sets.newHashSet(), Sets.newHashSet(), n01);
+    ThinnessClass gamma = new ThinnessClass(Sets.newHashSet(n0221), Sets.newHashSet(), n0212, n0211);
+    ThinnessClass delta = new ThinnessClass(Sets.newHashSet(n0221), Sets.newHashSet(n0221), n0222);
     
     // @formatter:on
 

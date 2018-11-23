@@ -1,34 +1,23 @@
-package de.uni.leipzig.performance;
-
-import java.util.List;
+package de.uni.leipzig.performance.firstTry;
 
 import org.junit.*;
 import org.junit.runners.MethodSorters;
 
-import com.google.common.collect.Lists;
-
 import de.uni.leipzig.method.TreeCreation;
 import de.uni.leipzig.method.TreeCreation.Method;
-import de.uni.leipzig.model.Pair;
 import de.uni.leipzig.ncolored.NColored.SuperTreeMethod;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@Ignore
 public class ColorDepthRelationshipWithNColoredAhoAndInformativeAsLRT {
 
     static int MAX_CHILDREN = 2;
 
-    static int MIN_DEPTH = 3;
-
     static int[] COLORS = new int[] { 2, 3, 10 };
-
-    static List<Pair<Integer>> DEPTHS_WITH_MIN = Lists.newArrayList(
-            new Pair<>(MIN_DEPTH, 4),
-            new Pair<>(MIN_DEPTH, 8),
-            new Pair<>(MIN_DEPTH, 12));
 
     TreeCreation lrtMethod = Method.AHO_INFORMATIVE.get().inNonInteractiveMode(true);
 
-    private Runner runner = new Runner(getClass(), MAX_CHILDREN, MIN_DEPTH, SuperTreeMethod.AHO);
+    private Runner runner = new Runner(getClass(), MAX_CHILDREN, SuperTreeMethod.AHO);
 
     // TWO COLORED
 

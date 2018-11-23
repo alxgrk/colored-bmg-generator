@@ -47,8 +47,10 @@ public class DiGraph {
 
     public Map<ThinnessClass, Neighbourhood> getNeighboursByTc() {
         if (neighboursByTc == null) {
-            this.neighboursByTc = Maps.asMap(getThinnessClasses(),
-                    tc -> new Neighbourhood(tc, edges));
+            this.neighboursByTc = Maps.newHashMap();
+            for (ThinnessClass tc : getThinnessClasses()) {
+                neighboursByTc.put(tc, new Neighbourhood(tc, edges));
+            }
         }
 
         return neighboursByTc;

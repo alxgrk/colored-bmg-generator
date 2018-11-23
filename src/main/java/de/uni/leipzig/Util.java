@@ -12,13 +12,20 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class Util {
 
-    public boolean equalSets(Collection<?> s1, Collection<?> s2) {
-        return Sets.difference(Sets.newHashSet(s1), Sets.newHashSet(s2)).isEmpty()
-                && Sets.difference(Sets.newHashSet(s2), Sets.newHashSet(s1)).isEmpty();
+    public boolean equalSets(Collection<?> c1, Collection<?> c2) {
+        Set<?> set1 = c1 instanceof Set ? (Set<?>) c1 : Sets.newHashSet(c1);
+        Set<?> set2 = c2 instanceof Set ? (Set<?>) c2 : Sets.newHashSet(c2);
+        return equalSets(set1, set2);
+    }
+
+    public boolean equalSets(Set<?> set1, Set<?> set2) {
+        return set1.equals(set2);
     }
 
     public boolean properSubset(Collection<?> subsetOf, Collection<?> parentSet) {
-        return properSubset(Sets.newHashSet(subsetOf), Sets.newHashSet(parentSet));
+        return properSubset(
+                subsetOf instanceof Set ? (Set<?>) subsetOf : Sets.newHashSet(subsetOf),
+                parentSet instanceof Set ? (Set<?>) parentSet : Sets.newHashSet(parentSet));
     }
 
     private boolean properSubset(Set<?> subsetOf, Set<?> parentSet) {

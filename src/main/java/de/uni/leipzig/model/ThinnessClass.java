@@ -1,26 +1,26 @@
 package de.uni.leipzig.model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @ToString
 @EqualsAndHashCode
-@NoArgsConstructor
 public class ThinnessClass {
 
     private Set<Node> nodes = new HashSet<>();
 
-    @VisibleForTesting
-    protected ThinnessClass(Node... nodes) {
+    private Set<Node> outNeighbours;
+
+    private Set<Node> inNeighbours;
+
+    public ThinnessClass(@NonNull Set<Node> outNeighbours, @NonNull Set<Node> inNeighbours,
+            Node... nodes) {
+        this.outNeighbours = outNeighbours;
+        this.inNeighbours = inNeighbours;
         this.nodes = Sets.newHashSet(nodes);
     }
 

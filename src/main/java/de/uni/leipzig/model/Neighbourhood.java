@@ -1,60 +1,58 @@
 package de.uni.leipzig.model;
 
-import java.util.*;
+import static java.util.stream.Collectors.*;
+
+import java.util.Set;
+
+import javax.annotation.Nullable;
 
 import de.uni.leipzig.model.edges.DiEdge;
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 
 @Getter
-@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @ToString
 public class Neighbourhood {
-    Set<Node> n1;
 
-    Set<Node> n2;
+    private Set<DiEdge> edges;
 
-    Set<Node> n3;
+    private final Set<Node> n1;
 
-    Set<Node> nIn;
+    private final Set<Node> nIn;
+
+    @Nullable
+    private Set<Node> n2;
+
+    @Nullable
+    private Set<Node> n3;
 
     public Neighbourhood(ThinnessClass tc, Set<DiEdge> edges) {
-        n1 = neighboursCalc(tc, edges);
-        n2 = neighboursCalc(n1, edges);
-        n3 = neighboursCalc(n2, edges);
-        nIn = inNeighboursOf(tc, edges);
-    }
-
-    private Set<Node> neighboursCalc(ThinnessClass tc, Set<DiEdge> edges) {
-        return neighboursCalc(tc.getNodes(), edges);
+        this.edges = edges;
+        n1 = tc.getOutNeighbours();
+        nIn = tc.getInNeighbours();
     }
 
     private Set<Node> neighboursCalc(Set<Node> tc, Set<DiEdge> edges) {
-        Set<Node> neighbours = new HashSet<>();
 
-        tc.forEach(n -> {
-            for (DiEdge diEdge : edges) {
+        return edges.stream()
+                .filter(e -> tc.contains(e.getFirst()))
+                .collect(mapping(DiEdge::getSecond, toSet()));
 
-                if (diEdge.getFirst() == n)
-                    neighbours.add(diEdge.getSecond());
-            }
-        });
-
-        return neighbours;
     }
 
-    private Set<Node> inNeighboursOf(ThinnessClass tc, Set<DiEdge> edges) {
-        Set<Node> neighbours = new HashSet<>();
+    public Set<Node> getN2() {
+        if (n2 == null) {
+            this.n2 = neighboursCalc(n1, edges);
+        }
 
-        tc.getNodes().forEach(n -> {
-
-            for (DiEdge diEdge : edges) {
-
-                if (diEdge.getSecond() == n)
-                    neighbours.add(diEdge.getFirst());
-            }
-        });
-
-        return neighbours;
+        return n2;
     }
+
+    public Set<Node> getN3() {
+        if (n3 == null) {
+            this.n3 = neighboursCalc(getN2(), edges);
+        }
+
+        return n3;
+    }
+
 }
