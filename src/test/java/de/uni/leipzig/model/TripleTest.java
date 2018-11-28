@@ -56,9 +56,8 @@ public class TripleTest {
         Triple uut = new DefaultTriple(new Edge(node1, node2), node3);
         uut.invertEdge();
 
-        assertThat(uut.getEdge())
-                .extracting("first", "second")
-                .contains(node2, node1);
+        assertThat(uut.getEdge().getFirst()).isEqualTo(node2);
+        assertThat(uut.getEdge().getSecond()).isEqualTo(node1);
     }
 
     @Test

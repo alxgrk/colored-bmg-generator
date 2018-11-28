@@ -121,7 +121,7 @@ public class NColored {
             Set<Triple> triples = tripleFromTree.extractOf(stTrees);
             Set<Node> leaves = stTrees.values()
                     .stream()
-                    .flatMap(t -> t.getLeafs().stream())
+                    .flatMap(t -> t.getLeaves().stream())
                     .collect(Collectors.toSet());
 
             aho.setAlwaysMinCut(alwaysMinCut);

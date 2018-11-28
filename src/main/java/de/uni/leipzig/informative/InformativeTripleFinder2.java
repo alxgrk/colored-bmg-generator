@@ -1,67 +1,106 @@
 package de.uni.leipzig.informative;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.jgrapht.alg.util.Pair;
-
-import com.google.common.collect.Lists;
 
 import de.uni.leipzig.informative.model.InformativeTriple;
 import de.uni.leipzig.model.*;
 import de.uni.leipzig.model.edges.*;
+import de.uni.leipzig.uncolored.DefaultTripleFinder;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class InformativeTripleFinder2 {
 
-    public Pair<Set<InformativeTriple>, Set<Node>> findTriple(DiGraph graph) {
+    private final DefaultTripleFinder defaultTripleFinder;
 
-        Set<InformativeTriple> foundTripleSet = new HashSet<>();
+    public InformativeTripleFinder2() {
+        this(new DefaultTripleFinder());
+    }
+
+    public Pair<Set<InformativeTriple>, Set<Node>> findTriple(AdjacencyList list) {
+
         Set<Node> foundNodes = new HashSet<>();
 
-        Set<DiEdge> edges = graph.getEdges();
+        Set<Triple> triples = defaultTripleFinder.findTriple(list).getFirst();
+        Set<DiEdge> edges = triples.stream()
+                .map(t -> (DiEdge) t.getEdge())
+                .collect(Collectors.toSet());
 
-        for (Node node1 : graph.getNodes()) {
-            for (Node node2 : graph.getNodes()) {
-                if (node1.equals(node2) || node1.getColor().equals(node2.getColor()))
-                    continue;
+        Set<InformativeTriple> foundTripleSet = triples.stream()
+                .map(t -> {
+                    Node node1 = t.getEdge().getFirst();
+                    Node node2 = t.getEdge().getSecond();
+                    Node node3 = t.getNode();
 
-                for (Node node3 : graph.getNodes()) {
+                    // FIXME filter edges for performance
+                    boolean[] edgesExistent = checkEdges(edges, node1, node2, node3);
 
-                    if (node1.equals(node3) || node2.equals(node3))
-                        continue;
-
-                    Pair<Node, Node> ab = new Pair<>(node1, node2);
-                    Pair<Node, Node> ac = new Pair<>(node1, node3);
-                    Pair<Node, Node> bc = new Pair<>(node2, node3);
-                    Pair<Node, Node> ba = new Pair<>(node2, node1);
-                    Pair<Node, Node> ca = new Pair<>(node3, node1);
-                    Pair<Node, Node> cb = new Pair<>(node3, node2);
-
-                    List<Boolean> edgesExistent = checkEdges(edges,
-                            Lists.newArrayList(cb, bc),
-                            Lists.newArrayList(ab, ba, ac, ca));
-
-                    if (!edgesExistent.contains(true))
-                        continue;
-
-                    if (edgesExistent.size() == 4
-                            && checkX(edgesExistent.get(0), edgesExistent.get(1),
-                                    edgesExistent.get(2), edgesExistent.get(3))) {
-
-                        Edge edge = new Edge(node1, node2);
-                        Node node = node3;
-
-                        InformativeTriple foundInformativeTriple = new InformativeTriple(edge,
-                                node);
-                        foundTripleSet.add(foundInformativeTriple);
+                    if (edgesExistent.length == 4
+                            && checkX(edgesExistent[0], edgesExistent[1],
+                                    edgesExistent[2], edgesExistent[3])) {
 
                         foundNodes.add(node1);
                         foundNodes.add(node2);
                         foundNodes.add(node3);
+
+                        return new InformativeTriple(new Edge(node1, node2), node3);
                     }
 
-                }
-            }
-        }
+                    return null;
+                })
+                .filter(t -> t != null)
+                .collect(Collectors.toSet());
+
+        Pair<Set<InformativeTriple>, Set<Node>> pair = new Pair<>(foundTripleSet, foundNodes);
+
+        return pair;
+    }
+
+    public Pair<Set<InformativeTriple>, Set<Node>> findTriple(DiGraph graph) {
+
+        Set<Node> foundNodes = new HashSet<>();
+
+        Set<Node> nodes = graph.getNodes();
+        Set<DiEdge> edges = new HashSet<>(graph.getEdges());
+
+        Set<InformativeTriple> foundTripleSet = graph.getEdges()
+                .stream()
+                .flatMap(e -> {
+                    Node node1 = e.getFirst();
+                    Node node2 = e.getFirst();
+
+                    return nodes.stream()
+                            .filter(n -> n.getColor().equals(node1.getColor()) || n.getColor()
+                                    .equals(node2.getColor()))
+                            .filter(n -> !node1.equals(n) && !node2.equals(n))
+                            .map(n -> new DefaultTriple(e, n));
+
+                })
+                .map(t -> {
+                    Node node1 = t.getEdge().getFirst();
+                    Node node2 = t.getEdge().getSecond();
+                    Node node3 = t.getNode();
+
+                    boolean[] edgesExistent = checkEdges(edges, node1, node2, node3);
+
+                    if (edgesExistent.length == 4
+                            && checkX(edgesExistent[0], edgesExistent[1],
+                                    edgesExistent[2], edgesExistent[3])) {
+
+                        foundNodes.add(node1);
+                        foundNodes.add(node2);
+                        foundNodes.add(node3);
+
+                        return new InformativeTriple(new Edge(node1, node2), node3);
+                    }
+
+                    return null;
+                })
+                .filter(t -> t != null)
+                .collect(Collectors.toSet());
 
         Pair<Set<InformativeTriple>, Set<Node>> pair = new Pair<>(foundTripleSet, foundNodes);
 
@@ -89,35 +128,61 @@ public class InformativeTripleFinder2 {
         return false;
     }
 
-    private List<Boolean> checkEdges(Set<DiEdge> edges, List<Pair<Node, Node>> forbiddenPairs,
-            List<Pair<Node, Node>> necessaryPairs) {
+    private boolean[] checkEdges(Set<DiEdge> edges, Node node1, Node node2, Node node3) {
 
-        List<Boolean> list = Arrays.asList(new Boolean[] {
+        boolean[] bools = new boolean[] {
                 false, false, false, false
-        });
+        };
 
-        for (DiEdge edge : edges) {
-            Pair<Node, Node> pair = new Pair<>(edge.getFirst(), edge.getSecond());
-
-            if (forbiddenPairs.contains(pair))
-                return list;
-
-            for (int i = 0; i < necessaryPairs.size(); i++) {
-
-                if (list.get(i) == true)
-                    continue;
-
-                Pair<Node, Node> neededPair = necessaryPairs.get(i);
-
-                if (neededPair.getFirst().equals(edge.getFirst())
-                        && neededPair.getSecond().equals(edge.getSecond())) {
-                    list.set(i, true);
-                }
-
-            }
-
+        // forbidden pairs
+        // cb
+        DiEdge forbiddenEdge1 = new DiEdge(node3, node2);
+        if (edges.contains(forbiddenEdge1)) {
+            edges.remove(forbiddenEdge1);
+            return bools;
         }
-        return list;
+        // bc
+        DiEdge forbiddenEdge2 = new DiEdge(node2, node3);
+        if (edges.contains(forbiddenEdge2)) {
+            edges.remove(forbiddenEdge2);
+            return bools;
+        }
+
+        // necessary pairs
+        // ab (0)
+        if (bools[0] == false) {
+            DiEdge e = new DiEdge(node1, node2);
+            if (edges.contains(e)) {
+                edges.remove(e);
+                bools[0] = true;
+            }
+        }
+        // ba (1)
+        if (bools[1] == false) {
+            DiEdge e = new DiEdge(node2, node1);
+            if (edges.contains(e)) {
+                edges.remove(e);
+                bools[1] = true;
+            }
+        }
+        // ac (2)
+        if (bools[2] == false) {
+            DiEdge e = new DiEdge(node1, node3);
+            if (edges.contains(e)) {
+                edges.remove(e);
+                bools[2] = true;
+            }
+        }
+        // ca (3)
+        if (bools[3] == false) {
+            DiEdge e = new DiEdge(node3, node1);
+            if (edges.contains(e)) {
+                edges.remove(e);
+                bools[3] = true;
+            }
+        }
+
+        return bools;
     }
 
 }

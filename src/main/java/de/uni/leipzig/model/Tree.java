@@ -45,12 +45,12 @@ public class Tree implements Comparable<Tree> {
                 .collect(Collectors.toList());
     }
 
-    public List<Node> getLeafs() {
+    public List<Node> getLeaves() {
         List<Node> leafs = new ArrayList<>();
 
         leafs.add(root);
         leafs.addAll(subTrees.stream()
-                .flatMap(t -> t.getLeafs().stream())
+                .flatMap(t -> t.getLeaves().stream())
                 .collect(Collectors.toList()));
 
         return leafs.stream()
@@ -72,10 +72,10 @@ public class Tree implements Comparable<Tree> {
 
     public Tree addSubTree(@NonNull Tree t) {
 
-        subTrees.removeIf(st -> t.getLeafs().containsAll(st.getLeafs()));
+        subTrees.removeIf(st -> t.getLeaves().containsAll(st.getLeaves()));
 
         subTrees.add(t);
-        Collections.sort(this.subTrees);
+        // Collections.sort(this.subTrees);
 
         return this;
     }
@@ -103,7 +103,7 @@ public class Tree implements Comparable<Tree> {
     }
 
     public Set<Color> getColors() {
-        return getLeafs().stream()
+        return getLeaves().stream()
                 .map(Node::getColor)
                 .collect(Collectors.toSet());
     }
@@ -137,8 +137,8 @@ public class Tree implements Comparable<Tree> {
 
     @Override
     public int compareTo(Tree o) {
-        List<Node> thisNodes = this.getLeafs();
-        List<Node> otherNodes = o.getLeafs();
+        List<Node> thisNodes = this.getLeaves();
+        List<Node> otherNodes = o.getLeaves();
 
         Collections.sort(thisNodes);
         Collections.sort(otherNodes);

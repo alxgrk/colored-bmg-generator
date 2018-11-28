@@ -1,11 +1,15 @@
 package de.uni.leipzig.uncolored;
 
+import static de.uni.leipzig.Util.*;
+
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.jgrapht.alg.util.Pair;
 
+import de.uni.leipzig.Util.LcaForTwoNodes;
 import de.uni.leipzig.model.*;
-import de.uni.leipzig.model.edges.Edge;
+import de.uni.leipzig.model.edges.DiEdge;
 import lombok.Getter;
 
 @Getter
@@ -20,83 +24,39 @@ public class DefaultTripleFinder implements TripleFinder<Triple> {
      */
     public Pair<Set<Triple>, Set<Node>> findTriple(AdjacencyList list) {
 
-        Set<Node> leaves = new HashSet<>();
-        Set<Triple> triples = new HashSet<>();
-
-        for (int i = 0; i < list.size(); i++) {
-
-            List<Node> firstList = list.get(i);
-
-            if (!isLeave(firstList)) {
-                continue;
-            }
-
-            Node firstNode = firstList.get(0);
-            // add every leave
-            leaves.add(firstNode);
-
-            for (int j = 0; j < list.size(); j++) {
-
-                List<Node> secondList = list.get(j);
-
-                if (!isLeave(secondList) || j == i) {
-                    continue;
-                }
-
-                Node secondNode = secondList.get(0);
-
-                for (int k = 0; k < list.size(); k++) {
-
-                    List<Node> thirdList = list.get(k);
-
-                    if (isLeave(thirdList) && k != j && k != i) {
-
-                        Node thirdNode = thirdList.get(0);
-
-                        List<Integer> x = firstNode.getIds();
-                        List<Integer> y = secondNode.getIds();
-                        List<Integer> z = thirdNode.getIds();
-
-                        List<Integer> lcaXY = findLCA(x, y);
-                        List<Integer> lcaXYZ = findLCA(z, lcaXY);
-
-                        // xy is the ingroup, z is the outgroup
-                        if (isTriple(lcaXY, lcaXYZ)) {
-                            Edge edge = new Edge(firstNode, secondNode);
-                            Triple tripel = new DefaultTriple(edge, thirdNode);
-                            triples.add(tripel);
-                        }
-                    }
-                }
-            }
-        }
+        Set<Node> leaves = list.getChildNodes();
+        Set<Triple> triples = findByLeaves(leaves);
 
         return Pair.of(triples, leaves);
     }
 
-    private boolean isTriple(List<Integer> lcaXY, List<Integer> lcaXYZ) {
-        return lcaXY.size() > lcaXYZ.size();
-    }
+    public Set<Triple> findByLeaves(Set<Node> leaves) {
+        Set<Triple> triples = new HashSet<>();
 
-    private List<Integer> findLCA(List<Integer> a, List<Integer> b) {
+        for (Node firstNode : leaves) {
 
-        List<Integer> ancester = new ArrayList<>();
+            List<LcaForTwoNodes> lcaCandidates = leaves.stream()
+                    .filter(n -> !firstNode.equals(n)
+                            && !firstNode.getColor().equals(n.getColor()))
+                    .map(n -> new LcaForTwoNodes(firstNode, n, findLCA(firstNode, n).size()))
+                    .collect(Collectors.toList());
 
-        int v = 0;
+            if (lcaCandidates.size() > 1) {
+                List<LcaForTwoNodes> closest = lcaCandidates.stream()
+                        .collect(maxList(Comparator.comparing(LcaForTwoNodes::getLcaPath)));
 
-        while (a.get(v) == b.get(v)) {
+                lcaCandidates.removeAll(closest);
 
-            ancester.add(a.get(v));
-            if (v == a.size() - 1 || v == b.size() - 1) {
-                return ancester;
+                closest.stream()
+                        .flatMap(lca -> lcaCandidates.stream()
+                                .map(LcaForTwoNodes::getB)
+                                .map(c -> new DefaultTriple(
+                                        new DiEdge(lca.getA(), lca.getB()),
+                                        c)))
+                        .forEach(triples::add);
             }
-            v++;
         }
-        return ancester;
-    }
-
-    private boolean isLeave(List<Node> nodes) {
-        return nodes.size() == 1;
+        return triples;
     }
 
 }

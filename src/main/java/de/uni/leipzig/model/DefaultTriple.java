@@ -1,6 +1,6 @@
 package de.uni.leipzig.model;
 
-import de.uni.leipzig.model.edges.Edge;
+import de.uni.leipzig.model.edges.*;
 import lombok.*;
 import lombok.experimental.NonFinal;
 
@@ -10,7 +10,7 @@ public class DefaultTriple implements Triple, Comparable<Triple> {
 
     @NonNull
     @NonFinal
-    Edge edge;
+    AbstractPair<Node> edge;
 
     @NonNull
     Node node;

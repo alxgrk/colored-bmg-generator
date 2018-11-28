@@ -58,14 +58,18 @@ public class RandomTree {
         ArrayList<Integer> arrayList = new ArrayList<>();
         arrayList.add(0);
 
-        create(arrayList, true, new ArrayList<>(), true);
+        Optional<Integer> maxDepthByNumberOfLeaves = numberOfLeaves()
+                .map(i -> (int) Math.ceil(Math.log(i) / Math.log(maxChildren)) + 4);
+
+        create(arrayList, true, true, maxDepthByNumberOfLeaves);
         link();
 
         return adjList;
     }
 
     private void create(List<Integer> ids, Boolean shouldHaveChildren,
-            List<Node> alreadyCreatedLeaves, Boolean checkForLeafCount) {
+            Boolean checkForLeafCount,
+            Optional<Integer> maxDepthByNumberOfLeaves) {
 
         // erzeuge neue linkedList in Arraylist und neuen Node
         List<Node> childList = new LinkedList<Node>();
@@ -73,7 +77,7 @@ public class RandomTree {
 
         Node node = Node.of(randomLabel(), ids);
         childList.add(node);
-        alreadyCreatedLeaves.add(node);
+        adjList.getChildNodes().add(node);
 
         int depth = ids.size();
         if (shouldHaveChildren == true) {
@@ -82,7 +86,9 @@ public class RandomTree {
                     ||
                     maxDepthNotReached(depth)
                     ||
-                    numberOfLeavesNotReached(alreadyCreatedLeaves)) {
+                    (numberOfLeavesNotReached()
+                            && maxDepthByNumberOfLeavesNotReached(maxDepthByNumberOfLeaves,
+                                    depth))) {
 
                 // bestimme wie viele Abzweige
                 int zahl = howManyChildren();
@@ -90,7 +96,7 @@ public class RandomTree {
                 // Kindern");
 
                 // entferne 'node' wieder von 'leafList'
-                alreadyCreatedLeaves.remove(node);
+                adjList.getChildNodes().remove(node);
 
                 List<Boolean> checkForLeafCountConditions = new ArrayList<>(zahl);
                 for (int i = 0; i <= zahl - 1; i++) {
@@ -102,7 +108,7 @@ public class RandomTree {
                 for (int i = 1; i <= zahl; i++) {
 
                     // überspringe child creation, sobald anzahl an leaves erreicht ist
-                    if (numberOfLeaves().isPresent() && !(alreadyCreatedLeaves
+                    if (numberOfLeaves().isPresent() && !(adjList.getChildNodes()
                             .size() < numberOfLeaves().get()))
                         continue;
 
@@ -112,12 +118,12 @@ public class RandomTree {
 
                     Boolean shouldHaveFurtherChildren = shouldHaveChildren(depth);
 
-                    if (checkForLeafCount && numberOfLeavesNotReached(alreadyCreatedLeaves))
+                    if (checkForLeafCount && numberOfLeavesNotReached())
                         shouldHaveFurtherChildren = true;
 
                     // rekursive Funktion
-                    create(copy, shouldHaveFurtherChildren, alreadyCreatedLeaves,
-                            checkForLeafCountConditions.get(i - 1));
+                    create(copy, shouldHaveFurtherChildren,
+                            checkForLeafCountConditions.get(i - 1), maxDepthByNumberOfLeaves);
                 }
             }
         } else {
@@ -125,8 +131,13 @@ public class RandomTree {
         }
     }
 
-    private boolean numberOfLeavesNotReached(List<Node> alreadyCreatedLeaves) {
-        return numberOfLeaves().isPresent() && alreadyCreatedLeaves.size() < numberOfLeaves()
+    private boolean maxDepthByNumberOfLeavesNotReached(Optional<Integer> maxDepthByNumberOfLeaves,
+            int depth) {
+        return !(maxDepthByNumberOfLeaves.isPresent() && depth > maxDepthByNumberOfLeaves.get());
+    }
+
+    private boolean numberOfLeavesNotReached() {
+        return numberOfLeaves().isPresent() && adjList.getChildNodes().size() < numberOfLeaves()
                 .get();
     }
 

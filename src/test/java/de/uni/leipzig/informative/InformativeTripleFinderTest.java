@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Set;
 
 import org.jgrapht.alg.util.Pair;
-import org.junit.Test;
+import org.junit.*;
 
 import com.google.common.collect.Lists;
 
@@ -47,6 +47,7 @@ public class InformativeTripleFinderTest {
     // @formatter:on
 
     @Test
+    @Ignore
     public void testFind() throws Exception {
 
         InformativeTripleFinder uut = new InformativeTripleFinder();

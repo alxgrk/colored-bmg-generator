@@ -22,7 +22,7 @@ public class TripleFromTree {
 
         Multimap<Node, List<Node>> parentLeafSetsPerLeaf = LinkedListMultimap.create();
 
-        List<Node> allLeafs = tree.getLeafs();
+        List<Node> allLeafs = tree.getLeaves();
         allLeafs.forEach(n -> parentLeafSetsPerLeaf.put(n, allLeafs));
         fillMultiMap(parentLeafSetsPerLeaf, tree);
 
@@ -69,7 +69,7 @@ public class TripleFromTree {
     private void fillMultiMap(Multimap<Node, List<Node>> parentLeafSetsPerLeaf, Tree tree) {
 
         for (Tree subTree : tree.getSubTrees()) {
-            List<Node> leafs = subTree.getLeafs();
+            List<Node> leafs = subTree.getLeaves();
 
             // skip leaf trees
             if (leafs.size() > 1) {

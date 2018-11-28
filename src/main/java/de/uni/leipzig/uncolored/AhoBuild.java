@@ -1,13 +1,14 @@
 package de.uni.leipzig.uncolored;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.function.*;
 
 import org.zalando.fauxpas.ThrowingRunnable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.*;
 
+import de.uni.leipzig.Util;
 import de.uni.leipzig.model.*;
 import de.uni.leipzig.user.UserInput;
 import lombok.*;
@@ -48,7 +49,7 @@ public class AhoBuild {
                 .map(component -> {
 
                     // get all nodes of this component recursively
-                    Set<Node> subLeaveSet = Sets.newHashSet(component.getLeafs());
+                    Set<Node> subLeaveSet = Sets.newHashSet(component.getLeaves());
 
                     // filter all triples describing this component
                     Set<Triple> subTripleSet = filter(subLeaveSet, tripleSetR);
@@ -97,11 +98,14 @@ public class AhoBuild {
      * set.
      */
     private Set<Triple> filter(Set<Node> subLeaveSet, Set<Triple> tripleSetR) {
-        return tripleSetR.stream()
-                .filter(t -> subLeaveSet.contains(t.getEdge().getFirst())
-                        && subLeaveSet.contains(t.getEdge().getSecond())
-                        && subLeaveSet.contains(t.getNode()))
-                .collect(Collectors.toSet());
+
+        Predicate<? super List<Node>> filter = t -> subLeaveSet.containsAll(t);
+        Function<Triple, List<Node>> prefilterConverter = t -> Arrays.asList(t.getEdge().getFirst(),
+                t.getEdge().getSecond(),
+                t.getNode());
+        Set<Triple> subset = Util.filterAndReduce(tripleSetR, prefilterConverter, filter);
+
+        return subset;
     }
 
 }

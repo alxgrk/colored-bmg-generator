@@ -33,6 +33,7 @@ public class Hierarchy {
         sets = setBuilder.build();
     }
 
+    // FIXME performance!!!
     public Tree toHasseTree() {
 
         // determine the transitive closure ("Transitive Hülle")
@@ -49,100 +50,54 @@ public class Hierarchy {
         Set<SetDiEdge> finalEdges = filterByInNeighbourCount(inNeighboursCount,
                 groupedByFirstNodeSet);
 
-        Tree finalTree = recursive(finalEdges, Sets.newHashSet(sets), new HashSet<>());
+        // find root node (set with largest size)
+        HashSet<Set<Node>> remainingSets = Sets.newHashSet(sets);
+        Optional<Set<Node>> rootSet = remainingSets.stream()
+                .max(Comparator.comparing(Set::size));
+
+        if (!rootSet.isPresent())
+            throw new IncorrectHierarchyException("unable to determine root set");
+
+        Tree finalTree = recursiveTopDown(finalEdges, rootSet.get());
 
         return finalTree;
     }
 
-    private Tree recursive(Set<SetDiEdge> finalEdges, Set<Set<Node>> remainingSets,
-            Set<Tree> leafsAsTree) {
+    private Tree recursiveTopDown(Set<SetDiEdge> finalEdges, Set<Node> parentNodeSet) {
 
-        // special case
-        if (finalEdges.size() == 0 && remainingSets.size() == 0)
-            return leafsAsTree.iterator().next();
+        // find all edges that have this node set as target
+        Predicate<? super Set<Node>> filter = t -> Util.equalSets(t, parentNodeSet);
 
-        // special case: see DiGraphTest.testFailingHierarchy
-        if (finalEdges.size() == 1 && leafsAsTree.size() > 1) {
-            return leafsAsTree.stream()
-                    .filter(l -> {
-                        Set<Node> rootNodes = finalEdges.iterator().next().getSecond();
+        Set<Set<Node>> nodesPointingToTarget = Util.filterAndReduce(finalEdges,
+                SetDiEdge::getSecond, filter, SetDiEdge::getFirst);
 
-                        return Util.equalSets(l.getLeafs(), rootNodes);
-                    })
-                    .findFirst()
-                    .orElseThrow(() -> new IncorrectHierarchyException(
-                            "last edge pointed to non existing node set"));
+        // if parent node set is a leave, return its nodes as a tree
+        if (nodesPointingToTarget.isEmpty())
+            return Util.nodeSetToLeafTree(parentNodeSet);
+
+        // get all nodes not contained by one of the subsets (all leaves)
+        Set<Set<Node>> leaves = nodesPointingToTarget.stream()
+                .reduce(parentNodeSet, Sets::difference)
+                .stream()
+                .map(n -> Sets.newHashSet(n))
+                .collect(Collectors.toSet());
+        leaves.forEach(nodesPointingToTarget::add);
+
+        // if there is still only one child, this is an incorrect tree
+        if (nodesPointingToTarget.size() == 1)
+            throw new IncorrectHierarchyException(
+                    "every tree in the hierarchy must have zero or at least 2 children");
+
+        // create new tree
+        Tree parentTree = new Tree();
+
+        // run recursively for all pointing sets
+        for (Set<Node> pointingNode : nodesPointingToTarget) {
+            Tree child = recursiveTopDown(finalEdges, pointingNode);
+            parentTree.addSubTree(child);
         }
 
-        if (remainingSets.size() == 1) {
-            Tree finalTree = Util.nodeSetToLeafTree(Lists.newArrayList(remainingSets).get(0));
-
-            leafsAsTree.forEach(finalTree::addSubTree);
-
-            return finalTree;
-        }
-
-        if (!leafsAsTree.isEmpty()) {
-            Set<Tree> tmpTrees = Sets.newHashSet(leafsAsTree);
-
-            leafsAsTree.stream()
-                    .filter(t -> edgeWithLeafAsFirst(finalEdges, t, false).isPresent())
-                    .forEach(t -> {
-                        Set<Node> newLeafSet = edgeWithLeafAsFirst(finalEdges, t, true)
-                                .get()
-                                .getSecond();
-
-                        Optional<Tree> existingTmpTree = tmpTrees.stream()
-                                .filter(tmp -> Util.equalSets(tmp.getLeafs(), newLeafSet))
-                                .findFirst();
-
-                        Tree newLeaf;
-                        if (existingTmpTree.isPresent())
-                            newLeaf = existingTmpTree.get();
-                        else {
-                            newLeaf = Util.nodeSetToLeafTree(newLeafSet);
-                            tmpTrees.add(newLeaf);
-                            remainingSets.removeIf(s -> Util.equalSets(s, newLeafSet));
-                        }
-                        newLeaf.addSubTree(t);
-                        tmpTrees.remove(t);
-                    });
-
-            leafsAsTree = tmpTrees;
-        } else {
-
-            // get all sets, where this set IS NEVER the second component of an edges - this means,
-            // that there are only outgoing edges in the transitive closure
-            Set<Set<Node>> leafs = remainingSets.stream()
-                    .filter(s -> finalEdges.stream()
-                            .noneMatch(e -> e.getSecond() == s))
-                    .collect(Collectors.toSet());
-
-            if (leafs.isEmpty())
-                throw new IncorrectHierarchyException("there must be at least one leaf set");
-
-            leafsAsTree = leafs.stream()
-                    .peek(remainingSets::remove)
-                    .map(Util::nodeSetToLeafTree)
-                    .collect(Collectors.toSet());
-        }
-
-        return recursive(finalEdges, remainingSets, leafsAsTree);
-    }
-
-    private Optional<SetDiEdge> edgeWithLeafAsFirst(Set<SetDiEdge> finalEdges, Tree t,
-            boolean andRemove) {
-        Predicate<? super SetDiEdge> treeEqualFirstOfEdge = e -> Util.equalSets(e
-                .getFirst(), t.getLeafs());
-
-        Optional<SetDiEdge> first = finalEdges.stream()
-                .filter(treeEqualFirstOfEdge)
-                .findFirst();
-
-        if (andRemove)
-            finalEdges.removeIf(treeEqualFirstOfEdge);
-
-        return first;
+        return parentTree;
     }
 
     private Set<SetDiEdge> getTransitiveClosure(Set<Set<Node>> sets) {
@@ -154,7 +109,7 @@ public class Hierarchy {
                 if (set == another)
                     continue;
 
-                if (Util.properSubset(set, another))
+                if (another.size() > set.size() && another.containsAll(set))
                     edges.add(new SetDiEdge(set, another));
             }
         }

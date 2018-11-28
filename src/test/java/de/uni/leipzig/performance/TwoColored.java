@@ -1,6 +1,7 @@
 package de.uni.leipzig.performance;
 
 import java.util.Arrays;
+import java.util.function.Supplier;
 
 import org.junit.*;
 import org.junit.runners.MethodSorters;
@@ -12,14 +13,14 @@ import de.uni.leipzig.method.TreeCreation.Method;
 public class TwoColored {
 
     static Integer[] LEAF_NUMBERS = new Integer[] {
-            10, 20, 40, 80// ,160, 320, 640 , 1280, 2560
+            10, 20, 40, 80, 160, 320, 640, 1280, 2560// , 5120
     };
 
     Runner runner = new Runner(TwoColored.class, Arrays.asList(LEAF_NUMBERS));
 
     @Test
     public void testHierarchy() throws Exception {
-        TreeCreation thinnessClass = Method.THINNESS_CLASS.get()
+        Supplier<TreeCreation> thinnessClass = () -> Method.THINNESS_CLASS.get()
                 .inNonInteractiveMode(true)
                 .inPrintMode(false);
 
@@ -28,7 +29,7 @@ public class TwoColored {
 
     @Test
     public void testInfAho() throws Exception {
-        TreeCreation infAho = Method.AHO_INFORMATIVE.get()
+        Supplier<TreeCreation> infAho = () -> Method.AHO_INFORMATIVE.get()
                 .inNonInteractiveMode(true)
                 .inPrintMode(false);
 

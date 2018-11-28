@@ -2,32 +2,38 @@ package de.uni.leipzig.uncolored;
 
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.stream.Stream;
+import java.util.stream.*;
 
 import com.google.common.annotations.VisibleForTesting;
 
 import de.uni.leipzig.model.*;
-import lombok.*;
+import de.uni.leipzig.model.Node;
+import de.uni.leipzig.model.edges.AbstractPair;
 
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@VisibleForTesting))
 public class DepthFirstSearch {
 
-    private final Marker marker;
-
-    public DepthFirstSearch() {
-        this(new Marker());
+    public Marker runOn(Set<Triple> tripleSetR, Set<Node> leftOvers) {
+        return runOn(leftOvers, tripleSetR.stream()
+                .map(t -> (AbstractPair<Node>) t.getEdge())
+                .collect(Collectors.toSet()), new Marker());
     }
 
     public Marker runOn(DiGraph diGraph) {
+        return runOn(diGraph.getNodes(), diGraph.getEdges(), new Marker());
+    }
+
+    @VisibleForTesting
+    protected Marker runOn(Set<Node> nodes, Set<? extends AbstractPair<Node>> edges,
+            Marker marker) {
         int c = 0;
         marker.clear();
 
-        for (Node v : diGraph.getNodes()) {
+        for (Node v : nodes) {
 
             if (!marker.isMarked(v)) {
                 // found new connected component
                 c = c + 1;
-                depthFirstSearch(diGraph, marker, c, v);
+                depthFirstSearch(edges, marker, c, v);
             }
 
         }
@@ -35,13 +41,13 @@ public class DepthFirstSearch {
         return marker;
     }
 
-    private void depthFirstSearch(DiGraph diGraph, Marker marker, int c, Node v) {
+    private void depthFirstSearch(Set<? extends AbstractPair<Node>> edges, Marker marker, int c,
+            Node v) {
         // mark node 'v' with component count 'c'
         marker.setMark(v, c);
 
         // get neighbours of 'v'
-        diGraph.getEdges()
-                .stream()
+        edges.stream()
                 .filter(e -> e.getFirst().equals(v) || e.getSecond().equals(v))
                 .map(e -> {
                     // consider incoming AND outgoing neighbours
@@ -52,7 +58,7 @@ public class DepthFirstSearch {
                 })
                 .forEach(neighbour -> {
                     if (!marker.isMarked(neighbour))
-                        depthFirstSearch(diGraph, marker, c, neighbour);
+                        depthFirstSearch(edges, marker, c, neighbour);
                 });
     }
 
@@ -80,4 +86,5 @@ public class DepthFirstSearch {
             marks.clear();
         }
     }
+
 }

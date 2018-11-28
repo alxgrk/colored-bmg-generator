@@ -43,14 +43,35 @@ class AhoInformative implements TreeCreation {
 
     @Override
     public Tree create(AdjacencyList adjList) {
-        DiGraph diGraph = diGraphExtractor.extract(adjList);
-        return create(diGraph);
+        Set<Node> nodes = adjList.getChildNodes();
+
+        Tree treeOrNull = sanityCheck(nodes);
+        if (treeOrNull != null)
+            return treeOrNull;
+
+        Pair<Set<InformativeTriple>, Set<Node>> triplesAndLeaves = informativeTripleFinder
+                .findTriple(adjList);
+        Set<InformativeTriple> informativeTriples = triplesAndLeaves.getFirst();
+
+        return aho.create(Util.uglyCast(informativeTriples), triplesAndLeaves.getSecond());
     }
 
     @Override
     public Tree create(DiGraph diGraph) {
 
         Set<Node> nodes = diGraph.getNodes();
+        Tree treeOrNull = sanityCheck(nodes);
+        if (treeOrNull != null)
+            return treeOrNull;
+
+        Pair<Set<InformativeTriple>, Set<Node>> triplesAndLeaves = informativeTripleFinder
+                .findTriple(diGraph);
+        Set<InformativeTriple> informativeTriples = triplesAndLeaves.getFirst();
+
+        return aho.create(Util.uglyCast(informativeTriples), triplesAndLeaves.getSecond());
+    }
+
+    private Tree sanityCheck(Set<Node> nodes) {
         if (nodes.size() < 3) {
             if (nodes.size() == 2) {
                 Iterator<Node> it = nodes.iterator();
@@ -65,12 +86,7 @@ class AhoInformative implements TreeCreation {
                 return new Tree(Node.helpNode());
             }
         }
-
-        Pair<Set<InformativeTriple>, Set<Node>> triplesAndLeaves = informativeTripleFinder
-                .findTriple(diGraph);
-        Set<InformativeTriple> informativeTriples = triplesAndLeaves.getFirst();
-
-        return aho.create(Util.uglyCast(informativeTriples), triplesAndLeaves.getSecond());
+        return null;
     }
 
 }

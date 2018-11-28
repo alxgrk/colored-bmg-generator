@@ -4,12 +4,13 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 import com.google.common.base.Stopwatch;
 
 import de.uni.leipzig.RandomTree;
 import de.uni.leipzig.method.TreeCreation;
-import de.uni.leipzig.model.AdjacencyList;
+import de.uni.leipzig.model.*;
 
 public class Runner {
 
@@ -22,8 +23,9 @@ public class Runner {
         this.leafNumbers = leafNumbers;
     }
 
-    public void run(TreeCreation lrtMethod) throws IOException {
-        File report = createTestReport(lrtMethod);
+    public void run(Supplier<TreeCreation> lrtMethod) throws IOException {
+        TreeCreation init = lrtMethod.get();
+        File report = createTestReport(init);
 
         String runInformation = leafNumbers.stream()
                 .map(i -> i.toString())
@@ -32,20 +34,27 @@ public class Runner {
 
         writeln(report, runInformation);
 
-        for (Integer leafNumber : leafNumbers) {
+        for (int i = 1; i <= 5; i++) {
 
-            boolean exceptionWasThrown;
-            do {
-                try {
-                    runFor(report, lrtMethod, leafNumber);
-                    exceptionWasThrown = false;
-                } catch (Exception e) {
-                    System.err.println(e.getMessage());
-                    exceptionWasThrown = true;
-                }
-            } while (exceptionWasThrown);
+            System.out.println("now: " + i + ". run of LRT-Method " + init.getClass()
+                    .getSimpleName());
 
-            System.out.println("done with leaf number " + leafNumber);
+            for (Integer leafNumber : leafNumbers) {
+
+                boolean exceptionWasThrown;
+                do {
+                    try {
+                        runFor(report, lrtMethod.get(), leafNumber);
+                        exceptionWasThrown = false;
+                    } catch (Exception e) {
+                        System.err.println(e.getMessage());
+                        exceptionWasThrown = true;
+                    }
+                } while (exceptionWasThrown);
+
+                System.out.println("done with leaf number " + leafNumber);
+            }
+
         }
     }
 
@@ -58,10 +67,15 @@ public class Runner {
 
         // TreeCreation.Method.AHO.get().inNonInteractiveMode(true).create(adjList);
 
-        lrtMethod.create(adjList);
+        System.out.println("Created " + adjList.getChildNodes().size() + " children");
 
-        Long elapsedMilliSeconds = sw.stop().elapsed(TimeUnit.MILLISECONDS);
-        write(report, Double.toString(elapsedMilliSeconds.doubleValue() / 1000));
+        Tree result = lrtMethod.create(adjList);
+
+        Long elapsedMicroSeconds = sw.stop().elapsed(TimeUnit.MICROSECONDS);
+        String asString = String.format("%f", elapsedMicroSeconds.doubleValue() / 1000000);
+        write(report, asString);
+
+        System.out.println(result.print());
 
         if (!(leafNumbers.indexOf(leafNumber) == leafNumbers.size() - 1))
             write(report, ",");

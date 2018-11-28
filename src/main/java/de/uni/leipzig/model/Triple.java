@@ -1,10 +1,10 @@
 package de.uni.leipzig.model;
 
-import de.uni.leipzig.model.edges.Edge;
+import de.uni.leipzig.model.edges.AbstractPair;
 
 public interface Triple extends Comparable<Triple> {
 
-    Edge getEdge();
+    <E extends AbstractPair<Node>> E getEdge();
 
     Node getNode();
 
