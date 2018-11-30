@@ -15,6 +15,7 @@ import de.uni.leipzig.conversion.TripleFromTree;
 import de.uni.leipzig.model.*;
 import de.uni.leipzig.ncolored.dengfernandezbaca.DFBBuildST;
 import de.uni.leipzig.ncolored.dengfernandezbaca.DFBBuildST.IncompatibleProfileException;
+import de.uni.leipzig.twocolored.DiGraphExtractor;
 import de.uni.leipzig.uncolored.*;
 import de.uni.leipzig.user.*;
 import lombok.*;
@@ -34,6 +35,8 @@ public class NColored {
 
     private final UserInput treeCombinationMethod;
 
+    private final DiGraphExtractor diGraphExtractor;
+
     // remember SuperTree method
     @Setter
     private Container<SuperTreeMethod> stMethod = Container.empty();
@@ -44,7 +47,11 @@ public class NColored {
 
     public NColored() {
         this(new ConnectedComponentsConstructor(), new DFBBuildST(), new AhoBuild(),
-                new TripleFromTree(), new UserInput());
+                new TripleFromTree(), new UserInput(), new DiGraphExtractor());
+    }
+
+    public Tree by(Function<DiGraph, Tree> creation, AdjacencyList adjList) {
+        return by(creation, diGraphExtractor.extract(adjList));
     }
 
     public Tree by(Function<DiGraph, Tree> creation, DiGraph diGraph) {
@@ -56,7 +63,7 @@ public class NColored {
 
         // are there some (what does 'some' mean? -> half of the connected component set size
         // assumed here) components with completely distinct color sets?
-        checkForSomeComponentsWithDistinctColors(components);
+        // checkForSomeComponentsWithDistinctColors(components);
 
         // iterate over all connected components and return result
         return components.stream()
@@ -65,37 +72,41 @@ public class NColored {
                     // store all stTrees
                     Map<Set<Color>, Tree> stTrees = new HashMap<>();
 
-                    // for every two colors s,t
-                    for (Color s : cc.getColors()) {
-                        for (Color t : cc.getColors()) {
+                    if (cc.getColors().size() == 1) {
+                        stTrees.put(cc.getColors(), creation.apply(cc));
+                    } else {
+                        // for every two colors s,t
+                        for (Color s : cc.getColors()) {
+                            for (Color t : cc.getColors()) {
 
-                            // s and t the same?
-                            if (s.equals(t) || stTrees.containsKey(Sets.newHashSet(s, t)))
-                                continue;
+                                // s and t the same?
+                                if (s.equals(t) || stTrees.containsKey(Sets.newHashSet(s, t)))
+                                    continue;
 
-                            // create induced subgraph for s,t
-                            DiGraph stSubGraph = cc.subGraphForLabels(s, t);
+                                // create induced subgraph for s,t
+                                DiGraph stSubGraph = cc.subGraphForLabels(s, t);
 
-                            // determine connected components
-                            List<DiGraph> stComponents = componentsConstructor.construct(
-                                    stSubGraph);
+                                // determine connected components
+                                List<DiGraph> stComponents = componentsConstructor.construct(
+                                        stSubGraph);
 
-                            // iterate over all connected components
-                            Tree stTree = stComponents.stream()
-                                    .map(stCC -> {
-                                        // apply tree creation method
-                                        Tree result = creation.apply(stCC);
+                                // iterate over all connected components
+                                Tree stTree = stComponents.stream()
+                                        .map(stCC -> {
+                                            // apply tree creation method
+                                            Tree result = creation.apply(stCC);
 
-                                        // exit if result is null
-                                        checkOnlyHelpNodeTree(result);
+                                            // exit if result is null
+                                            checkOnlyHelpNodeTree(result);
 
-                                        return result;
-                                    })
-                                    // append every subtree per connected component to new root
-                                    // r(s,t)
-                                    .reduce(new Tree(Node.helpNode()),
-                                            (i, subT) -> i.addSubTree(subT));
-                            stTrees.put(Sets.newHashSet(s, t), stTree);
+                                            return result;
+                                        })
+                                        // append every subtree per connected component to new root
+                                        // r(s,t)
+                                        .reduce(new Tree(Node.helpNode()),
+                                                (i, subT) -> i.addSubTree(subT));
+                                stTrees.put(Sets.newHashSet(s, t), stTree);
+                            }
                         }
                     }
 
@@ -172,13 +183,17 @@ public class NColored {
         final AtomicInteger componentsWithDistinctColorSets = new AtomicInteger(0);
         final int limit = components.size() / 2;
         components.stream()
-                .reduce((c1, c2) -> {
-                    if (!Util.equalSets(c1.getColors(), c2.getColors())) {
-                        if (componentsWithDistinctColorSets.incrementAndGet() > limit) {
-                            throw new RuntimeException("not a BMG");
-                        }
-                    }
-                    return c2;
+                .map(DiGraph::getColors)
+                .forEach((c1) -> {
+                    components.stream()
+                            .map(DiGraph::getColors)
+                            .forEach(c2 -> {
+                                if (!Util.equalSets(c1, c2)) {
+                                    if (componentsWithDistinctColorSets.incrementAndGet() > limit) {
+                                        throw new RuntimeException("not a BMG");
+                                    }
+                                }
+                            });
                 });
     }
 

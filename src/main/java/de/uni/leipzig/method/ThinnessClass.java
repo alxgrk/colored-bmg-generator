@@ -3,18 +3,19 @@ package de.uni.leipzig.method;
 import com.google.common.annotations.VisibleForTesting;
 
 import de.uni.leipzig.model.*;
-import de.uni.leipzig.twocolored.DiGraphExtractor2;
+import de.uni.leipzig.twocolored.DiGraphExtractor;
+import de.uni.leipzig.twocolored.axiom.Axioms;
 import lombok.*;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@VisibleForTesting))
 class ThinnessClass implements TreeCreation {
 
-    private final DiGraphExtractor2 extractor;
+    private final DiGraphExtractor extractor;
 
     private boolean inPrintMode = true;
 
     public ThinnessClass() {
-        this(new DiGraphExtractor2());
+        this(new DiGraphExtractor());
     }
 
     @Override
@@ -43,11 +44,10 @@ class ThinnessClass implements TreeCreation {
         graph.getNeighboursByTc();
         graph.getReachablesByTc();
 
-        // FIXME
-        // boolean axiomsFulfilled = Axioms.checkAll(graph);
-        //
-        // if (!axiomsFulfilled)
-        // throw new RuntimeException("Axioms not fulfilled!");
+        boolean axiomsFulfilled = Axioms.checkAll(graph);
+
+        if (!axiomsFulfilled)
+            throw new RuntimeException("Axioms not fulfilled!");
 
         Tree leastResolvedTree = graph.getHasseDiagram();
 

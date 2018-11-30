@@ -3,93 +3,24 @@ package de.uni.leipzig.conversion;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.*;
-
-import de.uni.leipzig.Util;
 import de.uni.leipzig.model.*;
-import de.uni.leipzig.model.edges.Edge;
+import de.uni.leipzig.uncolored.DefaultTripleFinder;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class TripleFromTree {
+
+    private final DefaultTripleFinder defaultTripleFinder;
+
+    public TripleFromTree() {
+        this(new DefaultTripleFinder());
+    }
 
     public Set<Triple> extractOf(Map<Set<Color>, Tree> stTrees) {
         return stTrees.values()
                 .stream()
-                .flatMap(t -> treeToTriples(t).stream())
+                .flatMap(t -> defaultTripleFinder.findTriple(t).getFirst().stream())
                 .collect(Collectors.toSet());
     }
 
-    public Set<Triple> treeToTriples(Tree tree) {
-
-        Multimap<Node, List<Node>> parentLeafSetsPerLeaf = LinkedListMultimap.create();
-
-        List<Node> allLeafs = tree.getLeaves();
-        allLeafs.forEach(n -> parentLeafSetsPerLeaf.put(n, allLeafs));
-        fillMultiMap(parentLeafSetsPerLeaf, tree);
-
-        Set<Triple> triples = Sets.newHashSet();
-
-        parentLeafSetsPerLeaf.asMap().forEach((a, va) -> {
-
-            parentLeafSetsPerLeaf.asMap().forEach((b, vb) -> {
-                if (a.equals(b))
-                    return;
-
-                if (a.getColor().equals(b.getColor()))
-                    return;
-
-                Optional<List<Node>> lcaOpt = findLca(va, vb);
-
-                parentLeafSetsPerLeaf.asMap().forEach((c, vc) -> {
-                    if (a.equals(c) || b.equals(c))
-                        return;
-
-                    // TODO is this correct?
-                    // currently excludes all same-colored / all-distinct-colored triples
-                    if ((a.getColor().equals(c.getColor()) && b.getColor().equals(c.getColor()))
-                            || (!a.getColor().equals(c.getColor()) && !b.getColor()
-                                    .equals(c.getColor())))
-                        return;
-
-                    lcaOpt.ifPresent(lca -> {
-                        for (List<Node> cParent : vc) {
-                            if (Util.properSubset(lca, cParent))
-                                triples.add(new DefaultTriple(new Edge(a, b), c));
-                        }
-                    });
-                });
-            });
-
-        });
-
-        parentLeafSetsPerLeaf.clear();
-
-        return triples;
-    }
-
-    private void fillMultiMap(Multimap<Node, List<Node>> parentLeafSetsPerLeaf, Tree tree) {
-
-        for (Tree subTree : tree.getSubTrees()) {
-            List<Node> leafs = subTree.getLeaves();
-
-            // skip leaf trees
-            if (leafs.size() > 1) {
-                for (Node node : leafs) {
-                    parentLeafSetsPerLeaf.put(node, leafs);
-                }
-            }
-
-            fillMultiMap(parentLeafSetsPerLeaf, subTree);
-        }
-    }
-
-    private Optional<List<Node>> findLca(Collection<List<Node>> va, Collection<List<Node>> vb) {
-        Set<List<Node>> parentLeafSetsA = Sets.newHashSet(va);
-        Set<List<Node>> parentLeafSetsB = Sets.newHashSet(vb);
-
-        Optional<List<Node>> lca = Sets.intersection(parentLeafSetsA, parentLeafSetsB)
-                .stream()
-                .min((l1, l2) -> Integer.compare(l1.size(), l2.size()));
-
-        return lca;
-    }
 }

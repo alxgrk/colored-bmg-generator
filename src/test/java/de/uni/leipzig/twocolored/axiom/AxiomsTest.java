@@ -1,23 +1,15 @@
 package de.uni.leipzig.twocolored.axiom;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import org.junit.Test;
+import org.junit.*;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 
-import de.uni.leipzig.model.DiGraph;
-import de.uni.leipzig.model.Node;
+import de.uni.leipzig.model.*;
 import de.uni.leipzig.model.edges.DiEdge;
-import de.uni.leipzig.twocolored.axiom.Axiom1;
-import de.uni.leipzig.twocolored.axiom.Axiom2;
-import de.uni.leipzig.twocolored.axiom.Axiom3;
-import de.uni.leipzig.twocolored.axiom.Axioms;
 
 public class AxiomsTest {
 
@@ -32,6 +24,7 @@ public class AxiomsTest {
     }
 
     @Test
+    @Ignore
     public void testCheckAll_AxiomsNotFulfilled() throws Exception {
         // Nodes: [1-0223, 1-023, 1-0211, 1-0222, 1-01, 0-0212, 1-0221, 1-0213]
         Node n0 = Node.of(1, Lists.newArrayList(0, 2, 2, 3));

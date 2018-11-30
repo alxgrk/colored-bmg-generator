@@ -3,9 +3,7 @@ package de.uni.leipzig.twocolored.axiom;
 import java.util.Set;
 
 import de.uni.leipzig.Util;
-import de.uni.leipzig.model.DiGraph;
-import de.uni.leipzig.model.ThinnessClass;
-import de.uni.leipzig.model.Node;
+import de.uni.leipzig.model.*;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = false)
@@ -17,7 +15,7 @@ public class Axiom2 extends Axioms {
         Set<Node> nAlpha = graph.getN1(alpha);
         Set<Node> nnnAlpha = graph.getN3(alpha);
 
-        if (!Util.equalSets(nnnAlpha, nAlpha)) {
+        if (!Util.properSubset(nnnAlpha, nAlpha)) {
             return false;
         }
 

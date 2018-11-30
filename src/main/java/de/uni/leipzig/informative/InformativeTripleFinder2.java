@@ -35,7 +35,6 @@ public class InformativeTripleFinder2 {
                     Node node2 = t.getEdge().getSecond();
                     Node node3 = t.getNode();
 
-                    // FIXME filter edges for performance
                     boolean[] edgesExistent = checkEdges(edges, node1, node2, node3);
 
                     if (edgesExistent.length == 4

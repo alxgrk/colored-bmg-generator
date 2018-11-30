@@ -16,7 +16,8 @@ public class TwoColored {
             10, 20, 40, 80, 160, 320, 640, 1280, 2560// , 5120
     };
 
-    Runner runner = new Runner(TwoColored.class, Arrays.asList(LEAF_NUMBERS));
+    TwoColoredRunner twoColoredRunner = new TwoColoredRunner(TwoColored.class, Arrays.asList(
+            LEAF_NUMBERS));
 
     @Test
     public void testHierarchy() throws Exception {
@@ -24,7 +25,7 @@ public class TwoColored {
                 .inNonInteractiveMode(true)
                 .inPrintMode(false);
 
-        runner.run(thinnessClass);
+        twoColoredRunner.run(thinnessClass);
     }
 
     @Test
@@ -33,7 +34,7 @@ public class TwoColored {
                 .inNonInteractiveMode(true)
                 .inPrintMode(false);
 
-        runner.run(infAho);
+        twoColoredRunner.run(infAho);
     }
 
 }

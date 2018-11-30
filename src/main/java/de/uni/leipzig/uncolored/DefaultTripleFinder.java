@@ -22,6 +22,21 @@ public class DefaultTripleFinder implements TripleFinder<Triple> {
      * @param list
      * @return
      */
+    public Pair<Set<Triple>, Set<Node>> findTriple(Tree tree) {
+
+        Set<Node> leaves = new HashSet<>(tree.getLeaves());
+        Set<Triple> triples = findByLeaves(leaves);
+
+        return Pair.of(triples, leaves);
+    }
+
+    /**
+     * Extracts all possible triples from the adjacent list.<br>
+     * <b>Be careful:</b> triples could be equal, but inverted!
+     * 
+     * @param list
+     * @return
+     */
     public Pair<Set<Triple>, Set<Node>> findTriple(AdjacencyList list) {
 
         Set<Node> leaves = list.getChildNodes();

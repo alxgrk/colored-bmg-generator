@@ -83,7 +83,7 @@ public class Node implements Comparable<Node> {
 
         Node other = (Node) obj;
 
-        if (this.isHelpNode())
+        if (this.isHelpNode() && other.isHelpNode())
             return super.equals(other);
 
         if (color == null) {

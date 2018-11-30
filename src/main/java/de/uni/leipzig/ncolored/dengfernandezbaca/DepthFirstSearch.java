@@ -1,16 +1,13 @@
 package de.uni.leipzig.ncolored.dengfernandezbaca;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import de.uni.leipzig.model.Tree;
-import de.uni.leipzig.model.TreeGraph;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
+import de.uni.leipzig.model.*;
+import lombok.*;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@VisibleForTesting))
 public class DepthFirstSearch {
@@ -45,14 +42,8 @@ public class DepthFirstSearch {
         // get neighbours of 'v'
         treeGraph.getEdges()
                 .stream()
-                .filter(e -> e.getFirst().equals(v) || e.getSecond().equals(v))
-                .map(e -> {
-                    // consider incoming AND outgoing neighbours
-                    if (e.getFirst().equals(v))
-                        return e.getSecond();
-                    else
-                        return e.getFirst();
-                })
+                .filter(e -> e.getFirst().equals(v))
+                .map(e -> e.getSecond())
                 .forEach(neighbour -> {
                     if (!marker.isMarked(neighbour))
                         depthFirstSearch(treeGraph, marker, c, neighbour);

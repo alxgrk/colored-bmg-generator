@@ -5,10 +5,8 @@ import java.util.List;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 
-import de.uni.leipzig.model.DiGraph;
-import de.uni.leipzig.model.ThinnessClass;
-import lombok.AccessLevel;
-import lombok.Getter;
+import de.uni.leipzig.model.*;
+import lombok.*;
 
 public abstract class Axioms {
 
@@ -25,12 +23,8 @@ public abstract class Axioms {
 
                 for (Axioms a : axioms) {
                     if (!a.check(graph, alpha, beta)) {
-                        // System.out.println(a + " not fulfilled for alpha=" + alpha + " & beta="
-                        // + beta);
                         return false;
                     }
-
-                    // System.out.println(a + " fulfilled for alpha=" + alpha + " & beta=" + beta);
                 }
 
             }

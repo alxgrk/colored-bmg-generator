@@ -23,11 +23,14 @@ public class DFBBuildST {
 
     public Tree build(Map<Set<Color>, Tree> inputU) throws IncompatibleProfileException {
 
+        if (inputU.size() == 1)
+            return inputU.values().iterator().next();
+
         // convert map
         Set<Tree> allTrees = Sets.newHashSet(inputU.values());
         Set<Tree> subTreesWithUAsRoot = Sets.newHashSet(inputU.values());
 
-        return build(subTreesWithUAsRoot, allTrees, false);
+        return build(subTreesWithUAsRoot, allTrees, true);
     }
 
     public Tree build(Set<Tree> subTreesWithUAsRoot, Set<Tree> allTrees, boolean checkValidity)
@@ -68,15 +71,18 @@ public class DFBBuildST {
         // for each tree in map that consist of only one leaf
         for (Tree t : allTrees) {
 
-            SetView<Node> vSet = Sets.intersection(rootsU.keySet(), Sets.newHashSet(t
-                    .getAllNodes()));
+            SetView<Node> vSet = Sets.intersection(rootsU.keySet(),
+                    Sets.newHashSet(t.getAllNodes()));
             if (vSet.size() == 1) {
                 Node v = vSet.iterator().next();
                 Tree vTree = rootsU.get(v);
                 List<Tree> childrenOfV = vTree.getSubTrees();
 
-                childrenOfV.forEach(subTreesWithUAsRoot::add);
-                subTreesWithUAsRoot.remove(vTree);
+                rootsU.remove(v);
+                Set<Tree> newSubTrees = Sets.newHashSet(rootsU.values());
+                newSubTrees.addAll(childrenOfV);
+                subTreesWithUAsRoot = newSubTrees;
+                rootsU = mapToRootNode(subTreesWithUAsRoot);
             }
 
         }
@@ -93,7 +99,7 @@ public class DFBBuildST {
         for (TreeGraph c : components) {
 
             // recursive call
-            Tree tJ = build(c.getTrees(), allTrees, true);
+            Tree tJ = build(c.getTrees(), allTrees, false);
 
             // if no exception was thrown, tJ is compatible
             rTree.addSubTree(tJ);
@@ -119,8 +125,7 @@ public class DFBBuildST {
                 if (v1.equals(v2))
                     continue;
 
-                if (!Sets.intersection(v1.getColors(), v2.getColors()).isEmpty()
-                        && !Sets.intersection(v2.getColors(), v1.getColors()).isEmpty()) {
+                if (!Sets.intersection(v1.getColors(), v2.getColors()).isEmpty()) {
                     edges.add(new TreeEdge(v1, v2));
                 }
 

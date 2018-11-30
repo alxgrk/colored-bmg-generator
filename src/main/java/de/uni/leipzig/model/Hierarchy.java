@@ -33,7 +33,6 @@ public class Hierarchy {
         sets = setBuilder.build();
     }
 
-    // FIXME performance!!!
     public Tree toHasseTree() {
 
         // determine the transitive closure ("Transitive Hülle")

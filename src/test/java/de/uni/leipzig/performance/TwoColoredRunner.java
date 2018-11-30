@@ -12,13 +12,13 @@ import de.uni.leipzig.RandomTree;
 import de.uni.leipzig.method.TreeCreation;
 import de.uni.leipzig.model.*;
 
-public class Runner {
+public class TwoColoredRunner {
 
     final List<Integer> leafNumbers;
 
     final Class<?> testClass;
 
-    public Runner(Class<?> testClass, List<Integer> leafNumbers) {
+    public TwoColoredRunner(Class<?> testClass, List<Integer> leafNumbers) {
         this.testClass = testClass;
         this.leafNumbers = leafNumbers;
     }
@@ -92,7 +92,7 @@ public class Runner {
     }
 
     private File createTestReport(TreeCreation lrtMethod) throws IOException {
-        File testReport = new File(Runner.class.getProtectionDomain()
+        File testReport = new File(TwoColoredRunner.class.getProtectionDomain()
                 .getCodeSource()
                 .getLocation()
                 .getPath()
