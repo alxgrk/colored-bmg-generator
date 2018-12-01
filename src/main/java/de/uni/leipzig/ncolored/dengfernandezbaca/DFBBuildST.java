@@ -23,9 +23,6 @@ public class DFBBuildST {
 
     public Tree build(Map<Set<Color>, Tree> inputU) throws IncompatibleProfileException {
 
-        if (inputU.size() == 1)
-            return inputU.values().iterator().next();
-
         // convert map
         Set<Tree> allTrees = Sets.newHashSet(inputU.values());
         Set<Tree> subTreesWithUAsRoot = Sets.newHashSet(inputU.values());
@@ -78,11 +75,8 @@ public class DFBBuildST {
                 Tree vTree = rootsU.get(v);
                 List<Tree> childrenOfV = vTree.getSubTrees();
 
-                rootsU.remove(v);
-                Set<Tree> newSubTrees = Sets.newHashSet(rootsU.values());
-                newSubTrees.addAll(childrenOfV);
-                subTreesWithUAsRoot = newSubTrees;
-                rootsU = mapToRootNode(subTreesWithUAsRoot);
+                childrenOfV.forEach(subTreesWithUAsRoot::add);
+                subTreesWithUAsRoot.remove(vTree);
             }
 
         }

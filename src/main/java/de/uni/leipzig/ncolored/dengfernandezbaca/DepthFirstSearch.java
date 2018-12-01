@@ -42,8 +42,14 @@ public class DepthFirstSearch {
         // get neighbours of 'v'
         treeGraph.getEdges()
                 .stream()
-                .filter(e -> e.getFirst().equals(v))
-                .map(e -> e.getSecond())
+                .filter(e -> e.getFirst().equals(v) || e.getSecond().equals(v))
+                .map(e -> {
+                    // consider incoming AND outgoing neighbours
+                    if (e.getFirst().equals(v))
+                        return e.getSecond();
+                    else
+                        return e.getFirst();
+                })
                 .forEach(neighbour -> {
                     if (!marker.isMarked(neighbour))
                         depthFirstSearch(treeGraph, marker, c, neighbour);

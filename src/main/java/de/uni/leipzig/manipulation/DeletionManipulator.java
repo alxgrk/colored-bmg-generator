@@ -1,16 +1,16 @@
 package de.uni.leipzig.manipulation;
 
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
-import com.google.common.collect.Sets;
-
-import de.uni.leipzig.model.Node;
-import de.uni.leipzig.model.Triple;
+import de.uni.leipzig.model.*;
 
 public class DeletionManipulator extends Manipulator {
 
-    protected DeletionManipulator(Integer percentage) {
+    public DeletionManipulator(Integer percentage) {
+        this((double) percentage);
+    }
+
+    public DeletionManipulator(Double percentage) {
         super(percentage);
     }
 
@@ -18,16 +18,14 @@ public class DeletionManipulator extends Manipulator {
         if (getPercentage() == 0)
             return;
 
-        Integer toBeDeleted = tripleSet.size() * getPercentage() / 100;
+        Integer toBeDeleted = (int) (tripleSet.size() * getPercentage() / 100);
         System.out.println("remove " + toBeDeleted + " triples from set");
-        Set<Triple> triplesToRemove = Sets.newHashSet();
 
         Iterator<Triple> iterator = tripleSet.iterator();
         while (toBeDeleted-- != 0) {
-            triplesToRemove.add(iterator.next());
+            iterator.next();
+            iterator.remove();
         }
-
-        tripleSet.removeAll(triplesToRemove);
     }
 
 }

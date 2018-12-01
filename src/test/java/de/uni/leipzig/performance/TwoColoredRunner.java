@@ -18,9 +18,12 @@ public class TwoColoredRunner {
 
     final Class<?> testClass;
 
-    public TwoColoredRunner(Class<?> testClass, List<Integer> leafNumbers) {
+    final int runs;
+
+    public TwoColoredRunner(Class<?> testClass, List<Integer> leafNumbers, int runs) {
         this.testClass = testClass;
         this.leafNumbers = leafNumbers;
+        this.runs = runs;
     }
 
     public void run(Supplier<TreeCreation> lrtMethod) throws IOException {
@@ -34,7 +37,7 @@ public class TwoColoredRunner {
 
         writeln(report, runInformation);
 
-        for (int i = 1; i <= 5; i++) {
+        for (int i = 1; i <= runs; i++) {
 
             System.out.println("now: " + i + ". run of LRT-Method " + init.getClass()
                     .getSimpleName());
@@ -75,7 +78,7 @@ public class TwoColoredRunner {
         String asString = String.format("%f", elapsedMicroSeconds.doubleValue() / 1000000);
         write(report, asString);
 
-        System.out.println(result.print());
+        // System.out.println(result.print());
 
         if (!(leafNumbers.indexOf(leafNumber) == leafNumbers.size() - 1))
             write(report, ",");

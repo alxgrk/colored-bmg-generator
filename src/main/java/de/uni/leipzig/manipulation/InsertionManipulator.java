@@ -9,7 +9,11 @@ import de.uni.leipzig.model.edges.Edge;
 
 public class InsertionManipulator extends Manipulator {
 
-    protected InsertionManipulator(Integer percentage) {
+    public InsertionManipulator(Integer percentage) {
+        this((double) percentage);
+    }
+
+    public InsertionManipulator(Double percentage) {
         super(percentage);
     }
 
@@ -17,7 +21,7 @@ public class InsertionManipulator extends Manipulator {
         if (getPercentage() == 0)
             return;
 
-        Integer toBeInserted = tripleSet.size() * getPercentage() / 100;
+        Integer toBeInserted = (int) (tripleSet.size() * getPercentage() / 100);
         System.out.println("add " + toBeInserted + " triples to set");
         Set<Triple> triplesToAdd = Sets.newHashSet();
 

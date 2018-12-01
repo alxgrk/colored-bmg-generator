@@ -49,8 +49,7 @@ public class ThreeColoredRunner {
 
         for (int i = 1; i <= 5; i++) {
 
-            System.out.println("now: " + i + ". run of ST-Method " + stMethod.getClass()
-                    .getSimpleName());
+            System.out.println("now: " + i + ". run of ST-Method " + stMethod.toString());
 
             for (Integer color : colors) {
 

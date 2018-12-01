@@ -1,14 +1,16 @@
 package de.uni.leipzig.manipulation;
 
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
-import de.uni.leipzig.model.Node;
-import de.uni.leipzig.model.Triple;
+import de.uni.leipzig.model.*;
 
 public class InversionManipulator extends Manipulator {
 
-    protected InversionManipulator(Integer percentage) {
+    public InversionManipulator(Integer percentage) {
+        this((double) percentage);
+    }
+
+    public InversionManipulator(Double percentage) {
         super(percentage);
     }
 
@@ -16,7 +18,7 @@ public class InversionManipulator extends Manipulator {
         if (getPercentage() == 0)
             return;
 
-        Integer toBeInverted = tripleSet.size() * getPercentage() / 100;
+        Integer toBeInverted = (int) (tripleSet.size() * getPercentage() / 100);
         System.out.println("invert " + toBeInverted + " triples");
 
         Iterator<Triple> iterator = tripleSet.iterator();

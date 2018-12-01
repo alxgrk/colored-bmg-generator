@@ -16,8 +16,8 @@ public class TwoColored {
             10, 20, 40, 80, 160, 320, 640, 1280, 2560// , 5120
     };
 
-    TwoColoredRunner twoColoredRunner = new TwoColoredRunner(TwoColored.class, Arrays.asList(
-            LEAF_NUMBERS));
+    TwoColoredRunner twoColoredRunner = new TwoColoredRunner(TwoColored.class,
+            Arrays.asList(LEAF_NUMBERS), 5);
 
     @Test
     public void testHierarchy() throws Exception {
